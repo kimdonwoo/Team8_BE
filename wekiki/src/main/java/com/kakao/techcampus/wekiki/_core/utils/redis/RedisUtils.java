@@ -1,6 +1,6 @@
 package com.kakao.techcampus.wekiki._core.utils.redis;
 
-import com.kakao.techcampus.wekiki.group.domain.Invitation;
+import com.kakao.techcampus.wekiki.domain.group.domain.Invitation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;

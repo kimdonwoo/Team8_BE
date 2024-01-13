@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.domain;
+package com.kakao.techcampus.wekiki;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

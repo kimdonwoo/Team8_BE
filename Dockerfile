@@ -22,4 +22,4 @@ ENV SERVER_URL=https://kb70bd6b8a3f6a.user-app.krampoline.com
 
 
 # 빌드 결과 jar 파일을 실행
-CMD ["java", "-jar", "-Dspring.profiles.active=prod", "/home/wekiki/gradle/project/wekiki/build/libs/wekiki-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=prodkrampoline", "/home/wekiki/gradle/project/wekiki/build/libs/wekiki-0.0.1-SNAPSHOT.jar"]

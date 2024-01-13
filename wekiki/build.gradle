@@ -37,22 +37,26 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 	// 메일 관련
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	// Redis 제공
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// (배포용) 사용할 MariaDB
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	// (배포용) 사용할 DB
+	//runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.31'
 
 	// (테스트용) H2 데이터베이스
-	runtimeOnly 'com.h2database:h2'
+	//runtimeOnly 'com.h2database:h2'
 
 	// 테스트 기능 제공
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// 모니터링용
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	// 유효성 검사
 	implementation 'org.springframework.boot:spring-boot-starter-validation'

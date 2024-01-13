@@ -3,7 +3,7 @@ package com.kakao.techcampus.wekiki.domain.page;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki._core.utils.IndexUtils;
-import com.kakao.techcampus.wekiki._core.utils.redis.RedisUtils;
+import com.kakao.techcampus.wekiki._core.utils.RedisUtils;
 import com.kakao.techcampus.wekiki.domain.group.domain.Group;
 import com.kakao.techcampus.wekiki.domain.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.domain.group.repository.GroupJPARepository;

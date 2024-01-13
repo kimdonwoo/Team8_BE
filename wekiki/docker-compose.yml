@@ -2,7 +2,7 @@ version: "3"
 services:
   prometheus:
     image: prom/prometheus
-    container_name: prometheus
+    container_name: prometheus_for_wekiki
     ports:
       - "9090:9090"
     volumes:
@@ -12,7 +12,7 @@ services:
 
   grafana:
     image: grafana/grafana
-    container_name: grafana
+    container_name: grafana_for_wekiki
     ports:
       - "3000:3000"
     environment:
@@ -20,3 +20,12 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
 #    volumes:
 #      - ./grafana:/etc/grafana/provisioning/datasources
+
+
+  redis:
+    image: redis:alpine
+    container_name: redis_for_wekiki
+    command: redis-server --port 6379
+    hostname: redis
+    ports:
+      - 6379:6379

@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki._core.utils.redis;
+package com.kakao.techcampus.wekiki._core.utils;
 
 import com.kakao.techcampus.wekiki.domain.group.domain.Invitation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,10 @@ public class RedisUtils {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    public void setValues(String key, String value, long lifetime) {
+        Duration duration = Duration.ofSeconds(lifetime);
+        redisTemplate.opsForValue().set(key, value, duration);
+    }
 
     public void setInvitationValues(String key, Invitation invitation, Duration lifetime) {
         redisTemplate.opsForValue().set(key, invitation, lifetime);

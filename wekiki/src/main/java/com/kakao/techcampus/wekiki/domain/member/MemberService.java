@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.techcampus.wekiki._core.error.exception.*;
 import com.kakao.techcampus.wekiki._core.jwt.JWTTokenProvider;
-import com.kakao.techcampus.wekiki._core.utils.RedisUtility;
-import com.kakao.techcampus.wekiki._core.utils.redis.RedisUtils;
+import com.kakao.techcampus.wekiki._core.utils.RedisUtils;
 import com.kakao.techcampus.wekiki.domain.group.domain.GroupMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,6 @@ public class MemberService {
     private final JWTTokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
-    private final RedisUtility redisUtility;
     private final RedisUtils redisUtils;
     private final JavaMailSender javaMailSender;
     @Value("${kakao.client.id}")
@@ -170,7 +168,7 @@ public class MemberService {
             throw e;
         }
         Integer authNumber = makeEmailAuthNum();
-        redisUtility.setValues(email, Integer.toString(authNumber), 300);
+        redisUtils.setValues(email, Integer.toString(authNumber), 300);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject("부산대 인증 메일입니다!");
@@ -189,7 +187,7 @@ public class MemberService {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (부산대 인증 메일 확인)");
             throw e;
         }
-        if(!redisUtility.getValues(pnuEmailRequestDTO.getEmail()).equals(pnuEmailRequestDTO.getCertificationNumber())){
+        if(!redisUtils.getValues(pnuEmailRequestDTO.getEmail()).equals(pnuEmailRequestDTO.getCertificationNumber())){
             log.error("부산대 메일 인증 번호가 틀렸습니다. User Id : " + member.getEmail());
             throw new Exception400("인증번호가 틀렸습니다.");
         }

@@ -1,8 +1,10 @@
 package com.kakao.techcampus.wekiki.domain.page;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,23 @@ import java.util.Optional;
 @Repository
 public interface PageJPARepository extends JpaRepository<PageInfo, Long> {
 
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM PageInfo  p WHERE p.id = :pageId")
+    PageInfo findByIdWithPessimisticLock(@Param("pageId")Long pageId);
+
+    @Lock(value = LockModeType.OPTIMISTIC)
+    @Query("SELECT p FROM PageInfo  p WHERE p.id = :pageId")
+    PageInfo findByIdWithOptimisticLock(@Param("pageId")Long pageId);
+
+    @Query(value = "select get_lock(:key, 3000)", nativeQuery = true)
+    void getLock(@Param("key") String key);
+
+    @Query(value = "select release_lock(:key)", nativeQuery = true)
+    void releaseLock(@Param("key") String key);
+
+
+
+    // ----------------------
     @Query("SELECT p FROM PageInfo p WHERE p.group.id = :groupId AND p.pageName LIKE :keyword%")
     Page<PageInfo> findPagesByTitleContainingKeyword(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);
 

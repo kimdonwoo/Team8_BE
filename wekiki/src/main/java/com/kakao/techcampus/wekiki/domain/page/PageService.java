@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -339,6 +340,41 @@ public class PageService {
         }
     }
 
+    @Transactional
+    public void likePageTest(Long pageId){
+        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
+        page.plusGoodCount();
+        pageJPARepository.saveAndFlush(page);
+    }
+
+    public synchronized void likePageWithSynchronized(Long pageId){
+        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
+        page.plusGoodCount();
+        pageJPARepository.saveAndFlush(page);
+    }
+
+    @Transactional
+    public void likePageWithPessimisticLock(Long pageId){
+        PageInfo page = pageJPARepository.findByIdWithPessimisticLock(pageId);
+        page.plusGoodCount();
+        pageJPARepository.saveAndFlush(page);
+    }
+
+    @Transactional
+    public void likePageWithOptimisticLock(Long pageId){
+        PageInfo page = pageJPARepository.findByIdWithOptimisticLock(pageId);
+        page.plusGoodCount();
+        pageJPARepository.save(page);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void likePageWithNamedLockAndLettuceLock(Long pageId){
+        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(
+                () -> new Exception404("존재하지 않는 페이지 입니다."));
+        page.plusGoodCount();
+        pageJPARepository.saveAndFlush(page);
+    }
+
 
     public GroupMember checkGroupMember(Long memberId, Long groupId){
 
@@ -350,6 +386,7 @@ public class PageService {
 
         return activeGroupMember;
     }
+
 
     public PageInfo checkPageFromPageId(Long pageId){
         return pageJPARepository.findById(pageId)

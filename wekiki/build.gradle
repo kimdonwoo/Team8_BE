@@ -41,8 +41,9 @@ dependencies {
 	// 메일 관련
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	// Redis 제공
+	// Redis 제공 + redisson
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.21.1'
 
 	// (배포용) 사용할 DB
 	//runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'

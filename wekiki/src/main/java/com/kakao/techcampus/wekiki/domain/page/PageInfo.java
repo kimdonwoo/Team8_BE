@@ -33,6 +33,9 @@ public class PageInfo {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
+    @Version
+    private Long version;
+
     @Builder
     public PageInfo(Long id, Group group, String pageName, int goodCount, int badCount, int viewCount, LocalDateTime created_at, LocalDateTime updated_at) {
         this.id = id;
@@ -60,5 +63,18 @@ public class PageInfo {
     public void addPost(Post post){
         this.posts.add(post);
         post.setPageInfo(this);
+    }
+
+    @Override
+    public String toString() {
+        return "PageInfo{" +
+                "id=" + id +
+                ", pageName='" + pageName + '\'' +
+                ", goodCount=" + goodCount +
+                ", badCount=" + badCount +
+                ", viewCount=" + viewCount +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                '}';
     }
 }

@@ -6,7 +6,7 @@ import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
-import com.kakao.techcampus.wekiki.history.infrastructure.HistoryJPARepository;
+import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
@@ -32,7 +32,7 @@ public class PostService {
 
     private final PageRepository pageRepository;
     private final PostRepository postRepository;
-    private final HistoryJPARepository historyJPARepository;
+    private final HistoryRepository historyRepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final ReportRepository reportRepository;
     final int HISTORY_COUNT = 5;
@@ -74,7 +74,7 @@ public class PostService {
                 .post(savedPost)
                 .build();
         savedPost.addHistory(newHistory);
-        historyJPARepository.save(newHistory);
+        historyRepository.save(newHistory);
 
         // 7. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹의 "  + pageId + " 페이지에 "+ title+" 포스트를 생성하였습니다.");
@@ -100,7 +100,7 @@ public class PostService {
 
         // 5. 다르면 Post 수정후 히스토리 생성 저장
         History newHistory = post.modifyPost(activeGroupMember, title, content);
-        historyJPARepository.save(newHistory);
+        historyRepository.save(newHistory);
 
         // 6. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ title+" 포스트를 수정하였습니다.");
@@ -117,7 +117,7 @@ public class PostService {
         Post post = checkPostFromPostId(postId);
 
         // 3. 해당 PostId로 history 모두 가져오기 시간순 + 페이지네이션
-        Page<History> historys = historyJPARepository.findHistoryWithMemberByPostId(postId, PageRequest.of(pageNo, HISTORY_COUNT));
+        Page<History> historys = historyRepository.findHistoryWithMemberByPostId(postId, PageRequest.of(pageNo, HISTORY_COUNT));
 
         // 4. DTO로 return
         List<PostResponse.getPostHistoryDTO.historyDTO> historyDTOs = historys.getContent().stream().
@@ -166,7 +166,7 @@ public class PostService {
         checkPostFromPostId(postId);
 
         // 3. postId의 최근 히스토리 가져오기
-        List<History> historyByPostId = historyJPARepository.findHistoryByPostId(postId, PageRequest.of(0, 1));
+        List<History> historyByPostId = historyRepository.findHistoryByPostId(postId, PageRequest.of(0, 1));
 
         // 4. report 생성
         Report report = Report.builder()

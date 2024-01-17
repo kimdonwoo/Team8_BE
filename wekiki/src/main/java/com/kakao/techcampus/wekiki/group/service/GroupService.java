@@ -13,7 +13,7 @@ import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialClosedGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;
 import com.kakao.techcampus.wekiki.history.domain.History;
-import com.kakao.techcampus.wekiki.history.infrastructure.HistoryJPARepository;
+import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.Member;
 import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
@@ -47,7 +47,7 @@ public class GroupService {
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final MemberJPARepository memberJPARepository;
     private final PageRepository pageRepository;
-    private final HistoryJPARepository historyJPARepository;
+    private final HistoryRepository historyRepository;
     private final ReportRepository reportRepository;
 
     private static final int GROUP_SEARCH_SIZE = 16;
@@ -309,7 +309,7 @@ public class GroupService {
 
         // 해당 멤버의 Post 기록 정보 확인(History에서 가져옴)
         Pageable pageable = PageRequest.of(0, 10);
-        Page<History> myHistoryList = historyJPARepository.findAllByGroupMember(groupMember.getId(), pageable);
+        Page<History> myHistoryList = historyRepository.findAllByGroupMember(groupMember.getId(), pageable);
         
         log.debug("히스토리 조회 완료");
 
@@ -325,7 +325,7 @@ public class GroupService {
         GroupMember groupMember = getActiveGroupMember(groupId, memberId);
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<History> myHistoryList = historyJPARepository.findAllByGroupMember(groupMember.getId(), pageable);
+        Page<History> myHistoryList = historyRepository.findAllByGroupMember(groupMember.getId(), pageable);
 
         log.debug("히스토리 조회 완료");
 

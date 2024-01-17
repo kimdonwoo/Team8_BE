@@ -19,7 +19,7 @@ import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import com.kakao.techcampus.wekiki.report.infrastructure.ReportJPARepository;
+import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,7 +48,7 @@ public class GroupService {
     private final MemberJPARepository memberJPARepository;
     private final PageRepository pageRepository;
     private final HistoryJPARepository historyJPARepository;
-    private final ReportJPARepository reportJPARepository;
+    private final ReportRepository reportRepository;
 
     private static final int GROUP_SEARCH_SIZE = 16;
     private static final String MEMBER_ID_PREFIX = "member_id:";
@@ -402,7 +402,7 @@ public class GroupService {
 
         for(PageInfo pageInfo : pageList) {
             for(Post post : pageInfo.getPosts()) {
-                reportJPARepository.deleteReportsByHistoryInQuery(post.getHistorys());
+                reportRepository.deleteReportsByHistoryInQuery(post.getHistorys());
 
                 log.debug(post.getId() + " 번 post의 모든 report 삭제 완료");
             }

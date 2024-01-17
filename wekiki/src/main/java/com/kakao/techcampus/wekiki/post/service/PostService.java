@@ -13,7 +13,7 @@ import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import com.kakao.techcampus.wekiki.report.domain.Report;
-import com.kakao.techcampus.wekiki.report.infrastructure.ReportJPARepository;
+import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final HistoryJPARepository historyJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
-    private final ReportJPARepository reportJPARepository;
+    private final ReportRepository reportRepository;
     final int HISTORY_COUNT = 5;
 
     @Transactional
@@ -175,7 +175,7 @@ public class PostService {
                 .content(content)
                 .created_at(LocalDateTime.now())
                 .build();
-        Report savedReport = reportJPARepository.save(report);
+        Report savedReport = reportRepository.save(report);
 
         // 5. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ postId +" 포스트를 신고합니다.");

@@ -4,7 +4,7 @@ import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki.comment.controller.response.CommentResponse;
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
-import com.kakao.techcampus.wekiki.comment.infrastructure.CommentJPARepository;
+import com.kakao.techcampus.wekiki.comment.service.port.CommentRepository;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CommentService {
 
-    private final CommentJPARepository commentJPARepository;
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     final int COMMENT_COUNT = 10;
@@ -40,7 +40,7 @@ public class CommentService {
         Post post = checkPostFromPostId(postId);
 
         // 3. postId로 Comment 다 가져오기
-        Page<Comment> comments = commentJPARepository.findCommentsByPostIdWithGroupMembers(postId, PageRequest.of(pageNo, COMMENT_COUNT));
+        Page<Comment> comments = commentRepository.findCommentsByPostIdWithGroupMembers(postId, PageRequest.of(pageNo, COMMENT_COUNT));
 
         // 4. return DTO
         List<CommentResponse.getCommentDTO.commentDTO> commentDTOs = comments.getContent()
@@ -67,7 +67,7 @@ public class CommentService {
                 .created_at(LocalDateTime.now())
                 .build();
         post.addComment(comment);
-        Comment savedComment = commentJPARepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ postId +" 포스트의 댓글을 생성합니다.");
@@ -90,7 +90,7 @@ public class CommentService {
 
         // 4. comment 삭제
         CommentResponse.deleteCommentDTO response = new CommentResponse.deleteCommentDTO(comment);
-        commentJPARepository.delete(comment);
+        commentRepository.delete(comment);
 
         // 5. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ commentId +" 댓글을 삭제합니다.");
@@ -142,7 +142,7 @@ public class CommentService {
     }
 
     public Comment checkCommentFromCommentId(Long commentId){
-        return commentJPARepository.findCommentWithGroupMember(commentId).
+        return commentRepository.findCommentWithGroupMember(commentId).
                 orElseThrow(() -> new Exception404("존재하지 않는 댓글 입니다."));
 
     }

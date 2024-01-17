@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.member;
+package com.kakao.techcampus.wekiki.member.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kakao.techcampus.wekiki.group.domain.Group;

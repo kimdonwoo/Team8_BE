@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.member;
+package com.kakao.techcampus.wekiki.member.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

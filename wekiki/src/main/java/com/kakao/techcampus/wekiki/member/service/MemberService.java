@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.member;
+package com.kakao.techcampus.wekiki.member.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -7,6 +7,11 @@ import com.kakao.techcampus.wekiki._core.error.exception.*;
 import com.kakao.techcampus.wekiki._core.jwt.JWTTokenProvider;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
+import com.kakao.techcampus.wekiki.member.controller.request.MemberRequest;
+import com.kakao.techcampus.wekiki.member.controller.response.MemberResponse;
+import com.kakao.techcampus.wekiki.member.domain.Authority;
+import com.kakao.techcampus.wekiki.member.domain.Member;
+import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +49,7 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberJPARepository memberRepository;
+    private final MemberRepository memberRepository;
     private final JWTTokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;

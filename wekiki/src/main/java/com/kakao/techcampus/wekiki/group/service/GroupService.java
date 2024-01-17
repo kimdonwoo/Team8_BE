@@ -14,8 +14,8 @@ import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
-import com.kakao.techcampus.wekiki.member.Member;
-import com.kakao.techcampus.wekiki.member.MemberJPARepository;
+import com.kakao.techcampus.wekiki.member.domain.Member;
+import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
@@ -45,7 +45,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
-    private final MemberJPARepository memberJPARepository;
+    private final MemberRepository memberRepository;
     private final PageRepository pageRepository;
     private final HistoryRepository historyRepository;
     private final ReportRepository reportRepository;
@@ -267,7 +267,7 @@ public class GroupService {
         member.getGroupMembers().add(groupMember);
 
         groupRepository.save(group);
-        memberJPARepository.save(member);
+        memberRepository.save(member);
         groupMemberRepository.save(groupMember);
         
         log.debug("그룹 멤버 저장 완료");
@@ -385,7 +385,7 @@ public class GroupService {
 
             Member member = getMemberById(memberId);
             member.getGroupMembers().remove(groupMember);
-            memberJPARepository.save(member);
+            memberRepository.save(member);
 
             groupRepository.save(group);
             groupMemberRepository.save(groupMember);
@@ -413,7 +413,7 @@ public class GroupService {
         for(GroupMember groupMember : group.getGroupMembers()) {
             Member member = groupMember.getMember();
             member.getGroupMembers().remove(groupMember);
-            memberJPARepository.save(member);
+            memberRepository.save(member);
 
             log.debug(member.getId() + " 번 회원의 groupMember 삭제 완료");
         }
@@ -424,7 +424,7 @@ public class GroupService {
     }
 
     protected Member getMemberById(Long memberId) {
-        return memberJPARepository.findById(memberId).orElseThrow(() -> {
+        return memberRepository.findById(memberId).orElseThrow(() -> {
             log.info("사용자 조회 불가 " + memberId + " 번 회원");
             throw new Exception404("해당 사용자를 찾을 수 없습니다.");
         });

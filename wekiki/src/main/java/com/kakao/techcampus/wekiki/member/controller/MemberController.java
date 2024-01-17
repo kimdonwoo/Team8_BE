@@ -1,6 +1,9 @@
-package com.kakao.techcampus.wekiki.member;
+package com.kakao.techcampus.wekiki.member.controller;
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
+import com.kakao.techcampus.wekiki.member.controller.request.MemberRequest;
+import com.kakao.techcampus.wekiki.member.controller.response.MemberResponse;
+import com.kakao.techcampus.wekiki.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -7,8 +7,8 @@ import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
-import com.kakao.techcampus.wekiki.member.Member;
-import com.kakao.techcampus.wekiki.member.MemberJPARepository;
+import com.kakao.techcampus.wekiki.member.domain.Member;
+import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
 import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
@@ -42,7 +42,7 @@ public class PageService {
     private final PageIndexGenerator pageIndexGenerator;
     private final RedisUtils redisUtils;
 
-    private final MemberJPARepository memberJPARepository;
+    private final MemberRepository memberRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final GroupRepository groupRepository;
 
@@ -62,7 +62,7 @@ public class PageService {
         else {
             //로그인을 한 사람
             log.info("로그인을 한 사람의 메인 페이지 조회");
-            Optional<Member> member = memberJPARepository.findById(currentMember());
+            Optional<Member> member = memberRepository.findById(currentMember());
             if(member.isEmpty()) {
                 log.error("회원이 존재하지 않습니다.");
                 throw new Exception400("없는 회원입니다.");

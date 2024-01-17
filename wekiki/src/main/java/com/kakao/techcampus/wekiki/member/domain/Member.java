@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.member;
+package com.kakao.techcampus.wekiki.member.domain;
 
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import jakarta.persistence.*;

@@ -8,10 +8,10 @@ import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.dto.GroupRequestDTO;
 import com.kakao.techcampus.wekiki.group.dto.GroupResponseDTO;
 import com.kakao.techcampus.wekiki.group.infrastructure.GroupJPARepository;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
 import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialClosedGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;
+import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.Member;
@@ -44,7 +44,7 @@ public class GroupService {
     private final InvitationService invitationService;
 
     private final GroupJPARepository groupJPARepository;
-    private final GroupMemberJPARepository groupMemberJPARepository;
+    private final GroupMemberRepository groupMemberRepository;
     private final MemberJPARepository memberJPARepository;
     private final PageRepository pageRepository;
     private final HistoryRepository historyRepository;
@@ -238,7 +238,7 @@ public class GroupService {
 
         log.debug("그룹 닉네임 중복 확인 완료");
 
-        GroupMember wasGroupMember = groupMemberJPARepository.findGroupMemberByMemberIdAndGroupId(memberId, groupId);
+        GroupMember wasGroupMember = groupMemberRepository.findGroupMemberByMemberIdAndGroupId(memberId, groupId);
 
         if(wasGroupMember != null) {
             // 이미 가입한 상태일 시 예외 처리
@@ -268,7 +268,7 @@ public class GroupService {
 
         groupJPARepository.save(group);
         memberJPARepository.save(member);
-        groupMemberJPARepository.save(groupMember);
+        groupMemberRepository.save(groupMember);
         
         log.debug("그룹 멤버 저장 완료");
     }
@@ -363,7 +363,7 @@ public class GroupService {
         groupMember.update(requestDTO.groupNickName());
 
         // 저장
-        groupMemberJPARepository.save(groupMember);
+        groupMemberRepository.save(groupMember);
 
         log.debug("그룹 닉네임 변경 완료");
     }
@@ -388,7 +388,7 @@ public class GroupService {
             memberJPARepository.save(member);
 
             groupJPARepository.save(group);
-            groupMemberJPARepository.save(groupMember);
+            groupMemberRepository.save(groupMember);
             
             log.debug("그룹 탈퇴 완료");
 
@@ -438,7 +438,7 @@ public class GroupService {
     }
 
     private GroupMember getActiveGroupMember(Long groupId, Long memberId) {
-        GroupMember groupMember = groupMemberJPARepository.findGroupMemberByMemberIdAndGroupId(memberId, groupId);
+        GroupMember groupMember = groupMemberRepository.findGroupMemberByMemberIdAndGroupId(memberId, groupId);
 
         if (groupMember == null) {
             log.info("권한 없는 그룹 접근 " + memberId + " 번 회원, " + groupId + " 번 그룹");
@@ -456,7 +456,7 @@ public class GroupService {
     }
 
     protected void groupNickNameCheck(Long groupId, String groupNickName) {
-        if(groupMemberJPARepository.findGroupMemberByNickName(groupId, groupNickName).isPresent()) {
+        if(groupMemberRepository.findGroupMemberByNickName(groupId, groupNickName).isPresent()) {
             log.info(groupId + " 번 그룹에서 사용 중인 닉네임");
             throw new Exception400("해당 닉네임은 이미 사용중입니다.");
         }

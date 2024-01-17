@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface GroupMemberJPARepository extends JpaRepository<GroupMember, Long> {
-
     @Query("SELECT gm FROM GroupMember gm WHERE gm.group.id = :groupId AND gm.nickName = :nickName")
     Optional<GroupMember> findGroupMemberByNickName(@Param("groupId") Long groupId, @Param("nickName") String nickName);
 

@@ -6,7 +6,7 @@ import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.infrastructure.GroupJPARepository;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.member.Member;
 import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
@@ -39,11 +39,12 @@ public class PageService {
 
     private final PageRepository pageRepository;
     private final PostRepository postRepository;
-    private final MemberJPARepository memberJPARepository;
-    private final GroupMemberJPARepository groupMemberJPARepository;
-    private final GroupJPARepository groupJPARepository;
     private final PageIndexGenerator pageIndexGenerator;
     private final RedisUtils redisUtils;
+
+    private final MemberJPARepository memberJPARepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final GroupJPARepository groupJPARepository;
 
     final int PAGE_COUNT = 10;
     final int RECENTLY_PAGE_COUNT = 10;
@@ -381,7 +382,7 @@ public class PageService {
 
     public GroupMember checkGroupMember(Long memberId, Long groupId){
 
-        GroupMember activeGroupMember = groupMemberJPARepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId, groupId)
+        GroupMember activeGroupMember = groupMemberRepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId, groupId)
                 .orElseThrow(() -> new Exception404("해당 그룹에 속한 회원이 아닙니다."));
         if(!activeGroupMember.isActiveStatus()) throw new Exception404("해당 그룹에 속한 회원이 아닙니다.");
         if(activeGroupMember.getMember() == null) throw new Exception404("존재하지 않는 회원입니다.");

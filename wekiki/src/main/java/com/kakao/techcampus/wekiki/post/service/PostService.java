@@ -4,7 +4,7 @@ package com.kakao.techcampus.wekiki.post.service;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
@@ -33,8 +33,8 @@ public class PostService {
     private final PageRepository pageRepository;
     private final PostRepository postRepository;
     private final HistoryRepository historyRepository;
-    private final GroupMemberJPARepository groupMemberJPARepository;
     private final ReportRepository reportRepository;
+    private final GroupMemberRepository groupMemberJPARepository;
     final int HISTORY_COUNT = 5;
 
     @Transactional

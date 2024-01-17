@@ -6,7 +6,7 @@ import com.kakao.techcampus.wekiki.comment.controller.response.CommentResponse;
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.comment.service.port.CommentRepository;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class CommentService {
-
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final GroupMemberJPARepository groupMemberJPARepository;
+    private final GroupMemberRepository groupMemberRepository;
+
     final int COMMENT_COUNT = 10;
 
     @Transactional
@@ -127,7 +127,7 @@ public class CommentService {
 
     public GroupMember checkGroupMember(Long memberId, Long groupId){
 
-        GroupMember activeGroupMember = groupMemberJPARepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId, groupId)
+        GroupMember activeGroupMember = groupMemberRepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId, groupId)
                 .orElseThrow(() -> new Exception404("해당 그룹에 속한 회원이 아닙니다."));
         if(!activeGroupMember.isActiveStatus()) throw new Exception404("해당 그룹에 속한 회원이 아닙니다.");
         if(activeGroupMember.getMember() == null) throw new Exception404("존재하지 않는 회원입니다.");

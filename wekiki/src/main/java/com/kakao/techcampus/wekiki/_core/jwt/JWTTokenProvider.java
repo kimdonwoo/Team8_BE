@@ -1,6 +1,6 @@
 package com.kakao.techcampus.wekiki._core.jwt;
 
-import com.kakao.techcampus.wekiki.domain.member.MemberResponse;
+import com.kakao.techcampus.wekiki.member.MemberResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

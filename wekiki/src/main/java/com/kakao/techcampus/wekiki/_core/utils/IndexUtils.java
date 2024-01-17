@@ -1,7 +1,7 @@
 package com.kakao.techcampus.wekiki._core.utils;
 
 
-import com.kakao.techcampus.wekiki.domain.post.Post;
+import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

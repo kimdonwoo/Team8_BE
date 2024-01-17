@@ -1,7 +1,7 @@
 package com.kakao.techcampus.wekiki._core.utils;
 
-import com.kakao.techcampus.wekiki.domain.member.Member;
-import com.kakao.techcampus.wekiki.domain.member.MemberJPARepository;
+import com.kakao.techcampus.wekiki.member.Member;
+import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

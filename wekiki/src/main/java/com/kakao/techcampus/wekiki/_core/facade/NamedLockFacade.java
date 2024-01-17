@@ -2,6 +2,7 @@ package com.kakao.techcampus.wekiki._core.facade;
 
 import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
 import com.kakao.techcampus.wekiki.page.service.PageService;
+import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,16 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class NamedLockFacade {
 
     private final PageService pageService;
-    private final PageJPARepository pageJPARepository;
+    private final PageRepository pageRepository;
 
 
     @Transactional
     public void likePageWithNamedLock(Long pageId) {
         try {
-            pageJPARepository.getLock(pageId.toString());
+            pageRepository.getLock(pageId.toString());
             pageService.likePageWithNamedLockAndLettuceLock(pageId);
         } finally {
-            pageJPARepository.releaseLock(pageId.toString());
+            pageRepository.releaseLock(pageId.toString());
         }
     }
 

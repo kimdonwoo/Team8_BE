@@ -13,6 +13,7 @@ import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
+import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.infrastructure.PostJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 @Slf4j
 public class PageService {
 
-    private final PageJPARepository pageJPARepository;
+    private final PageRepository pageRepository;
     private final PostJPARepository postJPARepository;
     private final MemberJPARepository memberJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
@@ -141,7 +142,7 @@ public class PageService {
 
         // 4. 포스트가 하나도 없으면 삭제시키기
         PageInfoResponse.deletePageDTO response = new PageInfoResponse.deletePageDTO(pageInfo);
-        pageJPARepository.deleteById(pageId);
+        pageRepository.deleteById(pageId);
 
         // 5. redis에 페이지 목록 삭제 시켜주기
         redisUtils.deleteHashValue(GROUP_PREFIX+groupId,pageInfo.getPageName());
@@ -181,7 +182,7 @@ public class PageService {
         GroupMember activeGroupMember = checkGroupMember(memberId, groupId);
 
         // 2. 그룹 내 동일한 title의 Page가 존재하는지 체크
-        if(pageJPARepository.findByTitle(groupId,title).isPresent()){
+        if(pageRepository.findByTitle(groupId,title).isPresent()){
             throw new Exception400("이미 존재하는 페이지입니다.");
         }
 
@@ -197,7 +198,7 @@ public class PageService {
                 .build();
 
         // 5. Page 저장
-        PageInfo savedPageInfo = pageJPARepository.save(newPageInfo);
+        PageInfo savedPageInfo = pageRepository.save(newPageInfo);
 
         // 6. Redis에 Hash 자료구조로 pageID 저장
         redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title,newPageInfo.getId().toString());
@@ -249,7 +250,7 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 페이지네이션 적용하여 Page 이름으로 keyword를 들고있는 페이지 들고오기
-        List<PageInfo> pages = pageJPARepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
+        List<PageInfo> pages = pageRepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
 
         // 3. 가져온 페이지들 중에 첫 포스트 가져오기
         List<Post> posts = postJPARepository.findPostInPages(pages);
@@ -295,7 +296,7 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 특정 groupId를 가진 Page들 order by로 updated_at이 최신인 10개 Page 조회
-        List<PageInfo> recentPage = pageJPARepository.findByGroupIdOrderByUpdatedAtDesc(groupId, PageRequest.of(0, RECENTLY_PAGE_COUNT));
+        List<PageInfo> recentPage = pageRepository.findByGroupIdOrderByUpdatedAtDesc(groupId, PageRequest.of(0, RECENTLY_PAGE_COUNT));
 
         // 3. return DTO
         List<PageInfoResponse.getRecentPageDTO.RecentPageDTO> collect = recentPage.stream().map(pageInfo ->
@@ -313,7 +314,7 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. groupId랑 title로 Page있는지 확인 (fetch join으로 post들 가져오기)
-        PageInfo page = pageJPARepository.findByTitleWithPosts(groupId,title).
+        PageInfo page = pageRepository.findByTitleWithPosts(groupId,title).
                 orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
 
         // 2. 목차 생성하기
@@ -345,37 +346,37 @@ public class PageService {
 
     @Transactional
     public void likePageTest(Long pageId){
-        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
+        PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
         page.plusGoodCount();
-        pageJPARepository.saveAndFlush(page);
+        pageRepository.saveAndFlush(page);
     }
 
     public synchronized void likePageWithSynchronized(Long pageId){
-        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
+        PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
         page.plusGoodCount();
-        pageJPARepository.saveAndFlush(page);
+        pageRepository.saveAndFlush(page);
     }
 
     @Transactional
     public void likePageWithPessimisticLock(Long pageId){
-        PageInfo page = pageJPARepository.findByIdWithPessimisticLock(pageId);
+        PageInfo page = pageRepository.findByIdWithPessimisticLock(pageId);
         page.plusGoodCount();
-        pageJPARepository.saveAndFlush(page);
+        pageRepository.saveAndFlush(page);
     }
 
     @Transactional
     public void likePageWithOptimisticLock(Long pageId){
-        PageInfo page = pageJPARepository.findByIdWithOptimisticLock(pageId);
+        PageInfo page = pageRepository.findByIdWithOptimisticLock(pageId);
         page.plusGoodCount();
-        pageJPARepository.save(page);
+        pageRepository.save(page);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void likePageWithNamedLockAndLettuceLock(Long pageId){
-        PageInfo page = pageJPARepository.findById(pageId).orElseThrow(
+        PageInfo page = pageRepository.findById(pageId).orElseThrow(
                 () -> new Exception404("존재하지 않는 페이지 입니다."));
         page.plusGoodCount();
-        pageJPARepository.saveAndFlush(page);
+        pageRepository.saveAndFlush(page);
     }
 
 
@@ -392,12 +393,12 @@ public class PageService {
 
 
     public PageInfo checkPageFromPageId(Long pageId){
-        return pageJPARepository.findById(pageId)
+        return pageRepository.findById(pageId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
     }
 
     public PageInfo getPageAndPostFromPageId(Long pageId){
-        return pageJPARepository.findByPageIdWithPosts(pageId)
+        return pageRepository.findByPageIdWithPosts(pageId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
     }
 }

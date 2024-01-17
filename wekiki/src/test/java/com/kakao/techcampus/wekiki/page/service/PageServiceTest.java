@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.domain.page;
+package com.kakao.techcampus.wekiki.page.service;
 
 import com.kakao.techcampus.wekiki._core.facade.LettuceLockFacade;
 import com.kakao.techcampus.wekiki._core.facade.NamedLockFacade;
@@ -7,6 +7,7 @@ import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
 import com.kakao.techcampus.wekiki.page.service.PageService;
+import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ public class PageServiceTest {
     @Autowired
     private PageService pageService;
     @Autowired
-    private PageJPARepository pageJPARepository;
+    private PageRepository pageRepository;
     @Autowired
     private OptimisticLockFacade optimisticLockFacade;
     @Autowired
@@ -51,14 +52,14 @@ public class PageServiceTest {
                 .updated_at(LocalDateTime.now())
                 .build();
 
-        pageJPARepository.saveAndFlush(newPageInfo);
+        pageRepository.saveAndFlush(newPageInfo);
         testPageId = newPageInfo.getId();
 
     }
 
     @AfterEach
     public void after(){
-        pageJPARepository.deleteAll();
+        pageRepository.deleteAll();
     }
 
     @Test

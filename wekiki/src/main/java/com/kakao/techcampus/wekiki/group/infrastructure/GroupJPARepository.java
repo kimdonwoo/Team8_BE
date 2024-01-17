@@ -1,6 +1,5 @@
 package com.kakao.techcampus.wekiki.group.infrastructure;
 
-import com.kakao.techcampus.wekiki.domain.group.domain.*;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;

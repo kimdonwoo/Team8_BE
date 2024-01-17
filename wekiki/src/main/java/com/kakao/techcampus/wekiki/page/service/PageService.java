@@ -14,7 +14,7 @@ import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import com.kakao.techcampus.wekiki.post.infrastructure.PostJPARepository;
+import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +38,7 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 public class PageService {
 
     private final PageRepository pageRepository;
-    private final PostJPARepository postJPARepository;
+    private final PostRepository postRepository;
     private final MemberJPARepository memberJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final GroupJPARepository groupJPARepository;
@@ -135,7 +135,7 @@ public class PageService {
         PageInfo pageInfo = checkPageFromPageId(pageId);
 
         // 3. pageId로 하위 post들이 존재하는지 확인 -> 존재하면 Exception
-        if(postJPARepository.existsByPageInfoId(pageId)){
+        if(postRepository.existsByPageInfoId(pageId)){
             throw new Exception400("글이 적혀있는 페이지는 삭제가 불가능합니다.");
         }
 
@@ -252,7 +252,7 @@ public class PageService {
         List<PageInfo> pages = pageRepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
 
         // 3. 가져온 페이지들 중에 첫 포스트 가져오기
-        List<Post> posts = postJPARepository.findPostInPages(pages);
+        List<Post> posts = postRepository.findPostInPages(pages);
 
         // 4. responseDTO 만들기
         List<PageInfoResponse.searchPageDTO.pageDTO> res = new ArrayList<>();

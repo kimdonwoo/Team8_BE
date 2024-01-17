@@ -11,7 +11,7 @@ import com.kakao.techcampus.wekiki.page.domain.PageInfo;
 import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import com.kakao.techcampus.wekiki.post.infrastructure.PostJPARepository;
+import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import com.kakao.techcampus.wekiki.report.domain.Report;
 import com.kakao.techcampus.wekiki.report.infrastructure.ReportJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PageJPARepository pageJPARepository;
-    private final PostJPARepository postJPARepository;
+    private final PostRepository postRepository;
     private final HistoryJPARepository historyJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final ReportJPARepository reportJPARepository;
@@ -50,12 +50,12 @@ public class PostService {
         // 3. parentPostId로 parentPost 가져오기
         Post parent = null;
         if(parentPostId != 0) {
-            parent = postJPARepository.findById(parentPostId).orElseThrow(
+            parent = postRepository.findById(parentPostId).orElseThrow(
                     () -> new Exception404("존재하지 않는 상위 글입니다."));
         }
 
         // 4. 같은 pageId를 가진 Post들 중에 입력받은 order보다 높은 모든 Post들의 order를 1씩 증가
-        postJPARepository.findPostsByPageIdAndOrderGreaterThan(pageId, order).stream().forEach(p -> p.plusOrder());
+        postRepository.findPostsByPageIdAndOrderGreaterThan(pageId, order).stream().forEach(p -> p.plusOrder());
 
         // 5. Post 엔티티 생성하고 저장하기
         Post newPost = Post.builder()
@@ -67,7 +67,7 @@ public class PostService {
                 .created_at(LocalDateTime.now())
                 .build();
         pageInfo.addPost(newPost);
-        Post savedPost = postJPARepository.save(newPost);
+        Post savedPost = postRepository.save(newPost);
 
         // 6. 히스토리 생성
         History newHistory = History.builder()
@@ -138,16 +138,16 @@ public class PostService {
         Post post = checkPostFromPostId(postId);
 
         // 3. parent로 해당 postId를 가지고 있는 post가 있는지 확인 -> 존재하면 Exception
-        if(postJPARepository.existsByParentId(postId)){
+        if(postRepository.existsByParentId(postId)){
             throw new Exception400("하위 글이 존재하는 글은 삭제가 불가능합니다.");
         }
 
         // 4. child post 존재 안하면 history + post 삭제 시키기
         PostResponse.deletePostDTO response = new PostResponse.deletePostDTO(post);
-        postJPARepository.deleteById(postId);
+        postRepository.deleteById(postId);
 
         // 5. order값 앞으로 땡기기
-        postJPARepository.findPostsByPageIdAndOrderGreaterThan(post.getPageInfo().getId(), post.getOrders())
+        postRepository.findPostsByPageIdAndOrderGreaterThan(post.getPageInfo().getId(), post.getOrders())
                 .stream().forEach(p -> p.minusOrder());
 
         // 6. return DTO;
@@ -201,12 +201,12 @@ public class PostService {
     }
 
     public Post checkPostFromPostId(Long postId){
-        return postJPARepository.findById(postId)
+        return postRepository.findById(postId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 글 입니다."));
     }
 
     public Post checkPostFromPostIdWithPage(Long postId){
-        return postJPARepository.findPostWithPageFromPostId(postId)
+        return postRepository.findPostWithPageFromPostId(postId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 글 입니다."));
     }
 

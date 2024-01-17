@@ -8,7 +8,7 @@ import com.kakao.techcampus.wekiki.comment.infrastructure.CommentJPARepository;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import com.kakao.techcampus.wekiki.post.infrastructure.PostJPARepository;
+import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentJPARepository commentJPARepository;
-    private final PostJPARepository postJPARepository;
+    private final PostRepository postRepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     final int COMMENT_COUNT = 10;
 
@@ -137,7 +137,7 @@ public class CommentService {
     }
 
     public Post checkPostFromPostId(Long postId){
-        return postJPARepository.findById(postId)
+        return postRepository.findById(postId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 글 입니다."));
     }
 

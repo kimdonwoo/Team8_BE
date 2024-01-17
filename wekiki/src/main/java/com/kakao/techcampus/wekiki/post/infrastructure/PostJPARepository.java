@@ -19,9 +19,6 @@ public interface PostJPARepository extends JpaRepository<Post, Long> {
             @Param("orders") int orders
     );
 
-    @Query("SELECT p FROM Post p WHERE p.pageInfo.id = :pageId ORDER BY p.orders ASC")
-    List<Post> findPostsByPageIdOrderByOrderAsc(@Param("pageId") Long pageId);
-
     @Query("SELECT po FROM Post po JOIN FETCH po.pageInfo WHERE po.id = :postId ")
     Optional<Post> findPostWithPageFromPostId(@Param("postId") Long postId);
 
@@ -29,9 +26,6 @@ public interface PostJPARepository extends JpaRepository<Post, Long> {
 
     boolean existsByParentId(Long parentId);
 
-    // 해당 pageId를 가지고 있는 post들 중에 orders가 1인거 들고오기
-    @Query("SELECT p FROM Post p WHERE p.pageInfo.id = :pageId AND p.orders = 1")
-    List<Post> findFirstPost(@Param("pageId") Long pageId);
 
     @Query("SELECT po FROM Post po WHERE po.pageInfo IN (:pages) AND po.orders = 1")
     List<Post> findPostInPages(@Param("pages") List<PageInfo> pages);

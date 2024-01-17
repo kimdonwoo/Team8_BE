@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.techcampus.wekiki._core.error.exception.*;
 import com.kakao.techcampus.wekiki._core.jwt.JWTTokenProvider;
-import com.kakao.techcampus.wekiki._core.utils.RedisUtils;
+import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

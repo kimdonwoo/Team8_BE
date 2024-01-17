@@ -1,5 +1,6 @@
 package com.kakao.techcampus.wekiki._core.utils;
 
+import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Invitation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class RedisUtils {
+public class RedisUtilsImpl implements RedisUtils {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -23,10 +24,6 @@ public class RedisUtils {
 
     public Boolean unlock(Long key) {
         return redisTemplate.delete(generateKey(key));
-    }
-
-    private String generateKey(Long key) {
-        return key.toString();
     }
 
     public void setValues(String key, String value, long lifetime) {
@@ -67,6 +64,10 @@ public class RedisUtils {
     public void deleteHashValue(String key, String hashKey) {
         HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
         hashOps.delete(key, hashKey);
+    }
+
+    private String generateKey(Long key) {
+        return key.toString();
     }
 
 }

@@ -7,11 +7,11 @@ import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.dto.GroupRequestDTO;
 import com.kakao.techcampus.wekiki.group.dto.GroupResponseDTO;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupJPARepository;
 import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialClosedGroup;
 import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.Member;
@@ -43,7 +43,7 @@ public class GroupService {
 
     private final InvitationService invitationService;
 
-    private final GroupJPARepository groupJPARepository;
+    private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MemberJPARepository memberJPARepository;
     private final PageRepository pageRepository;
@@ -136,9 +136,9 @@ public class GroupService {
         Pageable pageable = PageRequest.of(0, GROUP_SEARCH_SIZE);
 
         // 공식 그룹 리스트
-        Page<OfficialGroup> officialGroups = groupJPARepository.findOfficialGroupsByKeyword(keyword, pageable);
+        Page<OfficialGroup> officialGroups = groupRepository.findOfficialGroupsByKeyword(keyword, pageable);
         // 비공식 공개 그룹 리스트
-        Page<UnOfficialOpenedGroup> unOfficialOpenedGroups = groupJPARepository.findUnOfficialOpenedGroupsByKeyword(keyword, pageable);
+        Page<UnOfficialOpenedGroup> unOfficialOpenedGroups = groupRepository.findUnOfficialOpenedGroupsByKeyword(keyword, pageable);
         
         log.debug("그룹 리스트 조회 완료");
 
@@ -152,7 +152,7 @@ public class GroupService {
         Pageable pageable = PageRequest.of(page, GROUP_SEARCH_SIZE);
 
         // 공식 그룹 리스트
-        Page<OfficialGroup> officialGroups = groupJPARepository.findOfficialGroupsByKeyword(keyword, pageable);
+        Page<OfficialGroup> officialGroups = groupRepository.findOfficialGroupsByKeyword(keyword, pageable);
 
         log.debug("공식 그룹 리스트 조회 완료");
 
@@ -170,7 +170,7 @@ public class GroupService {
         Pageable pageable = PageRequest.of(page, GROUP_SEARCH_SIZE);
 
         // 비공식 공개 그룹 리스트
-        Page<UnOfficialOpenedGroup> unOfficialOpenedGroups = groupJPARepository.findUnOfficialOpenedGroupsByKeyword(keyword, pageable);
+        Page<UnOfficialOpenedGroup> unOfficialOpenedGroups = groupRepository.findUnOfficialOpenedGroupsByKeyword(keyword, pageable);
 
         log.debug("공개 그룹 리스트 조회 완료");
 
@@ -200,7 +200,7 @@ public class GroupService {
         getGroupById(groupId);
         getMemberById(memberId);
 
-        UnOfficialOpenedGroup group = groupJPARepository.findUnOfficialOpenedGroupById(groupId)
+        UnOfficialOpenedGroup group = groupRepository.findUnOfficialOpenedGroupById(groupId)
                 .orElseThrow(() -> {
                     log.info("그룹 조회 실패 " + memberId + " 번 회원, " + groupId + " 번 그룹");
                     return new Exception404("그룹을 찾을 수 없습니다.");
@@ -266,7 +266,7 @@ public class GroupService {
         group.addGroupMember(groupMember);
         member.getGroupMembers().add(groupMember);
 
-        groupJPARepository.save(group);
+        groupRepository.save(group);
         memberJPARepository.save(member);
         groupMemberRepository.save(groupMember);
         
@@ -387,7 +387,7 @@ public class GroupService {
             member.getGroupMembers().remove(groupMember);
             memberJPARepository.save(member);
 
-            groupJPARepository.save(group);
+            groupRepository.save(group);
             groupMemberRepository.save(groupMember);
             
             log.debug("그룹 탈퇴 완료");
@@ -418,7 +418,7 @@ public class GroupService {
             log.debug(member.getId() + " 번 회원의 groupMember 삭제 완료");
         }
 
-        groupJPARepository.delete(group);
+        groupRepository.delete(group);
 
         log.debug("group 삭제 완료");
     }
@@ -431,7 +431,7 @@ public class GroupService {
     }
 
     protected Group getGroupById(Long groupId) {
-        return groupJPARepository.findById(groupId).orElseThrow(() -> {
+        return groupRepository.findById(groupId).orElseThrow(() -> {
             log.info("그룹 조회 불가 " + groupId + " 번 그룹");
             throw new Exception404("해당 그룹을 찾을 수 없습니다.");
         });

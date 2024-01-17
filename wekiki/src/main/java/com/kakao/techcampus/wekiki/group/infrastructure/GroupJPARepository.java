@@ -14,9 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface GroupJPARepository extends JpaRepository<Group, Long> {
-    /*
-        그룹 검색 용
-     */
     @Query("select g from OfficialGroup g")
     List<OfficialGroup> findAllOfficialGroup();
     @Query("select g from UnOfficialOpenedGroup g")
@@ -25,10 +22,6 @@ public interface GroupJPARepository extends JpaRepository<Group, Long> {
     Page<OfficialGroup> findOfficialGroupsByKeyword(@Param("keyword") String keyword, Pageable pageable);
     @Query("SELECT g FROM UnOfficialOpenedGroup g WHERE g.groupName LIKE CONCAT('%', :keyword, '%')")
     Page<UnOfficialOpenedGroup> findUnOfficialOpenedGroupsByKeyword(@Param("keyword") String keyword, Pageable pageable);
-
-    /*
-        비공식 공개 그룹 입장
-     */
     @Query("SELECT g FROM UnOfficialOpenedGroup g WHERE g.id = :id")
     Optional<UnOfficialOpenedGroup> findUnOfficialOpenedGroupById(@Param("id") Long id);
 }

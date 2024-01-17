@@ -6,7 +6,7 @@ import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.dto.GroupResponseDTO;
 import com.kakao.techcampus.wekiki.group.domain.Invitation;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupJPARepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,8 +23,7 @@ import java.util.Set;
 public class InvitationService {
 
     private final RedisUtils redisUtils;
-
-    private final GroupJPARepository groupJPARepository;
+    private final GroupRepository groupRepository;
 
     private static final String GROUP_ID_PREFIX = "group_id:";
     private static final String INVITATION_PREFIX = "invitation:";
@@ -39,7 +38,7 @@ public class InvitationService {
      */
     public GroupResponseDTO.GetInvitationLinkResponseDTO getGroupInvitationCode(Long groupId) {
 
-        groupJPARepository.findById(groupId).orElseThrow(() -> {
+        groupRepository.findById(groupId).orElseThrow(() -> {
             log.info("존재하지 않는 그룹 접근 " + groupId + " 번 그룹");
             throw new Exception404("해당 그룹을 찾을 수 없습니다.");
         });
@@ -95,7 +94,7 @@ public class InvitationService {
 
         Long lGroupId = ((Integer) groupId).longValue();
 
-        Group group = groupJPARepository.findById(lGroupId).orElseThrow(() -> {
+        Group group = groupRepository.findById(lGroupId).orElseThrow(() -> {
             log.info(groupId + " 번 그룹은 존재하지 않는 그룹");
             throw new Exception400("해당 그룹은 존재하지 않습니다.");
         });

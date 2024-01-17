@@ -5,8 +5,8 @@ import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
-import com.kakao.techcampus.wekiki.group.infrastructure.GroupJPARepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
+import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.member.Member;
 import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
@@ -44,7 +44,7 @@ public class PageService {
 
     private final MemberJPARepository memberJPARepository;
     private final GroupMemberRepository groupMemberRepository;
-    private final GroupJPARepository groupJPARepository;
+    private final GroupRepository groupRepository;
 
     final int PAGE_COUNT = 10;
     final int RECENTLY_PAGE_COUNT = 10;
@@ -83,21 +83,21 @@ public class PageService {
                 .collect(Collectors.toList());
     }
     private List<PageInfoResponse.mainPageDTO.GroupDTO> getOfficialGroupList () {
-        return groupJPARepository.findAllOfficialGroup().stream()
+        return groupRepository.findAllOfficialGroup().stream()
                 .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
                 .limit(3)
                 .collect(Collectors.toList());
     }
 
     private List<PageInfoResponse.mainPageDTO.GroupDTO> getUnLoginUnOfficialGroupList() {
-        return groupJPARepository.findAllUnOfficialOpenGroup().stream()
+        return groupRepository.findAllUnOfficialOpenGroup().stream()
                 .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
                 .limit(8)
                 .collect(Collectors.toList());
     }
 
     private List<PageInfoResponse.mainPageDTO.GroupDTO> getLoginUnOfficialGroupList(List<Long> myGroupIdList) {
-        return groupJPARepository.findAllUnOfficialOpenGroup().stream()
+        return groupRepository.findAllUnOfficialOpenGroup().stream()
                 .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
                 .filter(tempGroup -> !myGroupIdList.contains(tempGroup.getGroupId()))
                 .limit(8)

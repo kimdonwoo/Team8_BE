@@ -5,8 +5,6 @@ import com.kakao.techcampus.wekiki._core.facade.NamedLockFacade;
 import com.kakao.techcampus.wekiki._core.facade.OptimisticLockFacade;
 import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
-import com.kakao.techcampus.wekiki.page.service.PageService;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

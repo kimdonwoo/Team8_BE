@@ -1,6 +1,7 @@
-package com.kakao.techcampus.wekiki._core.utils;
+package com.kakao.techcampus.wekiki.page.infrastructure;
 
 
+import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-public class IndexUtils {
+public class PageIndexGeneratorImpl implements PageIndexGenerator {
 
     public HashMap<Long, String> createIndex(List<Post> posts){
         HashMap<Long, ArrayList<Long>> tree = new HashMap<>();
@@ -40,7 +41,7 @@ public class IndexUtils {
         return indexs;
     }
 
-    public void DFS(int res, Long now, String index , HashMap<Long,String> indexs , HashMap<Long, ArrayList<Long>> tree){
+    private void DFS(int res, Long now, String index , HashMap<Long,String> indexs , HashMap<Long, ArrayList<Long>> tree){
         indexs.put(now,index+res);
         if(tree.containsKey(now)){
             for(int i = 0 ; i < tree.get(now).size(); i++){

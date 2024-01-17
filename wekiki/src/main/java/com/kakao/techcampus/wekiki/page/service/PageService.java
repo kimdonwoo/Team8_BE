@@ -2,7 +2,6 @@ package com.kakao.techcampus.wekiki.page.service;
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
-import com.kakao.techcampus.wekiki._core.utils.IndexUtils;
 import com.kakao.techcampus.wekiki._core.utils.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
@@ -12,7 +11,7 @@ import com.kakao.techcampus.wekiki.member.Member;
 import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
+import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.infrastructure.PostJPARepository;
@@ -43,7 +42,7 @@ public class PageService {
     private final MemberJPARepository memberJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final GroupJPARepository groupJPARepository;
-    private final IndexUtils indexUtils;
+    private final PageIndexGenerator pageIndexGenerator;
     private final RedisUtils redisUtils;
 
     final int PAGE_COUNT = 10;
@@ -114,7 +113,7 @@ public class PageService {
         PageInfo pageInfo = getPageAndPostFromPageId(pageId);
 
         // 3. 목차 생성하기
-        HashMap<Long, String> indexs = indexUtils.createIndex(pageInfo.getPosts());
+        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(pageInfo.getPosts());
 
         // 4. DTO로 return
         List<PageInfoResponse.getPageIndexDTO.postDTO> temp = pageInfo.getPosts().stream()
@@ -163,7 +162,7 @@ public class PageService {
         PageInfo pageInfo = getPageAndPostFromPageId(pageId);
 
         // 3. 목차 생성하기
-        HashMap<Long, String> indexs = indexUtils.createIndex(pageInfo.getPosts());
+        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(pageInfo.getPosts());
 
         // 4. DTO로 return
         List<PageInfoResponse.getPageFromIdDTO.postDTO> temp = pageInfo.getPosts().stream()
@@ -318,7 +317,7 @@ public class PageService {
                 orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
 
         // 2. 목차 생성하기
-        HashMap<Long, String> indexs = indexUtils.createIndex(page.getPosts());
+        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(page.getPosts());
 
         // 3. DTO로 return
         List<PageInfoResponse.getPageFromIdDTO.postDTO> temp = page.getPosts().stream()

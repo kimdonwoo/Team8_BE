@@ -104,5 +104,10 @@ public class PageRepositoryImpl implements PageRepository {
         pageJPARepository.deleteAll();
     }
 
+    @Override
+    public void deletePageInfos(List<PageInfo> pageInfos){
+        pageJPARepository.deleteAll(pageInfos);
+    }
+
 }
 

@@ -17,7 +17,7 @@ import com.kakao.techcampus.wekiki.history.infrastructure.HistoryJPARepository;
 import com.kakao.techcampus.wekiki.member.Member;
 import com.kakao.techcampus.wekiki.member.MemberJPARepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
+import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.report.infrastructure.ReportJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class GroupService {
     private final GroupJPARepository groupJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
     private final MemberJPARepository memberJPARepository;
-    private final PageJPARepository pageJPARepository;
+    private final PageRepository pageRepository;
     private final HistoryJPARepository historyJPARepository;
     private final ReportJPARepository reportJPARepository;
 
@@ -398,7 +398,7 @@ public class GroupService {
     }
 
     private void deleteGroup(Group group) {
-        List<PageInfo> pageList = pageJPARepository.findAllByGroupId(group.getId());
+        List<PageInfo> pageList = pageRepository.findAllByGroupId(group.getId());
 
         for(PageInfo pageInfo : pageList) {
             for(Post post : pageInfo.getPosts()) {
@@ -408,7 +408,7 @@ public class GroupService {
             }
         }
 
-        pageJPARepository.deleteAll(pageList);
+        pageRepository.deletePageInfos(pageList);
 
         for(GroupMember groupMember : group.getGroupMembers()) {
             Member member = groupMember.getMember();

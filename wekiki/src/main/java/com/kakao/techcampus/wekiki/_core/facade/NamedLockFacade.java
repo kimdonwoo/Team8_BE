@@ -1,6 +1,5 @@
 package com.kakao.techcampus.wekiki._core.facade;
 
-import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
 import com.kakao.techcampus.wekiki.page.service.PageService;
 import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import lombok.RequiredArgsConstructor;

@@ -24,4 +24,5 @@ public interface PageRepository {
     void saveAndFlush(PageInfo page);
     Optional<PageInfo> findById(Long pageId);
     void deleteAll();
+    void deletePageInfos(List<PageInfo> pageInfos);
 }

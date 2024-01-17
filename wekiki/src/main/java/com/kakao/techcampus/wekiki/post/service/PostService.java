@@ -8,7 +8,7 @@ import com.kakao.techcampus.wekiki.group.infrastructure.GroupMemberJPARepository
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.infrastructure.HistoryJPARepository;
 import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.infrastructure.PageJPARepository;
+import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PostService {
 
-    private final PageJPARepository pageJPARepository;
+    private final PageRepository pageRepository;
     private final PostRepository postRepository;
     private final HistoryJPARepository historyJPARepository;
     private final GroupMemberJPARepository groupMemberJPARepository;
@@ -196,7 +196,7 @@ public class PostService {
     }
 
     public PageInfo checkPageFromPageId(Long pageId){
-        return pageJPARepository.findById(pageId)
+        return pageRepository.findById(pageId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
     }
 

@@ -1,5 +1,6 @@
 ```
- 해당 repository는 카카오테크캠퍼스 Wekiki 팀프로젝트가 끝나고 개인적으로 더 고도화를 진행하기 위해 fork를 한 repository입니다.
+ 해당 repository는 카카오테크캠퍼스 Wekiki 팀프로젝트가 끝나고
+ 개인적으로 더 고도화를 진행하기 위해 fork를 한 repository입니다.
 ```
 [프로젝트 원본 저장소](https://github.com/Step3-kakao-tech-campus/Team8_BE)
 

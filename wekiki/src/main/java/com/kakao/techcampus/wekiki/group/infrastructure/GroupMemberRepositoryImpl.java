@@ -17,26 +17,30 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
     @Override
     public Optional<GroupMember> findGroupMemberByNickName(Long groupId, String nickName) {
-        return groupMemberJPARepository.findGroupMemberByNickName(groupId,nickName);
+        return groupMemberJPARepository.findGroupMemberByNickName(groupId,nickName).map(GroupMemberEntity::toModel);
     }
 
     @Override
     public Optional<GroupMember> findGroupMemberByMemberIdAndGroupIdFetchJoin(Long memberId, Long groupId) {
-        return groupMemberJPARepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId,groupId);
+        return groupMemberJPARepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId,groupId).map(GroupMemberEntity::toModel);
     }
 
     @Override
     public GroupMember findGroupMemberByMemberIdAndGroupId(Long memberId, Long groupId) {
-        return groupMemberJPARepository.findGroupMemberByMemberIdAndGroupId(memberId,groupId);
+        return groupMemberJPARepository.findGroupMemberByMemberIdAndGroupId(memberId,groupId).toModel();
     }
 
     @Override
     public List<GroupMember> findAllByGroupId(Long id) {
-        return groupMemberJPARepository.findAllByGroupId(id);
+        return groupMemberJPARepository.findAllByGroupId(id).stream().map(GroupMemberEntity::toModel).toList();
     }
 
     @Override
     public GroupMember save(GroupMember groupMember) {
-        return groupMemberJPARepository.save(groupMember);
+        GroupMemberEntity groupMemberEntity = GroupMemberEntity.fromModel(groupMember);
+        groupMemberEntity.getGroupEntity().addGroupMember(groupMemberEntity);
+        groupMemberEntity.getMemberEntity().getGroupMemberEntities().add(groupMemberEntity);
+
+        return groupMemberJPARepository.save(groupMemberEntity).toModel();
     }
 }

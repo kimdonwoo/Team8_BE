@@ -1,6 +1,6 @@
-package com.kakao.techcampus.wekiki.group.dto;
+package com.kakao.techcampus.wekiki.group.controller.request;
 
-import com.kakao.techcampus.wekiki.group.GroupType;
+import com.kakao.techcampus.wekiki.group.domain.GroupType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

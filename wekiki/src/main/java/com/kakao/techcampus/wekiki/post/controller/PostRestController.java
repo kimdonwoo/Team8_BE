@@ -27,8 +27,7 @@ public class PostRestController {
     public ResponseEntity<ApiUtils.ApiResult<PostResponse.createPostDTO>> createPost(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Valid @RequestBody PostRequest.createPostDTO request) {
 
-        PostResponse.createPostDTO response = postService.createPost(currentMember(),groupid,request.getPageId(), request.getParentPostId(),
-                request.getOrder(), request.getTitle(),request.getContent());
+        PostResponse.createPostDTO response = postService.createPost(currentMember(),groupid,request);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

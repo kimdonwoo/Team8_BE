@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.page.controller.request;
+package com.kakao.techcampus.wekiki.pageInfo.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

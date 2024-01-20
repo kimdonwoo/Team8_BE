@@ -1,10 +1,6 @@
-package com.kakao.techcampus.wekiki.group.dto;
+package com.kakao.techcampus.wekiki.group.controller.response;
 
-import com.kakao.techcampus.wekiki.group.domain.Group;
-import com.kakao.techcampus.wekiki.group.domain.Invitation;
-import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
-import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;
-import com.kakao.techcampus.wekiki.group.domain.GroupMember;
+import com.kakao.techcampus.wekiki.group.domain.*;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import jakarta.persistence.DiscriminatorValue;
 import org.springframework.data.domain.Page;

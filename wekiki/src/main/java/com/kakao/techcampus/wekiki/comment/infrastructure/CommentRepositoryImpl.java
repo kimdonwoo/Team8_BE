@@ -2,6 +2,7 @@ package com.kakao.techcampus.wekiki.comment.infrastructure;
 
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.comment.service.port.CommentRepository;
+import com.kakao.techcampus.wekiki.post.infrastructure.PostEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,21 +18,25 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public Page<Comment> findCommentsByPostIdWithGroupMembers(Long postId, PageRequest pageRequest) {
-        return commentJPARepository.findCommentsByPostIdWithGroupMembers(postId,pageRequest);
+        return commentJPARepository.findCommentsByPostIdWithGroupMembers(postId,pageRequest)
+                .map(CommentEntity::toModel);
     }
 
     @Override
     public Comment save(Comment comment) {
-        return commentJPARepository.save(comment);
+        CommentEntity commentEntity = CommentEntity.fromModel(comment);
+        PostEntity.fromModel(comment.getPost()).addCommentEntity(commentEntity);
+        return commentJPARepository.save(commentEntity).toModel();
     }
+
 
     @Override
     public void delete(Comment comment) {
-        commentJPARepository.delete(comment);
+        commentJPARepository.delete(CommentEntity.fromModel(comment));
     }
 
     @Override
     public Optional<Comment> findCommentWithGroupMember(Long commentId) {
-        return commentJPARepository.findCommentWithGroupMember(commentId);
+        return commentJPARepository.findCommentWithGroupMember(commentId).map(CommentEntity::toModel);
     }
 }

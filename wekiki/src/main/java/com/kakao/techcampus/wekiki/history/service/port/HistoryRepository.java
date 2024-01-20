@@ -12,7 +12,7 @@ public interface HistoryRepository {
 
     void save(History newHistory);
 
-    Page<History> findHistoryWithMemberByPostId(Long postId, PageRequest of);
+    Page<History> findHistoryWithMemberByPostId(Long postId, PageRequest pageRequest);
 
-    List<History> findHistoryByPostId(Long postId, PageRequest of);
+    List<History> findHistoryByPostId(Long postId, PageRequest pageRequest);
 }

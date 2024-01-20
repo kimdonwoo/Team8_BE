@@ -1,6 +1,6 @@
 package com.kakao.techcampus.wekiki.post.service.port;
 
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 
 

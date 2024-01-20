@@ -7,8 +7,9 @@ import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
+import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
@@ -38,47 +39,35 @@ public class PostService {
     final int HISTORY_COUNT = 5;
 
     @Transactional
-    public PostResponse.createPostDTO createPost(Long memberId, Long groupId, Long pageId, Long parentPostId, int order, String title, String content){
+    public PostResponse.createPostDTO createPost(Long memberId, Long groupId, PostRequest.createPostDTO request){
 
         // 1. 존재하는 Member, Group, GroupMember 인지 fetch join으로 하나의 쿼리로 확인
         GroupMember activeGroupMember = checkGroupMember(memberId, groupId);
 
         // 2. pageId로 PageInfo 객체 들고오기
-        PageInfo pageInfo = checkPageFromPageId(pageId);
+        PageInfo pageInfo = checkPageFromPageId(request.getPageId());
         pageInfo.updatePage();
+        pageRepository.save(pageInfo);
 
         // 3. parentPostId로 parentPost 가져오기
         Post parent = null;
-        if(parentPostId != 0) {
-            parent = postRepository.findById(parentPostId).orElseThrow(
+        if(request.getParentPostId() != 0) {
+            parent = postRepository.findById(request.getParentPostId()).orElseThrow(
                     () -> new Exception404("존재하지 않는 상위 글입니다."));
         }
 
         // 4. 같은 pageId를 가진 Post들 중에 입력받은 order보다 높은 모든 Post들의 order를 1씩 증가
-        postRepository.findPostsByPageIdAndOrderGreaterThan(pageId, order).stream().forEach(p -> p.plusOrder());
+        postRepository.findPostsByPageIdAndOrderGreaterThan(request.getParentPostId(), request.getOrder()).stream().forEach(p -> p.plusOrder());
 
         // 5. Post 엔티티 생성하고 저장하기
-        Post newPost = Post.builder()
-                .parent(parent)
-                .orders(order)
-                .groupMember(activeGroupMember)
-                .title(title)
-                .content(content)
-                .created_at(LocalDateTime.now())
-                .build();
-        pageInfo.addPost(newPost);
-        Post savedPost = postRepository.save(newPost);
+        Post savedpost = postRepository.save(Post.from(request,parent, activeGroupMember,pageInfo));
 
         // 6. 히스토리 생성
-        History newHistory = History.builder()
-                .post(savedPost)
-                .build();
-        savedPost.addHistory(newHistory);
-        historyRepository.save(newHistory);
+        historyRepository.save(History.from(savedpost, activeGroupMember));
 
         // 7. return DTO
-        log.info(memberId + " 님이 " + groupId + " 그룹의 "  + pageId + " 페이지에 "+ title+" 포스트를 생성하였습니다.");
-        return new PostResponse.createPostDTO(savedPost);
+        log.info(memberId + " 님이 " + groupId + " 그룹의 "  + request.getPageId() + " 페이지에 "+ request.getTitle()+" 포스트를 생성하였습니다.");
+        return new PostResponse.createPostDTO(savedpost);
     }
 
     @Transactional
@@ -91,7 +80,7 @@ public class PostService {
         Post post = checkPostFromPostIdWithPage(postId);
 
         // 3. page 최근 수정 시간 바꾸기
-        post.getPageInfo().updatePage();
+        post.getPageInfo().updatePage(); // TODO : 저장 흠.............................
 
         // 4. 현재 Post랑 내용 같은지 확인
         if(post.getTitle().equals(title) && post.getContent().equals(content)){
@@ -99,8 +88,8 @@ public class PostService {
         }
 
         // 5. 다르면 Post 수정후 히스토리 생성 저장
-        History newHistory = post.modifyPost(activeGroupMember, title, content);
-        historyRepository.save(newHistory);
+        Post updatedPost = postRepository.save(post.modifyPost(activeGroupMember, title, content));
+        historyRepository.save(History.from(updatedPost, activeGroupMember));
 
         // 6. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ title+" 포스트를 수정하였습니다.");
@@ -166,12 +155,12 @@ public class PostService {
         checkPostFromPostId(postId);
 
         // 3. postId의 최근 히스토리 가져오기
-        List<History> historyByPostId = historyRepository.findHistoryByPostId(postId, PageRequest.of(0, 1));
+        List<History> HistoryByPostId = historyRepository.findHistoryByPostId(postId, PageRequest.of(0, 1));
 
         // 4. report 생성
         Report report = Report.builder()
-                .groupMember(activeGroupMember)
-                .history(historyByPostId.get(0))
+                .fromMember(activeGroupMember)
+                .history(HistoryByPostId.get(0))
                 .content(content)
                 .created_at(LocalDateTime.now())
                 .build();

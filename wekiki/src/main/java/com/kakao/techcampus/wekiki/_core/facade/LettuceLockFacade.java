@@ -1,7 +1,7 @@
 package com.kakao.techcampus.wekiki._core.facade;
 
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
-import com.kakao.techcampus.wekiki.page.service.PageService;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

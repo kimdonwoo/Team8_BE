@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.page.service.port;
+package com.kakao.techcampus.wekiki.pageInfo.service.port;
 
 import com.kakao.techcampus.wekiki.post.domain.Post;
 

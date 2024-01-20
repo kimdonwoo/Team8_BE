@@ -11,5 +11,5 @@ public interface MemberRepository {
 
     void save(Member member);
 
-    void delete(Member member);
+    void deleteModify(Member member);
 }

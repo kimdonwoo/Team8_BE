@@ -1,6 +1,6 @@
-package com.kakao.techcampus.wekiki.page.service.port;
+package com.kakao.techcampus.wekiki.pageInfo.service.port;
 
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.page.service;
+package com.kakao.techcampus.wekiki.pageInfo.service;
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
@@ -9,10 +9,10 @@ import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
-import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
-import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
+import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
+import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -111,18 +111,18 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. pageId로 PageInfo + Post 객체 fetch join으로 한번에 들고오기
-        PageInfo pageInfo = getPageAndPostFromPageId(pageId);
+        PageInfo PageInfo = getPageAndPostFromPageId(pageId);
 
         // 3. 목차 생성하기
-        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(pageInfo.getPosts());
+        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(PageInfo.getPosts());
 
         // 4. DTO로 return
-        List<PageInfoResponse.getPageIndexDTO.postDTO> temp = pageInfo.getPosts().stream()
+        List<PageInfoResponse.getPageIndexDTO.postDTO> temp = PageInfo.getPosts().stream()
                 .map(p -> new PageInfoResponse.getPageIndexDTO.postDTO(p, indexs.get(p.getId())))
                 .collect(Collectors.toList());
 
         log.info(memberId + " 님이 " + groupId + "의 "  + pageId + " 페이지 목차 조회 API를 호출하였습니다. ");
-        return new PageInfoResponse.getPageIndexDTO(pageInfo, temp);
+        return new PageInfoResponse.getPageIndexDTO(PageInfo, temp);
 
     }
 
@@ -133,7 +133,7 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 존재하는 페이지 인지 체크
-        PageInfo pageInfo = checkPageFromPageId(pageId);
+        PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. pageId로 하위 post들이 존재하는지 확인 -> 존재하면 Exception
         if(postRepository.existsByPageInfoId(pageId)){
@@ -141,11 +141,11 @@ public class PageService {
         }
 
         // 4. 포스트가 하나도 없으면 삭제시키기
-        PageInfoResponse.deletePageDTO response = new PageInfoResponse.deletePageDTO(pageInfo);
+        PageInfoResponse.deletePageDTO response = new PageInfoResponse.deletePageDTO(PageInfo);
         pageRepository.deleteById(pageId);
 
         // 5. redis에 페이지 목록 삭제 시켜주기
-        redisUtils.deleteHashValue(GROUP_PREFIX+groupId,pageInfo.getPageName());
+        redisUtils.deleteHashValue(GROUP_PREFIX+groupId, PageInfo.getPageName());
 
         // 6. return DTO
         log.info(memberId + " 님이 " + groupId + "의 "  + pageId + " 페이지 삭제 API를 호출하였습니다. ");
@@ -160,18 +160,18 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. pageId로 PageInfo + Post 객체 fetch join으로 한번에 들고오기
-        PageInfo pageInfo = getPageAndPostFromPageId(pageId);
+        PageInfo PageInfo = getPageAndPostFromPageId(pageId);
 
         // 3. 목차 생성하기
-        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(pageInfo.getPosts());
+        HashMap<Long, String> indexs = pageIndexGenerator.createIndex(PageInfo.getPosts());
 
         // 4. DTO로 return
-        List<PageInfoResponse.getPageFromIdDTO.postDTO> temp = pageInfo.getPosts().stream()
+        List<PageInfoResponse.getPageFromIdDTO.postDTO> temp = PageInfo.getPosts().stream()
                 .map(p -> new PageInfoResponse.getPageFromIdDTO.postDTO(p, indexs.get(p.getId())))
                 .collect(Collectors.toList());
 
         log.info(memberId + " 님이 " + groupId + "의 "  + pageId + " 페이지 조회 API를 호출하였습니다. ");
-        return new PageInfoResponse.getPageFromIdDTO(pageInfo, temp);
+        return new PageInfoResponse.getPageFromIdDTO(PageInfo, temp);
 
     }
 
@@ -201,7 +201,7 @@ public class PageService {
         PageInfo savedPageInfo = pageRepository.save(newPageInfo);
 
         // 6. Redis에 Hash 자료구조로 pageID 저장
-        redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title,newPageInfo.getId().toString());
+        redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title, newPageInfo.getId().toString());
 
         // 7. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + title + " 페이지를 생성하였습니다.");
@@ -215,14 +215,14 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 존재하는 페이지 인지 체크
-        PageInfo pageInfo = checkPageFromPageId(pageId);
+        PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        pageInfo.plusGoodCount();
+        pageRepository.save(PageInfo.plusGoodCount());
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 좋아요를 눌렀습니다.");
-        return new PageInfoResponse.likePageDTO(pageInfo);
+        return new PageInfoResponse.likePageDTO(PageInfo);
 
     }
 
@@ -233,14 +233,14 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 존재하는 페이지 인지 체크
-        PageInfo pageInfo = checkPageFromPageId(pageId);
+        PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        pageInfo.plusBadCount();
+        PageInfo.plusBadCount();
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 싫어요를 눌렀습니다.");
-        return new PageInfoResponse.hatePageDTO(pageInfo);
+        return new PageInfoResponse.hatePageDTO(PageInfo);
     }
 
     @Transactional
@@ -250,39 +250,28 @@ public class PageService {
         checkGroupMember(memberId, groupId);
 
         // 2. 페이지네이션 적용하여 Page 이름으로 keyword를 들고있는 페이지 들고오기
-        List<PageInfo> pages = pageRepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
+        List<PageInfo> pageInfos = pageRepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
 
         // 3. 가져온 페이지들 중에 첫 포스트 가져오기
-        List<Post> posts = postRepository.findPostInPages(pages);
+        List<Post> postEntities = postRepository.findPostInPages(pageInfos);
 
         // 4. responseDTO 만들기
         List<PageInfoResponse.searchPageDTO.pageDTO> res = new ArrayList<>();
 
         boolean flag;
-        for(PageInfo p : pages) { // 최대 10개
+        for(PageInfo p : pageInfos) { // 최대 10개
             flag = false;
-            for (Post po : posts) { // 최대 10개
+            for (Post po : postEntities) { // 최대 10개
                 if (p.getId() == po.getPageInfo().getId()) {
-                    res.add(new PageInfoResponse.searchPageDTO.pageDTO(p.getId(), p.getPageName(), po.getContent()));
+                    res.add(new PageInfoResponse.searchPageDTO.pageDTO(p, po.getContent()));
                     flag = true;
                     break;
                 }
             }
             if (!flag) {
-                res.add(new PageInfoResponse.searchPageDTO.pageDTO(p.getId(), p.getPageName(), ""));
+                res.add(new PageInfoResponse.searchPageDTO.pageDTO(p, ""));
             }
         }
-//        Page<PageInfo> pages = pageJPARepository.findPagesWithPosts(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT));
-//
-//        List<PageInfoResponse.searchPageDTO.pageDTO> res = new ArrayList<>();
-//
-//        for(PageInfo p : pages.getContent()){
-//            if(p.getPosts().size() == 0){
-//                res.add(new PageInfoResponse.searchPageDTO.pageDTO(p.getId(),p.getPageName(),""));
-//            }else{
-//                res.add(new PageInfoResponse.searchPageDTO.pageDTO(p.getId(),p.getPageName(),p.getPosts().get(0).getContent()));
-//            }
-//        }
 
         // 5. pages로 DTO return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + keyword + " 키워드로 페이지 검색을 요청하였습니다.");
@@ -299,8 +288,8 @@ public class PageService {
         List<PageInfo> recentPage = pageRepository.findByGroupIdOrderByUpdatedAtDesc(groupId, PageRequest.of(0, RECENTLY_PAGE_COUNT));
 
         // 3. return DTO
-        List<PageInfoResponse.getRecentPageDTO.RecentPageDTO> collect = recentPage.stream().map(pageInfo ->
-                new PageInfoResponse.getRecentPageDTO.RecentPageDTO(pageInfo)).collect(Collectors.toList());
+        List<PageInfoResponse.getRecentPageDTO.recentPageDTO> collect = recentPage.stream().map(pageInfo ->
+                new PageInfoResponse.getRecentPageDTO.recentPageDTO(pageInfo)).collect(Collectors.toList());
 
         log.info(memberId + " 님이 " + groupId + " 그룹에서 최근 변경/생성된 페이지 10개을 조회합니다.");
         return new PageInfoResponse.getRecentPageDTO(collect);

@@ -2,45 +2,40 @@ package com.kakao.techcampus.wekiki.history.domain;
 
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import jakarta.persistence.*;
-import lombok.*;
+
+import lombok.Builder;
+import lombok.Getter;
+
 
 import java.time.LocalDateTime;
 
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "history_tb")
 public class History {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private GroupMember groupMember;
-
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="POST_ID")
-    private Post post;
-
-    private String title;
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
-    private LocalDateTime created_at;
+    private final Long id;
+    private final GroupMember groupMember;
+    private final Post post;
+    private final String title;
+    private final String content;
+    private final LocalDateTime created_at;
 
     @Builder
-    public History(Long id, Post post){
+    public History(Long id, GroupMember groupMember, Post post, String title, String content, LocalDateTime created_at) {
         this.id = id;
-        this.groupMember = post.getGroupMember();
+        this.groupMember = groupMember;
         this.post = post;
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.created_at = post.getCreated_at();
+        this.title = title;
+        this.content = content;
+        this.created_at = created_at;
     }
 
-    public void updateGroupMember(GroupMember groupMember) {
-        this.groupMember = groupMember;
+    public static History from(Post post, GroupMember activeGroupMember){
+        return History.builder()
+                .groupMember(activeGroupMember)
+                .post(post)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .created_at(post.getCreated_at())
+                .build();
     }
 }

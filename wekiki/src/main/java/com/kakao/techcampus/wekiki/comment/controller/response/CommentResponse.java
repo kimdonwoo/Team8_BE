@@ -49,7 +49,7 @@ public class CommentResponse {
             String content;
             LocalDateTime createdAt;
 
-            public commentDTO(Comment comment , GroupMember groupMember, boolean isMine){
+            public commentDTO(Comment comment, GroupMember groupMember, boolean isMine){
                 this.commentId = comment.getId();
                 this.nickName = groupMember.getNickName();
                 this.isMine = isMine;

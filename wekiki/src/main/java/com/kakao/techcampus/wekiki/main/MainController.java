@@ -1,8 +1,8 @@
 package com.kakao.techcampus.wekiki.main;
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
-import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
-import com.kakao.techcampus.wekiki.page.service.PageService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

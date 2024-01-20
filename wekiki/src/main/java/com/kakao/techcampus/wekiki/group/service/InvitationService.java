@@ -4,7 +4,7 @@ import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.Group;
-import com.kakao.techcampus.wekiki.group.dto.GroupResponseDTO;
+import com.kakao.techcampus.wekiki.group.controller.response.GroupResponseDTO;
 import com.kakao.techcampus.wekiki.group.domain.Invitation;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import lombok.RequiredArgsConstructor;

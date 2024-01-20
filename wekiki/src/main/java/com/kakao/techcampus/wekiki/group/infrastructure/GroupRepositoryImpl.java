@@ -21,41 +21,41 @@ public class GroupRepositoryImpl implements GroupRepository {
 
     @Override
     public List<OfficialGroup> findAllOfficialGroup() {
-        return groupJPARepository.findAllOfficialGroup();
+        return groupJPARepository.findAllOfficialGroup().stream().map(OfficialGroupEntity::toModel).toList();
     }
 
     @Override
     public List<UnOfficialOpenedGroup> findAllUnOfficialOpenGroup() {
-        return groupJPARepository.findAllUnOfficialOpenGroup();
+        return groupJPARepository.findAllUnOfficialOpenGroup().stream().map(UnOfficialOpenedGroupEntity::toModel).toList();
     }
 
     @Override
     public Page<OfficialGroup> findOfficialGroupsByKeyword(String keyword, Pageable pageable) {
-        return groupJPARepository.findOfficialGroupsByKeyword(keyword,pageable);
+        return groupJPARepository.findOfficialGroupsByKeyword(keyword,pageable).map(OfficialGroupEntity::toModel);
     }
 
     @Override
     public Page<UnOfficialOpenedGroup> findUnOfficialOpenedGroupsByKeyword(String keyword, Pageable pageable) {
-        return groupJPARepository.findUnOfficialOpenedGroupsByKeyword(keyword,pageable);
+        return groupJPARepository.findUnOfficialOpenedGroupsByKeyword(keyword,pageable).map(UnOfficialOpenedGroupEntity::toModel);
     }
 
     @Override
     public Optional<UnOfficialOpenedGroup> findUnOfficialOpenedGroupById(Long id) {
-        return groupJPARepository.findUnOfficialOpenedGroupById(id);
+        return groupJPARepository.findUnOfficialOpenedGroupById(id).map(UnOfficialOpenedGroupEntity::toModel);
     }
 
     @Override
     public Optional<Group> findById(Long groupId) {
-        return groupJPARepository.findById(groupId);
+        return groupJPARepository.findById(groupId).map(GroupEntity::toModel);
     }
 
     @Override
     public void save(Group group) {
-        groupJPARepository.save(group);
+        groupJPARepository.save(GroupEntity.fromModel(group));
     }
 
     @Override
     public void delete(Group group) {
-        groupJPARepository.delete(group);
+        groupJPARepository.delete(GroupEntity.fromModel(group));
     }
 }

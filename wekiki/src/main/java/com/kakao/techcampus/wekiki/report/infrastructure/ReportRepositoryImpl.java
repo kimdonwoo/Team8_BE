@@ -1,6 +1,7 @@
 package com.kakao.techcampus.wekiki.report.infrastructure;
 
 import com.kakao.techcampus.wekiki.history.domain.History;
+import com.kakao.techcampus.wekiki.history.infrastructure.HistoryEntity;
 import com.kakao.techcampus.wekiki.report.domain.Report;
 import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,11 @@ public class ReportRepositoryImpl implements ReportRepository {
 
     @Override
     public void deleteReportsByHistoryInQuery(List<History> historys) {
-        reportJPARepository.deleteReportsByHistoryInQuery(historys);
+        reportJPARepository.deleteReportsByHistoryInQuery(historys.stream().map(HistoryEntity::fromModel).toList());
     }
 
     @Override
     public Report save(Report report) {
-        return reportJPARepository.save(report);
+        return reportJPARepository.save(ReportEntity.fromModel(report)).toModel();
     }
 }

@@ -1,10 +1,10 @@
-package com.kakao.techcampus.wekiki.page.controller;
+package com.kakao.techcampus.wekiki.pageInfo.controller;
 
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
-import com.kakao.techcampus.wekiki.page.service.PageService;
-import com.kakao.techcampus.wekiki.page.controller.request.PageInfoRequest;
-import com.kakao.techcampus.wekiki.page.controller.response.PageInfoResponse;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.request.PageInfoRequest;
+import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -50,7 +50,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.deletePageDTO>> deletePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                          @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.deletePageDTO response = pageService.deletePage(currentMember(),groupid, pageid);
+        PageInfoResponse.deletePageDTO response = pageService.deletePage(currentMember(), groupid, pageid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

@@ -3,21 +3,17 @@ package com.kakao.techcampus.wekiki.group.service;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
-import com.kakao.techcampus.wekiki.group.domain.Group;
-import com.kakao.techcampus.wekiki.group.domain.GroupMember;
-import com.kakao.techcampus.wekiki.group.dto.GroupRequestDTO;
-import com.kakao.techcampus.wekiki.group.dto.GroupResponseDTO;
-import com.kakao.techcampus.wekiki.group.domain.OfficialGroup;
-import com.kakao.techcampus.wekiki.group.domain.UnOfficialClosedGroup;
-import com.kakao.techcampus.wekiki.group.domain.UnOfficialOpenedGroup;
+import com.kakao.techcampus.wekiki.group.controller.request.GroupRequestDTO;
+import com.kakao.techcampus.wekiki.group.controller.response.GroupResponseDTO;
+import com.kakao.techcampus.wekiki.group.domain.*;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.page.service.port.PageRepository;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -79,10 +75,10 @@ public class GroupService {
         
         log.debug("GroupMember 생성 완료");
 
-        // Entity 저장
-        saveGroupMember(member, group, groupMember);
+        //  저장
+        saveGroupMember(groupMember);
         
-        log.debug("Entity 저장 완료");
+        log.debug(" 저장 완료");
 
         // return
         return new GroupResponseDTO.CreateUnOfficialGroupResponseDTO(group, invitationService.getGroupInvitationCode(group.getId()));
@@ -251,9 +247,9 @@ public class GroupService {
             wasGroupMember.update(requestDTO.nickName());
 
             // GroupMember 저장
-            saveGroupMember(member, group, wasGroupMember);
+            saveGroupMember(wasGroupMember);
         } else {
-            saveGroupMember(member, group, buildGroupMember(member, group, groupNickName));
+            saveGroupMember(buildGroupMember(member, group, groupNickName));
         }
         
         log.debug("그룹 참가 완료");
@@ -261,13 +257,10 @@ public class GroupService {
         redisUtils.deleteValues(MEMBER_ID_PREFIX + memberId);
     }
 
-    private void saveGroupMember(Member member, Group group, GroupMember groupMember) {
-        // GroupMember 저장
-        group.addGroupMember(groupMember);
-        member.getGroupMembers().add(groupMember);
+    private void saveGroupMember(GroupMember groupMember) {
 
-        groupRepository.save(group);
-        memberRepository.save(member);
+        // GroupMember 저장
+        groupRepository.save(groupMember.getGroup());
         groupMemberRepository.save(groupMember);
         
         log.debug("그룹 멤버 저장 완료");
@@ -384,7 +377,7 @@ public class GroupService {
             groupMember.update("알수없음");
 
             Member member = getMemberById(memberId);
-            member.getGroupMembers().remove(groupMember);
+            member.getGroupMembers().remove(groupMember); // TODO : 이게 뭐지
             memberRepository.save(member);
 
             groupRepository.save(group);
@@ -412,7 +405,7 @@ public class GroupService {
 
         for(GroupMember groupMember : group.getGroupMembers()) {
             Member member = groupMember.getMember();
-            member.getGroupMembers().remove(groupMember);
+            member.getGroupMembers().remove(groupMember); // TODO ??
             memberRepository.save(member);
 
             log.debug(member.getId() + " 번 회원의 groupMember 삭제 완료");

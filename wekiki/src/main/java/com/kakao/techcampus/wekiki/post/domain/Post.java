@@ -3,94 +3,96 @@ package com.kakao.techcampus.wekiki.post.domain;
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.history.domain.History;
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import jakarta.persistence.*;
-import lombok.*;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
+import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
+import lombok.Builder;
+import lombok.Getter;
+
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "post_tb")
 public class Post {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Post parent;
-
-    private int orders;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private GroupMember groupMember;
-
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PageInfo pageInfo;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<History> historys  = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments  = new ArrayList<>();
-
-    private String title;
-    @Column(columnDefinition = "TEXT")
-    private String content;
-    private LocalDateTime created_at;
+    private final Long id;
+    private final Post parent;
+    private final int orders;
+    private final GroupMember groupMember;
+    private final PageInfo pageInfo;
+    private final List<History> historys;
+    private final List<Comment> comments;
+    private final String title;
+    private final String content;
+    private final LocalDateTime created_at;
 
     @Builder
-    public Post(Long id ,Post parent,int orders, GroupMember groupMember, PageInfo pageInfo, String title, String content, LocalDateTime created_at) {
+    public Post(Long id, Post parent, int orders, GroupMember groupMember, PageInfo pageInfo, List<History> historys, List<Comment> comments, String title, String content, LocalDateTime created_at) {
         this.id = id;
         this.parent = parent;
         this.orders = orders;
         this.groupMember = groupMember;
         this.pageInfo = pageInfo;
+        this.historys = historys;
+        this.comments = comments;
         this.title = title;
         this.content = content;
         this.created_at = created_at;
     }
 
-    public void plusOrder(){
-        this.orders++;
-    }
-
-    public void minusOrder(){
-        this.orders--;
-    }
-
-    public History modifyPost(GroupMember groupMember, String title, String content){
-        this.groupMember = groupMember;
-        this.title = title;
-        this.content = content;
-        this.created_at = LocalDateTime.now();
-
-        History newHistory = History.builder()
-                .post(this)
+    public Post plusOrder(){
+        return Post.builder()
+                .id(id)
+                .parent(parent)
+                .orders(orders+1)
+                .groupMember(groupMember)
+                .pageInfo(pageInfo)
+                .historys(historys)
+                .comments(comments)
+                .title(title)
+                .content(content)
+                .created_at(created_at)
                 .build();
-
-        this.historys.add(newHistory);
-        newHistory.setPost(this);
-
-        return newHistory;
     }
 
-    public void updateGroupMember(GroupMember groupMember) {
-        this.groupMember = groupMember;
+    public Post minusOrder(){
+        return Post.builder()
+                .id(id)
+                .parent(parent)
+                .orders(orders-1)
+                .groupMember(groupMember)
+                .pageInfo(pageInfo)
+                .historys(historys)
+                .comments(comments)
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
     }
 
-    public void addComment(Comment comment){
-        this.comments.add(comment);
-        comment.setPost(this);
+    public Post modifyPost(GroupMember groupMember, String title, String content){
+        return Post.builder()
+                .id(this.id)
+                .parent(this.parent)
+                .orders(this.orders)
+                .groupMember(groupMember)
+                .pageInfo(this.pageInfo)
+                .historys(this.historys)
+                .comments(this.comments)
+                .title(title)
+                .content(content)
+                .created_at(this.created_at)
+                .build();
     }
 
-    public void addHistory(History history){
-        this.historys.add(history);
-        history.setPost(this);
+    public static Post from(PostRequest.createPostDTO request, Post parent, GroupMember activeGroupMember, PageInfo pageInfo){
+        return Post.builder()
+                .parent(parent)
+                .orders(request.getOrder())
+                .groupMember(activeGroupMember)
+                .pageInfo(pageInfo) // history랑 comment는 ?
+                .title(request.getTitle())
+                .content(request.getContent())
+                .created_at(LocalDateTime.now())
+                .build();
     }
 }

@@ -1,7 +1,7 @@
-package com.kakao.techcampus.wekiki.page.infrastructure;
+package com.kakao.techcampus.wekiki.pageInfo.infrastructure;
 
 
-import com.kakao.techcampus.wekiki.page.service.port.PageIndexGenerator;
+import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.springframework.stereotype.Component;
 

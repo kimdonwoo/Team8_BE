@@ -1,7 +1,6 @@
 package com.kakao.techcampus.wekiki.post.infrastructure;
 
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
-import com.kakao.techcampus.wekiki.post.domain.Post;
+import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageInfoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,22 +10,22 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PostJPARepository extends JpaRepository<Post, Long> {
+public interface PostJPARepository extends JpaRepository<PostEntity, Long> {
 
-    @Query("SELECT p FROM Post p WHERE p.pageInfo.id = :pageId AND p.orders >= :orders")
-    List<Post> findPostsByPageIdAndOrderGreaterThan(
+    @Query("SELECT po FROM PostEntity po WHERE po.pageInfoEntity.id = :pageId AND po.orders >= :orders")
+    List<PostEntity> findPostsByPageIdAndOrderGreaterThan(
             @Param("pageId") Long pageId,
             @Param("orders") int orders
     );
 
-    @Query("SELECT po FROM Post po JOIN FETCH po.pageInfo WHERE po.id = :postId ")
-    Optional<Post> findPostWithPageFromPostId(@Param("postId") Long postId);
+    @Query("SELECT po FROM PostEntity po JOIN FETCH po.pageInfoEntity WHERE po.id = :postId ")
+    Optional<PostEntity> findPostWithPageFromPostId(@Param("postId") Long postId);
 
-    boolean existsByPageInfoId(Long pageInfoId);
+    boolean existsByPageInfoEntityId(Long pageInfoId);
 
     boolean existsByParentId(Long parentId);
 
 
-    @Query("SELECT po FROM Post po WHERE po.pageInfo IN (:pages) AND po.orders = 1")
-    List<Post> findPostInPages(@Param("pages") List<PageInfo> pages);
+    @Query("SELECT po FROM PostEntity po WHERE po.pageInfoEntity IN (:pages) AND po.orders = 1")
+    List<PostEntity> findPostInPages(@Param("pages") List<PageInfoEntity> pages);
 }

@@ -9,8 +9,8 @@ import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.member.controller.request.MemberRequest;
 import com.kakao.techcampus.wekiki.member.controller.response.MemberResponse;
-import com.kakao.techcampus.wekiki.member.domain.Authority;
 import com.kakao.techcampus.wekiki.member.domain.Member;
+import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -127,15 +127,9 @@ public class MemberService {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (회원 탈퇴)");
             throw e;
         }
-        Member cancelMember = new Member("알수없음", "", passwordEncoder.encode(makeRandomPassword()),
-                LocalDateTime.now(), Authority.none);
-        for (GroupMember g : member.getGroupMembers()) {
-            g.update("알수없음");
-            g.changeMember(cancelMember);
-            g.changeStatus();
-        }
-        //member.delete(passwordEncoder.encode(makeRandomPassword()));
-        memberRepository.delete(member);
+
+        Member deletedMember = member.delete(passwordEncoder.encode(makeRandomPassword()));
+        memberRepository.deleteModify(deletedMember);
     }
 
     public void changeNickName(MemberRequest.changeNickNameRequestDTO nickNameRequestDTO) {
@@ -262,12 +256,12 @@ public class MemberService {
             requestFactory.setProxy(proxy);
             RestTemplate restTemplate = new RestTemplate(requestFactory);
             System.out.println(restTemplate.getClass());
-            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
+            HttpEntity<MultiValueMap<String, String>> http = new HttpEntity<>(params, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
                     "https://kauth.kakao.com/oauth/token",
                     HttpMethod.POST,
-                    httpEntity,
+                    http,
                     String.class
             );
             log.info("카카오 엑세스 토큰 발급 완료");

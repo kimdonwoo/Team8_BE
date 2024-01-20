@@ -63,7 +63,7 @@ public class PostResponse {
         String currentTitle;
         List<historyDTO> historyList;
 
-        public getPostHistoryDTO(Post post,List<historyDTO> historyList){
+        public getPostHistoryDTO(Post post, List<historyDTO> historyList){
             this.postId = post.getId();
             this.currentTitle = post.getTitle();
             this.historyList = historyList;
@@ -79,7 +79,7 @@ public class PostResponse {
             String content;
             LocalDateTime createdAt;
 
-            public historyDTO(GroupMember groupMember,History history){
+            public historyDTO(GroupMember groupMember, History history){
                 this.memberId = groupMember.getId();
                 this.nickName = groupMember.getNickName();
                 this.historyId = history.getId();

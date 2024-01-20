@@ -2,30 +2,20 @@ package com.kakao.techcampus.wekiki.comment.domain;
 
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.post.domain.Post;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "comment_tb")
 public class Comment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private GroupMember groupMember;
-
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Post post;
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
-    private LocalDateTime created_at;
+    private final Long id;
+    private final GroupMember groupMember;
+    private final Post post;
+    private final String content;
+    private final LocalDateTime created_at;
 
     @Builder
     public Comment(Long id, GroupMember groupMember, Post post, String content, LocalDateTime created_at) {
@@ -36,11 +26,23 @@ public class Comment {
         this.created_at = created_at;
     }
 
-    public void updateContent(String newContent){
-        this.content = newContent;
+    public Comment updateContent(String newContent){
+        return Comment.builder()
+                .id(id)
+                .groupMember(groupMember)
+                .post(post)
+                .content(newContent)
+                .created_at(created_at)
+                .build();
     }
 
-    public void updateGroupMember(GroupMember groupMember) {
-        this.groupMember = groupMember;
+    public static Comment from(GroupMember activeGroupMember, Post post, String content){
+        return Comment.builder()
+                .groupMember(activeGroupMember)
+                .post(post)
+                .content(content)
+                .created_at(LocalDateTime.now())
+                .build();
     }
+
 }

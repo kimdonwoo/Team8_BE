@@ -1,7 +1,7 @@
-package com.kakao.techcampus.wekiki.page.controller.response;
+package com.kakao.techcampus.wekiki.pageInfo.controller.response;
 
 import com.kakao.techcampus.wekiki.group.domain.Group;
-import com.kakao.techcampus.wekiki.page.domain.PageInfo;
+import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class PageInfoResponse {
             String groupName;
             public GroupDTO(Group group) {
                 this.groupId = group.getId();
-                this.groupImage =group.getGroupProfileImage();
+                this.groupImage = group.getGroupProfileImage();
                 this.groupName = group.getGroupName();
             }
         }
@@ -106,9 +106,9 @@ public class PageInfoResponse {
             String pageName;
             String content;
 
-            public pageDTO(Long pageId, String pageName ,String content){
-                this.pageId = pageId;
-                this.pageName = pageName;
+            public pageDTO(PageInfo pageInfo ,String content){
+                this.pageId = pageInfo.getId();
+                this.pageName = pageInfo.getPageName();
                 this.content = content;
             }
         }
@@ -191,19 +191,19 @@ public class PageInfoResponse {
     @Getter @Setter
     public static class getRecentPageDTO{
 
-        List<RecentPageDTO> recentPage;
+        List<recentPageDTO> recentPage;
 
-        public getRecentPageDTO(List<RecentPageDTO> recentPage){
+        public getRecentPageDTO(List<recentPageDTO> recentPage){
             this.recentPage = recentPage;
         }
 
         @Getter @Setter
-        public static class RecentPageDTO{
+        public static class recentPageDTO{
             Long pageId;
             String pageName;
             private LocalDateTime updated_at;
 
-            public RecentPageDTO(PageInfo pageInfo){
+            public recentPageDTO(PageInfo pageInfo){
                 this.pageId = pageInfo.getId();
                 this.pageName = pageInfo.getPageName();
                 this.updated_at = pageInfo.getUpdated_at();

@@ -1,6 +1,7 @@
 package com.kakao.techcampus.wekiki.page.service.service;
 
 
+import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
 import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
@@ -24,15 +25,25 @@ public class PageInfoServiceTest {
 
     private PageService pageService;
     private final LocalDateTime testTime = LocalDateTime.now();
+    private FakeRedisUtils fakeRedisUtils;
+    private PageIndexGeneratorImpl pageIndexGeneratorImpl;
+    private FakePageInfoRepository fakePageInfoRepository;
+    private FakePostRepository fakePostRepository;
+    private FakeMemberRepository fakeMemberRepository;
+    private FakeGroupMemberRepository fakeGroupMemberRepository;
+    private FakeGroupRepository fakeGroupRepository;
+
+
 
     @BeforeEach
     void init(){
-        PageIndexGeneratorImpl pageIndexGeneratorImpl = new PageIndexGeneratorImpl();
-        FakePageInfoRepository fakePageInfoRepository = new FakePageInfoRepository();
-        FakePostRepository fakePostRepository = new FakePostRepository();
-        FakeMemberRepository fakeMemberRepository = new FakeMemberRepository();
-        FakeGroupMemberRepository fakeGroupMemberRepository = new FakeGroupMemberRepository();
-        FakeGroupRepository fakeGroupRepository = new FakeGroupRepository();
+        pageIndexGeneratorImpl = new PageIndexGeneratorImpl();
+        fakePageInfoRepository = new FakePageInfoRepository();
+        fakePostRepository = new FakePostRepository();
+        fakeMemberRepository = new FakeMemberRepository();
+        fakeGroupMemberRepository = new FakeGroupMemberRepository();
+        fakeGroupRepository = new FakeGroupRepository();
+        fakeRedisUtils = new FakeRedisUtils();
 
         pageService = PageService.builder()
                 .pageRepository(fakePageInfoRepository)
@@ -41,7 +52,7 @@ public class PageInfoServiceTest {
                 .memberRepository(fakeMemberRepository)
                 .groupMemberRepository(fakeGroupMemberRepository)
                 .postRepository(fakePostRepository)
-                .redisUtils(new FakeRedisUtils())
+                .redisUtils(fakeRedisUtils)
                 .build();
 
         // 회원 2명, 그룹 1개, 그룹멤버 2개(둘다 가입되어 있는 상황)
@@ -225,19 +236,55 @@ public class PageInfoServiceTest {
      * 8. getPageFromId는_해당_회원이_가입한적없는_회원이면_페이지_조회가_불가능하다()
      * 9. getPageFromId는_존재하지않는_페이지에_대해_페이지_조회가_불가능하다()
      *
-     *
-     *
-     *
-     *
      * - createPage
+     * 10. createPage는_모든_조건을_만족하는_회원은_페이지_생성이_가능하다()
+     * 11. createPage는_해당_그룹을_이미_탈퇴한_회원은_페이지_생성이_불가능하다()
+     * 12. createPage는_해당_회원이_가입한적없는_회원이면_페이지_생성이_불가능하다()
+     * 13. createPage는_이미_존재하는_이름의_페이지랑_동일한_페이지-생성이_불가능하다()
      *
      * - deletePage
+     * 14. deletePage는_모든_조건을_만족하는_회원은_페이지_삭제가_가능하다()
+     * 15. deletePage는_해당_그룹을_이미_탈퇴한_회원은_페이지_삭제가_불가능하다()
+     * 16. deletePage는_해당_회원이_가입한적없는_회원이면_페이지_삭제가_불가능하다()
+     * 17. deletePage는_존재하지않는_페이지에_대해_페이지_삭제가_불가능하다()
+     * 18. deletePage는 post가 존재하는 페이지는 삭제가 불가능하다()
+     *
      * - likePage
+     * 19. likePage는_모든_조건을_만족하는_회원은_페이지_좋아요가_가능하다()
+     * 20. likePage는_해당_그룹을_이미_탈퇴한_회원은_페이지_좋아요가_불가능하다()
+     * 21. likePage는_해당_회원이_가입한적없는_회원이면_페이지_좋아요가_불가능하다()
+     * 22. likePage는_존재하지않는_페이지에_대해_페이지_좋아요가_불가능하다()
+     *
      * - hatePage
+     * 23. hatePage는_모든_조건을_만족하는_회원은_페이지_싫어요가_가능하다()
+     * 24. hatePage는_해당_그룹을_이미_탈퇴한_회원은_페이지_싫어요_불가능하다()
+     * 25. hatePage는_해당_회원이_가입한적없는_회원이면_페이지_싫어요가_불가능하다()
+     * 26. hatePage는_존재하지않는_페이지에_대해_페이지_싫어요가_불가능하다()
+     *
      * - searchPage
+     * 27. searchPage는_모든_조건을_만족하는_회원은_페이지_검색이_가능하다()
+     * 28. searchPage는_해당_그룹을_이미_탈퇴한_회원은_페이지_검색이_불가능하다()
+     * 29. searchPage는_해당_회원이_가입한적없는_회원이면_페이지_검색이_불가능하다()
+     * 30. searchPage는_Post가_존재하지_않는_Page는_content에_빈문자열을_반환한다()
+     * 31. searchPage는_해당_keyword를_포함하는_페이지가_존재하지_않을_경우_빈페이지를_반환한다()
+     *
      * - getRecentPage
+     * 32. getRecentPage는_모든_조건을_만족하는_회원은_최근변경페이지_조회가_가능하다()
+     * 33. getRecentPage는_해당_그룹을_이미_탈퇴한_회원은_최근변경페이지_조회가_불가능하다()
+     * 34. getRecentPage는_해당_회원이_가입한적없는_회원이면_최근변경페이지_조회가_불가능하다()
+     * 35. getRecentPage는_Page가_하나도_없을_때_빈_recentPageDTO배열을_반환한다()
+     * 36. getRecentPage는_Page가_10개_이상있을때_10개의_최근변경페이지를_반환한다()
+     *
      * - getPageFromTitle
+     * 37.
+     * 38.
+     * 39.
+     * 40.
+     * 41.
+     *
+     *
      * - getPageLink
+     *
      */
 
 
@@ -411,5 +458,462 @@ public class PageInfoServiceTest {
         }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
     }
 
+    @Test
+    void createPage는_모든_조건을_만족하는_회원은_페이지_생성이_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "새로운 페이지 생성";
+
+        //when
+        PageInfoResponse.createPageDTO result = pageService.createPage(title, groupId, memberId);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(3L);
+        assertThat(result.getPageName()).isEqualTo("새로운 페이지 생성");
+        assertThat(fakeRedisUtils.getHashValue(pageService.getGROUP_PREFIX()+groupId,title))
+                .isEqualTo("3");
+
+    }
+
+    @Test
+    void createPage_해당_그룹을_이미_탈퇴한_회원은_페이지_생성이_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        String title = "새로운 페이지 생성";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.createPage(title,groupId,memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void createPage_해당_회원이_가입한적없는_회원이면_페이지_생성이_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+        String title = "새로운 페이지 생성";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.createPage(title,groupId,memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void createPage_이미_존재하는_이름의_페이지랑_동일한_페이지_생성이_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "Test Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.createPage(title,groupId,memberId);
+        }).isInstanceOf(Exception400.class).hasMessage("이미 존재하는 페이지입니다.");
+    }
+
+    @Test
+    void deletePage는_모든_조건을_만족하는_회원은_페이지_삭제가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 2L;
+
+        //when
+        PageInfoResponse.deletePageDTO result = pageService.deletePage(memberId, groupId, pageId);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(2L);
+        assertThat(result.getTitle()).isEqualTo("Test Page2");
+
+    }
+
+    @Test
+    void deletePage_해당_그룹을_이미_탈퇴한_회원은_페이지_삭제가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.deletePage(memberId, groupId, pageId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void deletePage_해당_회원이_가입한적없는_회원이면_페이지_삭제가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.deletePage(memberId, groupId, pageId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void deletePage는_존재하지않는_페이지에_대해_페이지_삭제가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 100L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.deletePage(memberId, groupId, pageId);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
+    }
+
+    @Test
+    void deletePage는_post가_존재하는_페이지는_삭제가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.deletePage(memberId, groupId, pageId);
+        }).isInstanceOf(Exception400.class).hasMessage("글이 적혀있는 페이지는 삭제가 불가능합니다.");
+    }
+
+    @Test
+    void likePage는_모든_조건을_만족하는_회원은_페이지_좋아요가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 1L;
+
+        //when
+        PageInfoResponse.likePageDTO result = pageService.likePage(pageId, groupId, memberId);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(1L);
+        assertThat(result.getPageName()).isEqualTo("Test Page");
+        assertThat(result.getGoodCount()).isEqualTo(1);
+    }
+
+    @Test
+    void likePage는_해당_그룹을_이미_탈퇴한_회원은_페이지_좋아요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.likePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void likePage는_해당_회원이_가입한적없는_회원이면_페이지_좋아요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.likePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void likePage는_존재하지않는_페이지에_대해_페이지_좋아요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 100L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.likePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
+    }
+
+    @Test
+    void hatePage는_모든_조건을_만족하는_회원은_페이지_싫어요가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 1L;
+
+        //when
+        PageInfoResponse.hatePageDTO result = pageService.hatePage(pageId, groupId, memberId);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(1L);
+        assertThat(result.getPageName()).isEqualTo("Test Page");
+        assertThat(result.getBadCount()).isEqualTo(1);
+    }
+
+    @Test
+    void hatePage는_해당_그룹을_이미_탈퇴한_회원은_페이지_싫어요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.hatePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void hatePage는_해당_회원이_가입한적없는_회원이면_페이지_싫어요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+        Long pageId = 1L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.hatePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void hatePage는_존재하지않는_페이지에_대해_페이지_싫어요가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        Long pageId = 100L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.hatePage(pageId, groupId, memberId);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
+    }
+
+    @Test
+    void searchPage는_모든_조건을_만족하는_회원은_페이지_검색이_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        int pageNo = 0;
+        String keyword = "Test";
+
+        //when
+        PageInfoResponse.searchPageDTO result = pageService.searchPage(groupId, memberId, pageNo, keyword);
+
+        //then
+        assertThat(result.getPages().get(0).getPageId()).isEqualTo(1L);
+        assertThat(result.getPages().get(0).getPageName()).isEqualTo("Test Page");
+        assertThat(result.getPages().get(0).getContent()).isEqualTo("해당 포스트는 테스트용 포스트1입니다.");
+    }
+
+    @Test
+    void searchPage는_해당_그룹을_이미_탈퇴한_회원은_페이지_검색이_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        int pageNo = 0;
+        String keyword = "Test";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.searchPage(groupId, memberId,pageNo,keyword);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void searchPage는_해당_회원이_가입한적없는_회원이면_페이지_검색이_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        int pageNo = 0;
+        String keyword = "Test";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.searchPage(groupId, memberId,pageNo,keyword);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void searchPage는_Post가_존재하지_않는_Page는_content에_빈문자열을_반환한다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        int pageNo = 0;
+        String keyword = "Test";
+
+        //when
+        PageInfoResponse.searchPageDTO result = pageService.searchPage(groupId, memberId, pageNo, keyword);
+
+        //then
+        assertThat(result.getPages().get(1).getPageId()).isEqualTo(2L);
+        assertThat(result.getPages().get(1).getPageName()).isEqualTo("Test Page2");
+        assertThat(result.getPages().get(1).getContent()).isEqualTo("");
+    }
+
+    @Test
+    void searchPage는_해당keyword를_포함하는_페이지가_존재하지_않을_경우_빈페이지를_반환한다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        int pageNo = 0;
+        String keyword = "blank";
+
+        //when
+        PageInfoResponse.searchPageDTO result = pageService.searchPage(groupId, memberId, pageNo, keyword);
+
+        //then
+        assertThat(result.getPages()).isEmpty();
+    }
+
+    @Test
+    void getRecentPage는_모든_조건을_만족하는_회원은_최근변경페이지_조회가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+
+        //when
+        PageInfoResponse.getRecentPageDTO result = pageService.getRecentPage(memberId, groupId);
+        ;
+
+        //then
+        assertThat(result.getRecentPage().get(0).getPageId()).isEqualTo(1L);
+        assertThat(result.getRecentPage().get(0).getPageName()).isEqualTo("Test Page");
+        assertThat(result.getRecentPage().get(0).getUpdated_at()).isEqualTo(testTime);
+        assertThat(result.getRecentPage().get(1).getPageId()).isEqualTo(2L);
+        assertThat(result.getRecentPage().get(1).getPageName()).isEqualTo("Test Page2");
+        assertThat(result.getRecentPage().get(1).getUpdated_at()).isEqualTo(testTime);
+    }
+
+    @Test
+    void getRecentPage는_해당_그룹을_이미_탈퇴한_회원은_최근변경페이지_조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getRecentPage(memberId,groupId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void getRecentPage는_해당_회원이_가입한적없는_회원이면_최근변경페이지_조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getRecentPage(memberId,groupId);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void getRecentPage는_Page가_하나도_없을_때_빈_recentPageDTO배열을_반환한다(){
+        //given
+        Member newMember = Member.builder()
+                .name("TestMember4")
+                .email("test4@naver.com")
+                .password("1111")
+                .created_at( testTime)
+                .authority(Authority.user)
+                .build();
+        Member savedNewMember = fakeMemberRepository.save(newMember);
+        Group newGroup = Group.builder()
+                .id(2L)
+                .groupName("TestGroup2")
+                .groupProfileImage("s3/url")
+                .memberCount(0)
+                .created_at( testTime)
+                .build();
+        GroupMember newGroupMember = GroupMember.builder()
+                .member(savedNewMember)
+                .group(newGroup)
+                .nickName("TestMember4의 groupMember")
+                .memberLevel(0)
+                .created_at(testTime)
+                .activeStatus(true)
+                .build();
+        fakeGroupMemberRepository.save(newGroupMember);
+
+        //when
+        PageInfoResponse.getRecentPageDTO result = pageService.getRecentPage(savedNewMember.getId(), newGroup.getId());
+
+        //then
+        assertThat(result.getRecentPage()).isEmpty();
+    }
+
+    @Test
+    void getRecentPage는_Page가_10개_이상있을때_10개의_최근변경페이지를_반환한다(){
+        //given
+        Member newMember = Member.builder()
+                .name("TestMember4")
+                .email("test4@naver.com")
+                .password("1111")
+                .created_at( testTime)
+                .authority(Authority.user)
+                .build();
+        Member savedNewMember = fakeMemberRepository.save(newMember);
+        Group newGroup = Group.builder()
+                .id(2L)
+                .groupName("TestGroup2")
+                .groupProfileImage("s3/url")
+                .memberCount(0)
+                .created_at( testTime)
+                .build();
+        GroupMember newGroupMember = GroupMember.builder()
+                .member(savedNewMember)
+                .group(newGroup)
+                .nickName("TestMember4의 groupMember")
+                .memberLevel(0)
+                .created_at(testTime)
+                .activeStatus(true)
+                .build();
+        fakeGroupMemberRepository.save(newGroupMember);
+
+        for(int i = 0 ; i < 15 ; i++){
+            PageInfo pageInfo = PageInfo.builder()
+                    .group(newGroup)
+                    .pageName("Test Page"+i)
+                    .goodCount(0)
+                    .badCount(0)
+                    .viewCount(0)
+                    .created_at(testTime)
+                    .updated_at(testTime.plusMinutes(15-i))
+                    .build();
+            fakePageInfoRepository.save(pageInfo);
+        }
+
+        //when
+        PageInfoResponse.getRecentPageDTO result = pageService.getRecentPage(savedNewMember.getId(), newGroup.getId());
+
+        //then
+        assertThat(result.getRecentPage().size()).isEqualTo(10);
+        assertThat(result.getRecentPage().get(0).getPageId()).isEqualTo(17);
+        assertThat(result.getRecentPage().get(1).getPageId()).isEqualTo(16);
+        assertThat(result.getRecentPage().get(2).getPageId()).isEqualTo(15);
+        assertThat(result.getRecentPage().get(3).getPageId()).isEqualTo(14);
+        assertThat(result.getRecentPage().get(4).getPageId()).isEqualTo(13);
+        assertThat(result.getRecentPage().get(5).getPageId()).isEqualTo(12);
+        assertThat(result.getRecentPage().get(6).getPageId()).isEqualTo(11);
+        assertThat(result.getRecentPage().get(7).getPageId()).isEqualTo(10);
+        assertThat(result.getRecentPage().get(8).getPageId()).isEqualTo(9);
+        assertThat(result.getRecentPage().get(9).getPageId()).isEqualTo(8);
+    }
 
 }

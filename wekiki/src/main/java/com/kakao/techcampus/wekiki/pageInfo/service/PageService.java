@@ -16,6 +16,7 @@ import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +51,7 @@ public class PageService {
 
     final int PAGE_COUNT = 10;
     final int RECENTLY_PAGE_COUNT = 10;
+    @Getter
     final String GROUP_PREFIX = "GROUP_";
 
     @Transactional
@@ -149,7 +151,7 @@ public class PageService {
         PageInfo savedPageInfo = pageRepository.save(newPageInfo);
 
         // 6. Redis에 Hash 자료구조로 pageID 저장
-        redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title, newPageInfo.getId().toString());
+        redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title, savedPageInfo.getId().toString());
 
         // 7. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + title + " 페이지를 생성하였습니다.");
@@ -166,11 +168,11 @@ public class PageService {
         PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        pageRepository.save(PageInfo.plusGoodCount());
+        PageInfoResponse.likePageDTO response = new PageInfoResponse.likePageDTO(pageRepository.save(PageInfo.plusGoodCount()));
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 좋아요를 눌렀습니다.");
-        return new PageInfoResponse.likePageDTO(PageInfo);
+        return response;
 
     }
 
@@ -184,11 +186,11 @@ public class PageService {
         PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        PageInfo.plusBadCount();
+        PageInfoResponse.hatePageDTO response = new PageInfoResponse.hatePageDTO(PageInfo.plusBadCount());
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 싫어요를 눌렀습니다.");
-        return new PageInfoResponse.hatePageDTO(PageInfo);
+        return response;
     }
 
     @Transactional
@@ -201,7 +203,7 @@ public class PageService {
         List<PageInfo> pageInfos = pageRepository.findPages(groupId, keyword, PageRequest.of(pageNo, PAGE_COUNT)).getContent();
 
         // 3. 가져온 페이지들 중에 첫 포스트 가져오기
-        List<Post> postEntities = postRepository.findPostInPages(pageInfos);
+        List<Post> posts = postRepository.findPostInPages(pageInfos);
 
         // 4. responseDTO 만들기
         List<PageInfoResponse.searchPageDTO.pageDTO> res = new ArrayList<>();
@@ -209,7 +211,7 @@ public class PageService {
         boolean flag;
         for(PageInfo p : pageInfos) { // 최대 10개
             flag = false;
-            for (Post po : postEntities) { // 최대 10개
+            for (Post po : posts) { // 최대 10개
                 if (p.getId() == po.getPageInfo().getId()) {
                     res.add(new PageInfoResponse.searchPageDTO.pageDTO(p, po.getContent()));
                     flag = true;

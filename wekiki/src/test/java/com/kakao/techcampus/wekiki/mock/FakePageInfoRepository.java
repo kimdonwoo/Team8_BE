@@ -20,7 +20,7 @@ public class FakePageInfoRepository implements PageRepository {
     @Override
     public List<PageInfo> findByGroupIdOrderByUpdatedAtDesc(Long groupId, Pageable pageable) {
         return data.stream().filter(item -> item.getGroup().getId().equals(groupId))
-                .sorted(Comparator.comparing(PageInfo::getUpdated_at).reversed())
+                .sorted(Comparator.comparing(PageInfo::getUpdated_at))
                 .limit(10).toList();
     }
 

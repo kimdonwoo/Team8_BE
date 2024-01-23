@@ -15,6 +15,7 @@ import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +36,7 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Builder
 public class PageService {
 
     private final PageRepository pageRepository;
@@ -49,60 +51,6 @@ public class PageService {
     final int PAGE_COUNT = 10;
     final int RECENTLY_PAGE_COUNT = 10;
     final String GROUP_PREFIX = "GROUP_";
-
-    @Transactional
-    public PageInfoResponse.mainPageDTO getMainPage() {
-        if(SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
-            // 로그인 안한 사람
-            log.info("로그인하지 않은 사람의 메인 페이지 조회");
-            List<PageInfoResponse.mainPageDTO.GroupDTO> officialGroupList = getOfficialGroupList();
-            List<PageInfoResponse.mainPageDTO.GroupDTO> unOfficialGroupList = getUnLoginUnOfficialGroupList();
-            return new PageInfoResponse.mainPageDTO(officialGroupList, unOfficialGroupList);
-        }
-        else {
-            //로그인을 한 사람
-            log.info("로그인을 한 사람의 메인 페이지 조회");
-            Optional<Member> member = memberRepository.findById(currentMember());
-            if(member.isEmpty()) {
-                log.error("회원이 존재하지 않습니다.");
-                throw new Exception400("없는 회원입니다.");
-            }
-            List<Group> myGroupList = member.get().getGroupMembers().stream()
-                    .filter(GroupMember::isActiveStatus).map(GroupMember::getGroup).toList();
-            List<Long> myGroupIdList = myGroupList.stream().map(Group::getId).toList();
-            List<PageInfoResponse.mainPageDTO.GroupDTO> myGroupListDTO = getMyGroupList(myGroupList);
-            List<PageInfoResponse.mainPageDTO.GroupDTO> officialGroupList = getOfficialGroupList();
-            List<PageInfoResponse.mainPageDTO.GroupDTO> unOfficialGroupList = getLoginUnOfficialGroupList(myGroupIdList);
-            return new PageInfoResponse.mainPageDTO(myGroupListDTO, officialGroupList, unOfficialGroupList);
-        }
-    }
-
-    private List<PageInfoResponse.mainPageDTO.GroupDTO> getMyGroupList (List<Group> myGroupList) {
-        return myGroupList.stream()
-                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
-                .collect(Collectors.toList());
-    }
-    private List<PageInfoResponse.mainPageDTO.GroupDTO> getOfficialGroupList () {
-        return groupRepository.findAllOfficialGroup().stream()
-                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
-                .limit(3)
-                .collect(Collectors.toList());
-    }
-
-    private List<PageInfoResponse.mainPageDTO.GroupDTO> getUnLoginUnOfficialGroupList() {
-        return groupRepository.findAllUnOfficialOpenGroup().stream()
-                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
-                .limit(8)
-                .collect(Collectors.toList());
-    }
-
-    private List<PageInfoResponse.mainPageDTO.GroupDTO> getLoginUnOfficialGroupList(List<Long> myGroupIdList) {
-        return groupRepository.findAllUnOfficialOpenGroup().stream()
-                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
-                .filter(tempGroup -> !myGroupIdList.contains(tempGroup.getGroupId()))
-                .limit(8)
-                .toList();
-    }
 
     @Transactional
     public PageInfoResponse.getPageIndexDTO getPageIndex(Long groupId,Long memberId, Long pageId){
@@ -368,6 +316,60 @@ public class PageService {
         pageRepository.saveAndFlush(page);
     }
 
+
+    @Transactional
+    public PageInfoResponse.mainPageDTO getMainPage() {
+        if(SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
+            // 로그인 안한 사람
+            log.info("로그인하지 않은 사람의 메인 페이지 조회");
+            List<PageInfoResponse.mainPageDTO.GroupDTO> officialGroupList = getOfficialGroupList();
+            List<PageInfoResponse.mainPageDTO.GroupDTO> unOfficialGroupList = getUnLoginUnOfficialGroupList();
+            return new PageInfoResponse.mainPageDTO(officialGroupList, unOfficialGroupList);
+        }
+        else {
+            //로그인을 한 사람
+            log.info("로그인을 한 사람의 메인 페이지 조회");
+            Optional<Member> member = memberRepository.findById(currentMember());
+            if(member.isEmpty()) {
+                log.error("회원이 존재하지 않습니다.");
+                throw new Exception400("없는 회원입니다.");
+            }
+            List<Group> myGroupList = member.get().getGroupMembers().stream()
+                    .filter(GroupMember::isActiveStatus).map(GroupMember::getGroup).toList();
+            List<Long> myGroupIdList = myGroupList.stream().map(Group::getId).toList();
+            List<PageInfoResponse.mainPageDTO.GroupDTO> myGroupListDTO = getMyGroupList(myGroupList);
+            List<PageInfoResponse.mainPageDTO.GroupDTO> officialGroupList = getOfficialGroupList();
+            List<PageInfoResponse.mainPageDTO.GroupDTO> unOfficialGroupList = getLoginUnOfficialGroupList(myGroupIdList);
+            return new PageInfoResponse.mainPageDTO(myGroupListDTO, officialGroupList, unOfficialGroupList);
+        }
+    }
+
+    private List<PageInfoResponse.mainPageDTO.GroupDTO> getMyGroupList (List<Group> myGroupList) {
+        return myGroupList.stream()
+                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
+                .collect(Collectors.toList());
+    }
+    private List<PageInfoResponse.mainPageDTO.GroupDTO> getOfficialGroupList () {
+        return groupRepository.findAllOfficialGroup().stream()
+                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
+                .limit(3)
+                .collect(Collectors.toList());
+    }
+
+    private List<PageInfoResponse.mainPageDTO.GroupDTO> getUnLoginUnOfficialGroupList() {
+        return groupRepository.findAllUnOfficialOpenGroup().stream()
+                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
+                .limit(8)
+                .collect(Collectors.toList());
+    }
+
+    private List<PageInfoResponse.mainPageDTO.GroupDTO> getLoginUnOfficialGroupList(List<Long> myGroupIdList) {
+        return groupRepository.findAllUnOfficialOpenGroup().stream()
+                .map(PageInfoResponse.mainPageDTO.GroupDTO::new)
+                .filter(tempGroup -> !myGroupIdList.contains(tempGroup.getGroupId()))
+                .limit(8)
+                .toList();
+    }
 
     public GroupMember checkGroupMember(Long memberId, Long groupId){
 

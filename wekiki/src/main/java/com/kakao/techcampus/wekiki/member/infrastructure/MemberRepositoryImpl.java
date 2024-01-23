@@ -25,8 +25,8 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void save(Member member) {
-        memberJPARepository.save(MemberEntity.fromModel(member));
+    public Member save(Member member) {
+        return memberJPARepository.save(MemberEntity.fromModel(member)).toModel();
     }
 
     @Override

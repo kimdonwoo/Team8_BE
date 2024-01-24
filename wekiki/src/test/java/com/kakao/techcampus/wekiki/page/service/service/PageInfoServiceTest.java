@@ -228,7 +228,7 @@ public class PageInfoServiceTest {
      * 2. getPageIndex는_해당_그룹을_이미_탈퇴한_회원은_페이지인덱스_조회가_불가능하다()
      * 3. getPageIndex는_존재하지않는_페이지에_대해_페이지인덱스_조회가_불가능하다()
      * 4. getPageIndex는_해당_회원이_가입한적없는_회원이면_페이지인덱스_조회가_불가능하다()
-     * 5. getPageIndex는_Post가_없는_Page요청에_대해서는_빈Post를_반환합니다()
+     * 5. getPageIndex는_Post가_없는_Page요청에_대해서는_빈_Post를_반환합니다()
      *
      * - getPageFromId
      * 6. getPageFromId는_모든_조건을_만족하는_회원은_페이지_조회가_가능하다()
@@ -276,15 +276,16 @@ public class PageInfoServiceTest {
      * 36. getRecentPage는_Page가_10개_이상있을때_10개의_최근변경페이지를_반환한다()
      *
      * - getPageFromTitle
-     * 37.
-     * 38.
-     * 39.
-     * 40.
-     * 41.
-     *
+     * 37. getPageFromTitle는_모든_조건을_만족하는_회원은_제목으로_페이지조회가_가능하다()
+     * 38. getPageFromTitle는_해당_그룹을_이미_탈퇴한_회원은_제목으로_페이지조회가_불가능하다()
+     * 39. getPageFromTitle는_해당_회원이_가입한적없는_회원이면_제목으로_페이지조회가_불가능하다()
+     * 40. getPageFromTitle는_존재하지않는_페이지에_대해_제목으로_페이지조회가_불가능하다()
+     * 41. getPageFromTitle는_Post가_없는_페이지에_대해_제목으로_페이지조회는_빈_Post를_반환합니다()
      *
      * - getPageLink
-     *
+     * 42. getPageLink는_존재하는_페이지에_대해_페이지의_링크조회가_가능하다()
+     * 43. getPageLink는_존재하지않는_페이지에_대해_페이지의_링크_조회가_불가능하다()
+     * 44. getPageLink는_존재하지않는_그룹에_대해_페이지의_링크_조회가_불가능하다()
      */
 
 
@@ -914,6 +915,144 @@ public class PageInfoServiceTest {
         assertThat(result.getRecentPage().get(7).getPageId()).isEqualTo(10);
         assertThat(result.getRecentPage().get(8).getPageId()).isEqualTo(9);
         assertThat(result.getRecentPage().get(9).getPageId()).isEqualTo(8);
+    }
+
+    @Test
+    void getPageFromTitle는_모든_조건을_만족하는_회원은_제목으로_페이지조회가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "Test Page";
+
+        //when
+        PageInfoResponse.getPageFromIdDTO result = pageService.getPageFromTitle(memberId, groupId, title);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(1L);
+        assertThat(result.getPageName()).isEqualTo("Test Page");
+        assertThat(result.getPostList().get(0).getPostId()).isEqualTo(1L);
+        assertThat(result.getPostList().get(0).getPostTitle()).isEqualTo("1. Test Post");
+        assertThat(result.getPostList().get(0).getIndex()).isEqualTo("1");
+        assertThat(result.getPostList().get(0).getContent()).isEqualTo("해당 포스트는 테스트용 포스트1입니다.");
+
+        assertThat(result.getPostList().get(1).getPostId()).isEqualTo(2L);
+        assertThat(result.getPostList().get(1).getPostTitle()).isEqualTo("2. Test Post");
+        assertThat(result.getPostList().get(1).getIndex()).isEqualTo("2");
+        assertThat(result.getPostList().get(1).getContent()).isEqualTo("해당 포스트는 테스트용 포스트2입니다.");
+
+        assertThat(result.getPostList().get(2).getPostId()).isEqualTo(3L);
+        assertThat(result.getPostList().get(2).getPostTitle()).isEqualTo("2-1. Test Post");
+        assertThat(result.getPostList().get(2).getIndex()).isEqualTo("2.1");
+        assertThat(result.getPostList().get(2).getContent()).isEqualTo("해당 포스트는 테스트용 포스트3입니다.");
+
+        assertThat(result.getPostList().get(3).getPostId()).isEqualTo(4L);
+        assertThat(result.getPostList().get(3).getPostTitle()).isEqualTo("2-2. Test Post");
+        assertThat(result.getPostList().get(3).getIndex()).isEqualTo("2.2");
+        assertThat(result.getPostList().get(3).getContent()).isEqualTo("해당 포스트는 테스트용 포스트4입니다.");
+
+        assertThat(result.getPostList().get(4).getPostId()).isEqualTo(5L);
+        assertThat(result.getPostList().get(4).getPostTitle()).isEqualTo("3. Test Post");
+        assertThat(result.getPostList().get(4).getIndex()).isEqualTo("3");
+        assertThat(result.getPostList().get(4).getContent()).isEqualTo("해당 포스트는 테스트용 포스트5입니다.");
+
+    }
+
+    @Test
+    void getPageFromTitle는_해당_그룹을_이미_탈퇴한_회원은_제목으로_페이지조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 2L;
+        String title = "Test Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getPageFromTitle(memberId,groupId,title);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+    }
+    @Test
+    void getPageFromTitle는_해당_회원이_가입한적없는_회원이면_제목으로_페이지조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 3L;
+        String title = "Test Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getPageFromTitle(memberId,groupId,title);
+        }).isInstanceOf(Exception404.class).hasMessage("해당 그룹에 속한 회원이 아닙니다.");
+
+    }
+    @Test
+    void getPageFromTitle는_존재하지않는_페이지에_대해_제목으로_페이지조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "Null Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getPageFromTitle(memberId,groupId,title);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
+    }
+
+    @Test
+    void getPageFromTitle는_Post가_없는_페이지에_대해_제목으로_페이지조회는_빈_Post를_반환합니다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "Test Page2";
+
+        //when
+        PageInfoResponse.getPageFromIdDTO result = pageService.getPageFromTitle(memberId, groupId, title);
+
+        //then
+        assertThat(result.getPageName()).isEqualTo("Test Page2");
+        assertThat(result.getPostList()).isEmpty();
+
+    }
+
+    @Test
+    void getPageLink는_존재하는_페이지에_대해_페이지의_링크조회가_가능하다(){
+        //given
+        Long groupId = 1L;
+        Long memberId = 1L;
+        String title = "Link Test Page";
+        pageService.createPage(title, groupId, memberId);
+
+        //when
+        PageInfoResponse.getPageLinkDTO result = pageService.getPageLink(groupId, title);
+
+        //then
+        assertThat(result.getPageId()).isEqualTo(3L);
+    }
+
+    @Test
+    void getPageLink는_존재하지않는_페이지에_대해_페이지의_링크_조회가_불가능하다(){
+        //given
+        Long groupId = 1L;
+        String title = "Null Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getPageLink(groupId, title);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
+    }
+
+    @Test
+    void getPageLink는_존재하지않는_그룹에_대해_페이지의_링크_조회가_불가능하다(){
+        //given
+        Long groupId = 100L;
+        String title = "Null Page";
+
+        //when
+        //then
+        assertThatThrownBy(()-> {
+            pageService.getPageLink(groupId, title);
+        }).isInstanceOf(Exception404.class).hasMessage("존재하지 않는 페이지 입니다.");
     }
 
 }

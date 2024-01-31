@@ -15,6 +15,7 @@ import com.kakao.techcampus.wekiki.post.domain.Post;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import com.kakao.techcampus.wekiki.report.domain.Report;
 import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Builder
 public class PostService {
 
     private final PageRepository pageRepository;
@@ -46,8 +48,7 @@ public class PostService {
 
         // 2. pageId로 PageInfo 객체 들고오기
         PageInfo pageInfo = checkPageFromPageId(request.getPageId());
-        pageInfo.updatePage();
-        pageRepository.save(pageInfo);
+        pageRepository.save(pageInfo.updatePage());
 
         // 3. parentPostId로 parentPost 가져오기
         Post parent = null;
@@ -57,17 +58,18 @@ public class PostService {
         }
 
         // 4. 같은 pageId를 가진 Post들 중에 입력받은 order보다 높은 모든 Post들의 order를 1씩 증가
-        postRepository.findPostsByPageIdAndOrderGreaterThan(request.getParentPostId(), request.getOrder()).stream().forEach(p -> p.plusOrder());
+        //postRepository.findPostsByPageIdAndOrderGreaterThan(request.getParentPostId(), request.getOrder()).stream().forEach(p -> p.plusOrder());
+        postRepository.findPostsByPageIdAndOrderGreaterThan(request.getParentPostId(), request.getOrder()).stream().map(post -> post.plusOrder()).map(postRepository::save);
 
         // 5. Post 엔티티 생성하고 저장하기
-        Post savedpost = postRepository.save(Post.from(request,parent, activeGroupMember,pageInfo));
+        Post savedPost = postRepository.save(Post.from(request,parent, activeGroupMember,pageInfo));
 
         // 6. 히스토리 생성
-        historyRepository.save(History.from(savedpost, activeGroupMember));
+        historyRepository.save(History.from(savedPost, activeGroupMember));
 
         // 7. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹의 "  + request.getPageId() + " 페이지에 "+ request.getTitle()+" 포스트를 생성하였습니다.");
-        return new PostResponse.createPostDTO(savedpost);
+        return new PostResponse.createPostDTO(savedPost);
     }
 
     @Transactional
@@ -80,7 +82,7 @@ public class PostService {
         Post post = checkPostFromPostIdWithPage(postId);
 
         // 3. page 최근 수정 시간 바꾸기
-        post.getPageInfo().updatePage(); // TODO : 저장 흠.............................
+        pageRepository.save(post.getPageInfo().updatePage());
 
         // 4. 현재 Post랑 내용 같은지 확인
         if(post.getTitle().equals(title) && post.getContent().equals(content)){
@@ -93,7 +95,7 @@ public class PostService {
 
         // 6. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ title+" 포스트를 수정하였습니다.");
-        return new PostResponse.modifyPostDTO(post);
+        return new PostResponse.modifyPostDTO(updatedPost);
     }
 
     @Transactional
@@ -136,8 +138,8 @@ public class PostService {
         postRepository.deleteById(postId);
 
         // 5. order값 앞으로 땡기기
-        postRepository.findPostsByPageIdAndOrderGreaterThan(post.getPageInfo().getId(), post.getOrders())
-                .stream().forEach(p -> p.minusOrder());
+        //postRepository.findPostsByPageIdAndOrderGreaterThan(post.getPageInfo().getId(), post.getOrders()).stream().forEach(p -> p.minusOrder());
+        postRepository.findPostsByPageIdAndOrderGreaterThan(post.getPageInfo().getId(), post.getOrders()).stream().map(p -> p.minusOrder()).map(postRepository::save);
 
         // 6. return DTO;
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ postId +" 포스트를 삭제합니다.");

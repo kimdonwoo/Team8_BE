@@ -1,7 +1,9 @@
 package com.kakao.techcampus.wekiki.mock;
 
+import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.comment.infrastructure.CommentEntity;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
+import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.infrastructure.HistoryEntity;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.domain.Post;
@@ -29,12 +31,14 @@ public class FakePostRepository implements PostRepository {
                     .orders(post.getOrders())
                     .groupMember(post.getGroupMember())
                     .pageInfo(post.getPageInfo())
-                    //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
-                    //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
+                    .historys(new ArrayList<History>())
+                    .comments(new ArrayList<Comment>())
                     .title(post.getTitle())
                     .content(post.getContent())
                     .created_at(post.getCreated_at())
                     .build();
+            newPost.getPageInfo().getPosts().add(newPost);
+
             data.add(newPost);
             return newPost;
         }else{
@@ -63,7 +67,14 @@ public class FakePostRepository implements PostRepository {
 
     @Override
     public boolean existsByParentId(Long parentId) {
-        if(data.stream().filter(item -> item.getParent().getId().equals(parentId)).findFirst().isPresent()) return true;
+        if(data.stream().anyMatch(item -> {
+            Post p = item.getParent();
+            if(p != null){
+                if(p.getId().equals(parentId)) return true;
+            }
+            return false;
+        })) return true;
+
         return false;
     }
 

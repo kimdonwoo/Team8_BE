@@ -4,12 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 public class PostRequest {
     @Getter
     @Setter
+    @Builder
     public static class createPostDTO {
 
         @Positive(message = "유효하지 않은 pageID입니다.")

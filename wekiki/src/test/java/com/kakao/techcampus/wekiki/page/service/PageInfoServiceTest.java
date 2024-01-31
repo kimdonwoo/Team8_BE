@@ -1,4 +1,4 @@
-package com.kakao.techcampus.wekiki.page.service.service;
+package com.kakao.techcampus.wekiki.page.service;
 
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
@@ -55,8 +55,8 @@ public class PageInfoServiceTest {
                 .redisUtils(fakeRedisUtils)
                 .build();
 
-        // 회원 2명, 그룹 1개, 그룹멤버 2개(둘다 가입되어 있는 상황)
-        // 페이지 1개, 포스트 5개
+        // 회원 3명 그룹 1개 그룹 멤버 2개
+        // 페이지 2개, 포스트 5개
 
         Member member1 = Member.builder()
                 .name("TestMember1")
@@ -211,12 +211,6 @@ public class PageInfoServiceTest {
                 .build();
 
         Post savedPost3 = fakePostRepository.save(post3);
-
-        fakePageInfoRepository.addPost(savedPageInfo1,savedPost1);
-        fakePageInfoRepository.addPost(savedPageInfo1,savedPost2);
-        fakePageInfoRepository.addPost(savedPageInfo1,savedPost21);
-        fakePageInfoRepository.addPost(savedPageInfo1,savedPost22);
-        fakePageInfoRepository.addPost(savedPageInfo1,savedPost3);
 
     }
 

@@ -8,6 +8,7 @@ import lombok.Getter;
 
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 public class History {
@@ -37,5 +38,18 @@ public class History {
                 .content(post.getContent())
                 .created_at(post.getCreated_at())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        History history = (History) o;
+        return Objects.equals(id, history.id) && Objects.equals(groupMember, history.groupMember) && Objects.equals(post, history.post) && Objects.equals(title, history.title) && Objects.equals(content, history.content) && Objects.equals(created_at, history.created_at);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, groupMember, post, title, content, created_at);
     }
 }

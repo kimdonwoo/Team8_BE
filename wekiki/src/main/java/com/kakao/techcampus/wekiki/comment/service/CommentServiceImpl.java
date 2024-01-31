@@ -2,6 +2,10 @@ package com.kakao.techcampus.wekiki.comment.service;
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentCreateService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentDeleteService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentReadService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentUpdateService;
 import com.kakao.techcampus.wekiki.comment.controller.response.CommentResponse;
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.comment.service.port.CommentRepository;
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Builder
-public class CommentService {
+public class CommentServiceImpl implements CommentReadService, CommentUpdateService, CommentDeleteService, CommentCreateService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final GroupMemberRepository groupMemberRepository;

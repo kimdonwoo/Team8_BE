@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.*;
 
 public class CommentServiceTest {
 
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
     private final LocalDateTime testTime = LocalDateTime.now();
     private FakeCommentRepository fakeCommentRepository;
     private FakeGroupMemberRepository fakeGroupMemberRepository;
@@ -39,7 +39,7 @@ public class CommentServiceTest {
         fakePostRepository = new FakePostRepository();
         fakePageInfoRepository = new FakePageInfoRepository();
 
-        this.commentService = CommentService.builder()
+        this.commentService = CommentServiceImpl.builder()
                 .commentRepository(fakeCommentRepository)
                 .postRepository(fakePostRepository)
                 .groupMemberRepository(fakeGroupMemberRepository)

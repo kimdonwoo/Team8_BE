@@ -118,8 +118,8 @@ public class FakePageInfoRepository implements PageRepository {
     }
 
     @Override
-    public void saveAndFlush(PageInfo page) {
-
+    public PageInfo saveAndFlush(PageInfo page) {
+        return null;
     }
 
     @Override

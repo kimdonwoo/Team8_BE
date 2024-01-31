@@ -1,6 +1,6 @@
 package com.kakao.techcampus.wekiki._core.facade;
 
-import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
+import com.kakao.techcampus.wekiki.page.service.PageConcurrencyService;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class NamedLockFacade {
+public class NamedLockFacadeTest {
 
-    private final PageService pageService;
+    private final PageConcurrencyService pageConcurrencyService;
     private final PageRepository pageRepository;
 
 
@@ -18,7 +18,7 @@ public class NamedLockFacade {
     public void likePageWithNamedLock(Long pageId) {
         try {
             pageRepository.getLock(pageId.toString());
-            pageService.likePageWithNamedLockAndLettuceLock(pageId);
+            pageConcurrencyService.likePageWithNamedLockAndLettuceLock(pageId);
         } finally {
             pageRepository.releaseLock(pageId.toString());
         }

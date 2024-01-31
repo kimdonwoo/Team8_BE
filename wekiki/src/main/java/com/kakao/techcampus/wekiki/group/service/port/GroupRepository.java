@@ -19,7 +19,7 @@ public interface GroupRepository {
 
     Optional<Group> findById(Long groupId);
 
-    void save(Group group);
+    Group save(Group group);
 
     void delete(Group group);
 }

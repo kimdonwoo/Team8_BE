@@ -158,7 +158,8 @@ public class PageService {
         return new PageInfoResponse.createPageDTO(savedPageInfo);
     }
 
-    @Transactional
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PageInfoResponse.likePageDTO likePage(Long pageId , Long groupId, Long memberId){
 
         // 1. 존재하는 Member, Group, GroupMember 인지 fetch join으로 하나의 쿼리로 확인
@@ -281,41 +282,6 @@ public class PageService {
             // 2. return DTO
             return new PageInfoResponse.getPageLinkDTO(Long.valueOf(value));
         }
-    }
-
-    @Transactional
-    public void likePageTest(Long pageId){
-        PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
-        page.plusGoodCount();
-        pageRepository.saveAndFlush(page);
-    }
-
-    public synchronized void likePageWithSynchronized(Long pageId){
-        PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
-        page.plusGoodCount();
-        pageRepository.saveAndFlush(page);
-    }
-
-    @Transactional
-    public void likePageWithPessimisticLock(Long pageId){
-        PageInfo page = pageRepository.findByIdWithPessimisticLock(pageId);
-        page.plusGoodCount();
-        pageRepository.saveAndFlush(page);
-    }
-
-    @Transactional
-    public void likePageWithOptimisticLock(Long pageId){
-        PageInfo page = pageRepository.findByIdWithOptimisticLock(pageId);
-        page.plusGoodCount();
-        pageRepository.save(page);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void likePageWithNamedLockAndLettuceLock(Long pageId){
-        PageInfo page = pageRepository.findById(pageId).orElseThrow(
-                () -> new Exception404("존재하지 않는 페이지 입니다."));
-        page.plusGoodCount();
-        pageRepository.saveAndFlush(page);
     }
 
 

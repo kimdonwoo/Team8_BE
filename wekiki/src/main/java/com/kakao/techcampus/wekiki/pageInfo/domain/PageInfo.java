@@ -87,4 +87,16 @@ public class PageInfo {
                 .build();
     }
 
+    @Override
+    public String toString() {
+        return "PageInfo{" +
+                "id=" + id +
+                ", pageName='" + pageName + '\'' +
+                ", goodCount=" + goodCount +
+                ", badCount=" + badCount +
+                ", viewCount=" + viewCount +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                '}';
+    }
 }

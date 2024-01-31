@@ -66,7 +66,7 @@ public class FakeGroupRepository implements GroupRepository {
 
     // TODO : 이게 맞나 ?
     @Override
-    public void save(Group group) {
+    public Group save(Group group) {
         if(group.getId() == null || group.getId() == 0){
             if (group instanceof OfficialGroup) {
                 // OfficialGroup 타입일 때의 처리
@@ -79,6 +79,7 @@ public class FakeGroupRepository implements GroupRepository {
                         .created_at(group.getCreated_at())
                         .build();
                 data.add(officialGroup);
+                return officialGroup;
             } else if (group instanceof UnOfficialClosedGroup) {
                 // UnOfficialClosedGroup 타입일 때의 처리
                 UnOfficialClosedGroup unOfficialClosedGroup = UnOfficialClosedGroup.unOfficialClosedGroupBuilder()
@@ -90,6 +91,7 @@ public class FakeGroupRepository implements GroupRepository {
                         .created_at(group.getCreated_at())
                         .build();
                 data.add(unOfficialClosedGroup);
+                return unOfficialClosedGroup;
             } else if (group instanceof UnOfficialOpenedGroup) {
                 // UnOfficialOpenedGroup 타입일 때의 처리
                 UnOfficialOpenedGroup unOfficialOpenedGroup = UnOfficialOpenedGroup.unOfficialOpenedGroupBuilder()
@@ -104,12 +106,15 @@ public class FakeGroupRepository implements GroupRepository {
                         .entrancePassword(((UnOfficialOpenedGroup) group).getEntranceHint())
                         .build();
                 data.add(unOfficialOpenedGroup);
+                return unOfficialOpenedGroup;
             }
         }else{
             // 아니면 update
             data.removeIf(item -> Objects.equals(item.getId(), group.getId()));
             data.add(group);
+            return group;
         }
+        return group;
     }
 
     @Override

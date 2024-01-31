@@ -2,16 +2,17 @@ package com.kakao.techcampus.wekiki._core.facade;
 
 import com.kakao.techcampus.wekiki.page.service.PageConcurrencyService;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@RequiredArgsConstructor
 public class NamedLockFacadeTest {
 
-    private final PageConcurrencyService pageConcurrencyService;
-    private final PageRepository pageRepository;
+    @Autowired
+    private PageConcurrencyService pageConcurrencyService;
+    @Autowired
+    private PageRepository pageRepository;
 
 
     @Transactional

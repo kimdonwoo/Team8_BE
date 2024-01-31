@@ -1,24 +1,24 @@
 package com.kakao.techcampus.wekiki._core.facade;
 
 
-import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
+import com.kakao.techcampus.wekiki.page.service.PageConcurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OptimisticLockFacade {
+public class OptimisticLockFacadeTest {
 
-    private final PageService pageService;
+    private final PageConcurrencyService pageConcurrencyService;
 
     public void likePageWithOptimisticLock(Long pageId) throws InterruptedException {
         while (true) {
             try {
-                pageService.likePageWithOptimisticLock(pageId);
+                pageConcurrencyService.likePageWithOptimisticLock(pageId);
 
                 break;
             } catch (Exception e) {
-                Thread.sleep(50);
+                Thread.sleep(500);
             }
         }
     }

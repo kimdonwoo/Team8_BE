@@ -50,8 +50,8 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
-    public void save(Group group) {
-        groupJPARepository.save(GroupEntity.fromModel(group));
+    public Group save(Group group) {
+        return groupJPARepository.save(GroupEntity.fromModel(group)).toModel();
     }
 
     @Override

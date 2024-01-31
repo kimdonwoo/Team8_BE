@@ -50,7 +50,8 @@ public class FakeGroupMemberRepository implements GroupMemberRepository {
 
     @Override
     public Optional<GroupMember> findGroupMemberByMemberIdAndGroupIdFetchJoin(Long memberId, Long groupId) {
-        return data.stream().filter(item->item.getMember().getId().equals(memberId) && item.getGroup().getId().equals(groupId)).findFirst();
+        return data.stream().filter(item->item.getMember().getId().equals(memberId))
+                .filter(item -> item.getGroup().getId().equals(groupId)).findFirst();
     }
 
     @Override

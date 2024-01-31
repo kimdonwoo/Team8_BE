@@ -21,7 +21,7 @@ public interface PageRepository {
     List<PageInfo> findAllByGroupId(Long groupId);
     PageInfo save(PageInfo newPageInfo);
     void deleteById(Long pageId);
-    void saveAndFlush(PageInfo page);
+    PageInfo saveAndFlush(PageInfo page);
     Optional<PageInfo> findById(Long pageId);
     void deleteAll();
     void deletePageInfos(List<PageInfo> pageInfos);

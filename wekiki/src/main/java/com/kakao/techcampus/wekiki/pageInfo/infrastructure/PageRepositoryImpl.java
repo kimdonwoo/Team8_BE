@@ -91,14 +91,15 @@ public class PageRepositoryImpl implements PageRepository {
     }
 
     @Override
-    public void saveAndFlush(PageInfo pageInfo) {
-        pageJPARepository.saveAndFlush(PageInfoEntity.fromModel(pageInfo));
+    public PageInfo saveAndFlush(PageInfo pageInfo) {
+        return pageJPARepository.saveAndFlush(PageInfoEntity.fromModelWithId(pageInfo)).toModel();
     }
 
     @Override
     public Optional<PageInfo> findById(Long pageId) {
         //PageInfo pageInfo = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
-        return pageJPARepository.findById(pageId).map(PageInfoEntity::toModel);
+        Optional<PageInfo> temp = pageJPARepository.findById(pageId).map(PageInfoEntity::toModel);
+        return temp;
     }
 
     @Override

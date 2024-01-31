@@ -42,11 +42,12 @@ public class GroupEntity {
     }
 
     public Group toModel(){
+        System.out.println("@@@@@@@");
         return Group.builder()
                 .id(this.id)
                 .groupName(this.groupName)
                 .groupProfileImage(this.groupProfileImage)
-                .groupMembers(this.groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                //.groupMembers(this.groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
                 .memberCount(this.memberCount)
                 .created_at(this.created_at)
                 .build();
@@ -57,7 +58,7 @@ public class GroupEntity {
                 .id(group.getId())
                 .groupName(group.getGroupName())
                 .groupProfileImage(group.getGroupProfileImage())
-                .groupMemberEntities(group.getGroupMembers().stream().map(GroupMemberEntity::fromModel).toList())
+                //.groupMemberEntities(group.getGroupMembers().stream().map(GroupMemberEntity::fromModel).toList())
                 .memberCount(group.getMemberCount())
                 .created_at(group.getCreated_at())
                 .build();
@@ -70,7 +71,14 @@ public class GroupEntity {
         this.memberCount++;
     }
 
-    public void minusMemberCount() {
-        this.memberCount--;
+    @Override
+    public String toString() {
+        return "GroupEntity{" +
+                "id=" + id +
+                ", groupName='" + groupName + '\'' +
+                ", groupProfileImage='" + groupProfileImage + '\'' +
+                ", memberCount=" + memberCount +
+                ", created_at=" + created_at +
+                '}';
     }
 }

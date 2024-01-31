@@ -1,6 +1,7 @@
 package com.kakao.techcampus.wekiki.pageInfo.controller;
 
 
+import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
 import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.request.PageInfoRequest;
@@ -23,6 +24,7 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 public class PageRestController {
 
     private final PageService pageService;
+    private final RedissonLockFacade redissonLockFacade;
 
     // 페이지 ID로 페이지 + 글 조회
     @GetMapping("/{pageid}")
@@ -60,7 +62,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.likePageDTO>> likePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.likePageDTO response = pageService.likePage(pageid, groupid, currentMember());
+        PageInfoResponse.likePageDTO response = redissonLockFacade.likePageWithRedissonLock(pageid, groupid, currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

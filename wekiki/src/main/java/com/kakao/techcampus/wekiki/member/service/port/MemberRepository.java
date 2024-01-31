@@ -9,7 +9,7 @@ public interface MemberRepository {
 
     Optional<Member> findByEmail(String email);
 
-    void save(Member member);
+    Member save(Member member);
 
     void deleteModify(Member member);
 }

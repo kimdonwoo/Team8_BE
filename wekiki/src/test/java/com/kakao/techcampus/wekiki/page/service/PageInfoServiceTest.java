@@ -11,7 +11,7 @@ import com.kakao.techcampus.wekiki.mock.*;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageIndexGeneratorImpl;
-import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PageInfoServiceTest {
 
-    private PageService pageService;
+    private PageServiceImpl pageService;
     private final LocalDateTime testTime = LocalDateTime.now();
     private FakeRedisUtils fakeRedisUtils;
     private PageIndexGeneratorImpl pageIndexGeneratorImpl;
@@ -45,7 +45,7 @@ public class PageInfoServiceTest {
         fakeGroupRepository = new FakeGroupRepository();
         fakeRedisUtils = new FakeRedisUtils();
 
-        pageService = PageService.builder()
+        pageService = PageServiceImpl.builder()
                 .pageRepository(fakePageInfoRepository)
                 .pageIndexGenerator(pageIndexGeneratorImpl)
                 .groupRepository(fakeGroupRepository)

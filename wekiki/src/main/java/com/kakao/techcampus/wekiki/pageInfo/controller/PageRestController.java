@@ -3,7 +3,11 @@ package com.kakao.techcampus.wekiki.pageInfo.controller;
 
 import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
-import com.kakao.techcampus.wekiki.pageInfo.service.PageService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoCreateService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoDeleteService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoReadService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import com.kakao.techcampus.wekiki.pageInfo.controller.request.PageInfoRequest;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
 import jakarta.validation.Valid;
@@ -23,7 +27,10 @@ import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMembe
 @Validated
 public class PageRestController {
 
-    private final PageService pageService;
+    private final PageInfoCreateService pageInfoCreateService;
+    private final PageInfoDeleteService pageInfoDeleteService;
+    private final PageInfoReadService pageInfoReadService;
+    private final PageInfoUpdateService pageInfoUpdateService;
     private final RedissonLockFacade redissonLockFacade;
 
     // 페이지 ID로 페이지 + 글 조회
@@ -31,7 +38,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.getPageFromIdDTO>> getPageFromId(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                                @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.getPageFromIdDTO response = pageService.getPageFromId(currentMember(), groupid, pageid);
+        PageInfoResponse.getPageFromIdDTO response = pageInfoReadService.getPageFromId(currentMember(), groupid, pageid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -42,7 +49,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.createPageDTO>> createPage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                          @Valid @RequestBody PageInfoRequest.createPageDTO request) {
 
-        PageInfoResponse.createPageDTO response = pageService.createPage(request.getPageName(), groupid, currentMember());
+        PageInfoResponse.createPageDTO response = pageInfoCreateService.createPage(request.getPageName(), groupid, currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -52,7 +59,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.deletePageDTO>> deletePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                          @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.deletePageDTO response = pageService.deletePage(currentMember(), groupid, pageid);
+        PageInfoResponse.deletePageDTO response = pageInfoDeleteService.deletePage(currentMember(), groupid, pageid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -72,7 +79,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.hatePageDTO>> hatePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.hatePageDTO response = pageService.hatePage(pageid, groupid, currentMember());
+        PageInfoResponse.hatePageDTO response = pageInfoUpdateService.hatePage(pageid, groupid, currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -82,7 +89,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.getPageIndexDTO>> getPageIndex(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                              @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.getPageIndexDTO response = pageService.getPageIndex(groupid,currentMember(), pageid);
+        PageInfoResponse.getPageIndexDTO response = pageInfoReadService.getPageIndex(groupid,currentMember(), pageid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -94,7 +101,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.getPageFromIdDTO>> getPageFromTitle(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                                   @NotBlank(message = "페이지명을 입력해주세요.") @Size(max=200, message = "페이지명은 최대 200자까지 가능합니다.") @RequestParam(value = "title") String title) {
 
-        PageInfoResponse.getPageFromIdDTO response = pageService.getPageFromTitle(currentMember(), groupid,title);
+        PageInfoResponse.getPageFromIdDTO response = pageInfoReadService.getPageFromTitle(currentMember(), groupid,title);
 
         return ResponseEntity.ok(ApiUtils.success(response));
 
@@ -106,7 +113,7 @@ public class PageRestController {
                                                                                          @Size(max=10, message = "키워드는 최대 10자까지 가능합니다.") @RequestParam(value = "keyword" , defaultValue = "") String keyword,
                                                                                          @RequestParam(value = "page", defaultValue = "1") int page) {
 
-        PageInfoResponse.searchPageDTO response = pageService.searchPage(groupid, currentMember(),page - 1, keyword);
+        PageInfoResponse.searchPageDTO response = pageInfoReadService.searchPage(groupid, currentMember(),page - 1, keyword);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -115,7 +122,7 @@ public class PageRestController {
     @GetMapping("/recent")
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.getRecentPageDTO>> getRecentPage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid){
 
-        PageInfoResponse.getRecentPageDTO response = pageService.getRecentPage(currentMember(), groupid);
+        PageInfoResponse.getRecentPageDTO response = pageInfoReadService.getRecentPage(currentMember(), groupid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -125,7 +132,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.getPageLinkDTO>> getPageLink(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                            @Size(max=200, message = "페이지명은 최대 200자까지 가능합니다.") @RequestParam(value = "title") String title){
 
-        PageInfoResponse.getPageLinkDTO response = pageService.getPageLink(groupid, title);
+        PageInfoResponse.getPageLinkDTO response = pageInfoReadService.getPageLink(groupid, title);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

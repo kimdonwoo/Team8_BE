@@ -9,6 +9,10 @@ import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
+import com.kakao.techcampus.wekiki.post.controller.port.PostCreateService;
+import com.kakao.techcampus.wekiki.post.controller.port.PostDeleteService;
+import com.kakao.techcampus.wekiki.post.controller.port.PostReadService;
+import com.kakao.techcampus.wekiki.post.controller.port.PostUpdateService;
 import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
@@ -31,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Builder
-public class PostService {
+public class PostServiceImpl implements PostReadService, PostCreateService, PostUpdateService, PostDeleteService {
 
     private final PageRepository pageRepository;
     private final PostRepository postRepository;
@@ -40,6 +44,7 @@ public class PostService {
     private final GroupMemberRepository groupMemberJPARepository;
     final int HISTORY_COUNT = 5;
 
+    @Override
     @Transactional
     public PostResponse.createPostDTO createPost(Long memberId, Long groupId, PostRequest.createPostDTO request){
 
@@ -72,6 +77,7 @@ public class PostService {
         return new PostResponse.createPostDTO(savedPost);
     }
 
+    @Override
     @Transactional
     public PostResponse.modifyPostDTO modifyPost(Long memberId , Long groupId, Long postId , String title, String content){
 
@@ -98,6 +104,7 @@ public class PostService {
         return new PostResponse.modifyPostDTO(updatedPost);
     }
 
+    @Override
     @Transactional
     public PostResponse.getPostHistoryDTO getPostHistory(Long memberId, Long groupId, Long postId , int pageNo){
 
@@ -119,6 +126,7 @@ public class PostService {
 
     }
 
+    @Override
     @Transactional
     public PostResponse.deletePostDTO deletePost(Long memberId, Long groupId, Long postId){
 
@@ -147,6 +155,7 @@ public class PostService {
 
     }
 
+    @Override
     @Transactional
     public PostResponse.createReportDTO createReport(Long memberId, Long groupId, Long postId , String content){
 

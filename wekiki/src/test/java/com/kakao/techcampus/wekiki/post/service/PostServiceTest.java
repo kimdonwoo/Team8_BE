@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PostServiceTest {
 
-    private PostService postService;
+    private PostServiceImpl postService;
     private FakePageInfoRepository fakePageInfoRepository;
     private FakePostRepository fakePostRepository;
     private FakeHistoryRepository fakeHistoryRepository;
@@ -40,7 +40,7 @@ public class PostServiceTest {
         fakeReportRepository = new FakeReportRepository();
         fakeGroupMemberRepository = new FakeGroupMemberRepository();
 
-        postService = PostService.builder()
+        postService = PostServiceImpl.builder()
                 .pageRepository(fakePageInfoRepository)
                 .postRepository(fakePostRepository)
                 .historyRepository(fakeHistoryRepository)

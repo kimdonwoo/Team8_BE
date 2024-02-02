@@ -34,6 +34,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
     private final GroupMemberRepository groupMemberRepository;
     final int COMMENT_COUNT = 10;
 
+    @Override
     @Transactional
     public CommentResponse.getCommentDTO getComment(Long memberId, Long groupId, Long postId, int pageNo){
 
@@ -55,6 +56,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         return new CommentResponse.getCommentDTO(post,commentDTOs);
     }
 
+    @Override
     @Transactional
     public CommentResponse.createCommentDTO createComment(Long memberId, Long groupId, Long postId, String content){
 
@@ -73,6 +75,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         return new CommentResponse.createCommentDTO(savedComment, activeGroupMember.getNickName());
     }
 
+    @Override
     @Transactional
     public CommentResponse.updateCommentDTO updateComment(Long memberId, Long groupId, Long commentId, String updateContent){
 
@@ -100,6 +103,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         return new CommentResponse.updateCommentDTO(updatedComment);
     }
 
+    @Override
     @Transactional
     public CommentResponse.deleteCommentDTO deleteComment(Long memberId, Long groupId, Long commentId){
 
@@ -122,7 +126,6 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ commentId +" 댓글을 삭제합니다.");
         return response;
     }
-
 
 
     private GroupMember checkGroupMember(Long memberId, Long groupId){

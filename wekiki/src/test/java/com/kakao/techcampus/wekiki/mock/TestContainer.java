@@ -15,6 +15,7 @@ import com.kakao.techcampus.wekiki.group.domain.Group;
 import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
+import com.kakao.techcampus.wekiki.history.domain.History;
 import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
@@ -319,6 +320,102 @@ public class TestContainer {
                 .build();
 
         Post savedPost2 = postRepository.save(post2);
+
+        PageInfo pageInfo2 = PageInfo.builder()
+                .group(group)
+                .pageName("Test Page2")
+                //.posts(postEntities.stream().map(PostEntity::toModel).toList())
+                .goodCount(0)
+                .badCount(0)
+                .viewCount(0)
+                .created_at( testTime)
+                .updated_at( testTime)
+                .build();
+
+        PageInfo savedPageInfo2 = pageRepository.save(pageInfo2);
+        redisUtils.saveKeyAndHashValue("GROUP_"+savedPageInfo2.getGroup().getId(),savedPageInfo2.getPageName(), savedPageInfo2.getId().toString());
+
+
+
+    }
+
+    // PostController 테스트를 위한
+    // member, group , GroupMember, Page, Post 한개 씩 생성
+    public void testPostControllerSetting(){
+
+        Member member1 = Member.builder()
+                .id(1L)
+                .name("TestMember1")
+                .email("test1@naver.com")
+                .password("1111")
+                .created_at( testTime)
+                //.groupMembers(groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                .authority(Authority.user)
+                .build();
+
+        Group group = Group.builder()
+                .id(1L)
+                .groupName("TestGroup")
+                .groupProfileImage("s3/url")
+                //.groupMembers(this.groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                .memberCount(0)
+                .created_at( testTime)
+                .build();
+
+        GroupMember groupMember1 = GroupMember.builder()
+                .member(member1)
+                .group(group)
+                .nickName("TestMember1의 groupMember")
+                .memberLevel(0)
+                .created_at( testTime)
+                .activeStatus(true)
+                .build();
+
+        GroupMember savedGroupMember1 = groupMemberRepository.save(groupMember1);
+
+        PageInfo pageInfo = PageInfo.builder()
+                .group(group)
+                .pageName("Test Page")
+                //.posts(postEntities.stream().map(PostEntity::toModel).toList())
+                .goodCount(0)
+                .badCount(0)
+                .viewCount(0)
+                .created_at( testTime)
+                .updated_at( testTime)
+                .build();
+
+        PageInfo savedPageInfo1 = pageRepository.save(pageInfo);
+        redisUtils.saveKeyAndHashValue("GROUP_"+savedPageInfo1.getGroup().getId(),savedPageInfo1.getPageName(), savedPageInfo1.getId().toString());
+
+        Post post = Post.builder()
+                //.parent(parent.toModel())
+                .orders(0)
+                .groupMember(savedGroupMember1)
+                .pageInfo(savedPageInfo1)
+                //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
+                //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
+                .title("Test Post1")
+                .content("해당 포스트는 테스트용 포스트1입니다.")
+                .created_at( testTime)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+        historyRepository.save(History.from(savedPost, savedGroupMember1));
+
+        Post post2 = Post.builder()
+                //.parent(parent.toModel())
+                .orders(1)
+                .groupMember(savedGroupMember1)
+                .pageInfo(savedPageInfo1)
+                //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
+                //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
+                .title("Test Post2")
+                .content("해당 포스트는 테스트용 포스트2입니다.")
+                .created_at( testTime)
+                .build();
+
+        Post savedPost2 = postRepository.save(post2);
+        historyRepository.save(History.from(savedPost2, savedGroupMember1));
 
         PageInfo pageInfo2 = PageInfo.builder()
                 .group(group)

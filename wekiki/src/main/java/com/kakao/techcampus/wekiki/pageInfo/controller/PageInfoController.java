@@ -26,12 +26,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @Builder
-public class PageRestController {
+public class PageInfoController {
 
     private final PageInfoCreateService pageInfoCreateService;
     private final PageInfoDeleteService pageInfoDeleteService;
     private final PageInfoReadService pageInfoReadService;
-    private final PageInfoUpdateService pageInfoUpdateService;
     private final RedissonLockFacade redissonLockFacade;
     private final SecurityUtils securityUtils;
 
@@ -81,7 +80,7 @@ public class PageRestController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.hatePageDTO>> hatePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.hatePageDTO response = pageInfoUpdateService.hatePage(pageid, groupid, securityUtils.currentMember());
+        PageInfoResponse.hatePageDTO response = redissonLockFacade.hatePageWithRedissonLock(pageid, groupid, securityUtils.currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

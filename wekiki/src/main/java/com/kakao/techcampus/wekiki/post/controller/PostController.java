@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @Builder
-public class PostRestController {
+public class PostController {
 
     private final PostReadService postReadService;
     private final PostCreateService postCreateService;

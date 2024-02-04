@@ -1,5 +1,6 @@
 package com.kakao.techcampus.wekiki.mock;
 
+import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
 import com.kakao.techcampus.wekiki.comment.controller.CommentController;
@@ -18,7 +19,7 @@ import com.kakao.techcampus.wekiki.history.service.port.HistoryRepository;
 import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
-import com.kakao.techcampus.wekiki.pageInfo.controller.PageRestController;
+import com.kakao.techcampus.wekiki.pageInfo.controller.PageInfoController;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoCreateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoDeleteService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoReadService;
@@ -28,7 +29,7 @@ import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageIndexGeneratorImp
 import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
-import com.kakao.techcampus.wekiki.post.controller.PostRestController;
+import com.kakao.techcampus.wekiki.post.controller.PostController;
 import com.kakao.techcampus.wekiki.post.controller.port.PostCreateService;
 import com.kakao.techcampus.wekiki.post.controller.port.PostDeleteService;
 import com.kakao.techcampus.wekiki.post.controller.port.PostReadService;
@@ -38,6 +39,7 @@ import com.kakao.techcampus.wekiki.post.service.PostServiceImpl;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
 import lombok.Builder;
+import lombok.Getter;
 import org.redisson.api.RedissonClient;
 
 import java.time.LocalDateTime;
@@ -45,7 +47,7 @@ import java.time.LocalDateTime;
 
 public class TestContainer {
 
-    public final PageRestController pageRestController;
+    public final PageInfoController pageInfoController;
     public final PageInfoCreateService pageInfoCreateService;
     public final PageInfoDeleteService pageInfoDeleteService;
     public final PageInfoReadService pageInfoReadService;
@@ -59,10 +61,10 @@ public class TestContainer {
     public final GroupMemberRepository groupMemberRepository;
     public final GroupRepository groupRepository;
 
-    //public final RedissonLockFacade redissonLockFacade;
-    //private final RedissonClient redissonClient;
+    public final RedissonLockFacade redissonLockFacade;
+    public final RedissonClient redissonClient;
 
-    public final PostRestController postRestController;
+    public final PostController postRestController;
     public final PostReadService postReadService;
     public final PostCreateService postCreateService;
     public final PostUpdateService postUpdateService;
@@ -77,6 +79,7 @@ public class TestContainer {
     private final CommentDeleteService commentDeleteService;
 
     private final CommentRepository commentRepository;
+    @Getter
     private final LocalDateTime testTime = LocalDateTime.now();
 
     @Builder
@@ -92,6 +95,7 @@ public class TestContainer {
         this.reportRepository = new FakeReportRepository();
         this.commentRepository = new FakeCommentRepository();
         this.securityUtils = new FakeSecurityUtils();
+        this.redissonClient = new FakeRedissonClient();
 
         PageServiceImpl pageService = PageServiceImpl.builder()
                 .pageRepository(this.pageRepository)
@@ -130,14 +134,20 @@ public class TestContainer {
         this.commentUpdateService = commentService;
         this.commentDeleteService = commentService;
 
-        this.pageRestController = PageRestController.builder()
+        this.redissonLockFacade = RedissonLockFacade.builder()
+                .redissonClient(this.redissonClient)
+                .pageInfoUpdateService(this.pageInfoUpdateService)
+                .build();
+
+        this.pageInfoController = PageInfoController.builder()
                 .pageInfoCreateService(this.pageInfoCreateService)
                 .pageInfoDeleteService(this.pageInfoDeleteService)
                 .pageInfoReadService(this.pageInfoReadService)
-                .pageInfoUpdateService(this.pageInfoUpdateService)
+                .redissonLockFacade(this.redissonLockFacade)
+                //.pageInfoUpdateService(this.pageInfoUpdateService)
                 .securityUtils(this.securityUtils)
                 .build();
-        this.postRestController = PostRestController.builder()
+        this.postRestController = PostController.builder()
                 .postReadService(this.postReadService)
                 .postCreateService(this.postCreateService)
                 .postDeleteService(this.postDeleteService)
@@ -232,6 +242,98 @@ public class TestContainer {
                 .build();
 
         commentRepository.save(comment2);
+    }
+
+    // PageInfoController 테스트를 위한
+    // member, group , GroupMember, Page, Post 한개 씩 생성
+    public void testPageInfoControllerSetting(){
+
+        Member member1 = Member.builder()
+                .id(1L)
+                .name("TestMember1")
+                .email("test1@naver.com")
+                .password("1111")
+                .created_at( testTime)
+                //.groupMembers(groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                .authority(Authority.user)
+                .build();
+
+        Group group = Group.builder()
+                .id(1L)
+                .groupName("TestGroup")
+                .groupProfileImage("s3/url")
+                //.groupMembers(this.groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                .memberCount(0)
+                .created_at( testTime)
+                .build();
+
+        GroupMember groupMember1 = GroupMember.builder()
+                .member(member1)
+                .group(group)
+                .nickName("TestMember1의 groupMember")
+                .memberLevel(0)
+                .created_at( testTime)
+                .activeStatus(true)
+                .build();
+
+        GroupMember savedGroupMember1 = groupMemberRepository.save(groupMember1);
+
+        PageInfo pageInfo = PageInfo.builder()
+                .group(group)
+                .pageName("Test Page")
+                //.posts(postEntities.stream().map(PostEntity::toModel).toList())
+                .goodCount(0)
+                .badCount(0)
+                .viewCount(0)
+                .created_at( testTime)
+                .updated_at( testTime)
+                .build();
+
+        PageInfo savedPageInfo1 = pageRepository.save(pageInfo);
+        redisUtils.saveKeyAndHashValue("GROUP_"+savedPageInfo1.getGroup().getId(),savedPageInfo1.getPageName(), savedPageInfo1.getId().toString());
+
+        Post post = Post.builder()
+                //.parent(parent.toModel())
+                .orders(0)
+                .groupMember(savedGroupMember1)
+                .pageInfo(savedPageInfo1)
+                //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
+                //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
+                .title("Test Post1")
+                .content("해당 포스트는 테스트용 포스트1입니다.")
+                .created_at( testTime)
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        Post post2 = Post.builder()
+                //.parent(parent.toModel())
+                .orders(1)
+                .groupMember(savedGroupMember1)
+                .pageInfo(savedPageInfo1)
+                //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
+                //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
+                .title("Test Post2")
+                .content("해당 포스트는 테스트용 포스트2입니다.")
+                .created_at( testTime)
+                .build();
+
+        Post savedPost2 = postRepository.save(post2);
+
+        PageInfo pageInfo2 = PageInfo.builder()
+                .group(group)
+                .pageName("Test Page2")
+                //.posts(postEntities.stream().map(PostEntity::toModel).toList())
+                .goodCount(0)
+                .badCount(0)
+                .viewCount(0)
+                .created_at( testTime)
+                .updated_at( testTime)
+                .build();
+
+        PageInfo savedPageInfo2 = pageRepository.save(pageInfo2);
+        redisUtils.saveKeyAndHashValue("GROUP_"+savedPageInfo2.getGroup().getId(),savedPageInfo2.getPageName(), savedPageInfo2.getId().toString());
+
 
 
     }

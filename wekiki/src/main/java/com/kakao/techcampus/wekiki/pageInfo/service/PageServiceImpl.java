@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMember;
 
 @RequiredArgsConstructor
 @Service
@@ -298,7 +297,7 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
 
     @Override
     @Transactional
-    public PageInfoResponse.mainPageDTO getMainPage() {
+    public PageInfoResponse.mainPageDTO getMainPage(Long memberId) {
         if(SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
             // 로그인 안한 사람
             log.info("로그인하지 않은 사람의 메인 페이지 조회");
@@ -309,7 +308,7 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
         else {
             //로그인을 한 사람
             log.info("로그인을 한 사람의 메인 페이지 조회");
-            Optional<Member> member = memberRepository.findById(currentMember());
+            Optional<Member> member = memberRepository.findById(memberId);
             if(member.isEmpty()) {
                 log.error("회원이 존재하지 않습니다.");
                 throw new Exception400("없는 회원입니다.");

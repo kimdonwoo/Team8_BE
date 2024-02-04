@@ -2,6 +2,7 @@ package com.kakao.techcampus.wekiki.group.controller;
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
+import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
 import com.kakao.techcampus.wekiki.group.controller.request.GroupRequestDTO;
 import com.kakao.techcampus.wekiki.group.controller.response.GroupResponseDTO;
 import com.kakao.techcampus.wekiki.group.service.GroupService;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMember;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +21,7 @@ public class GroupRestController {
 
     private final GroupService groupService;
     private final InvitationService invitationService;
+    private final SecurityUtils securityUtils;
 
     /*
         공개, 비공개 그룹 생성
@@ -35,7 +36,7 @@ public class GroupRestController {
             throw new Exception400(result.getFieldError().getDefaultMessage());
         }
 
-        GroupResponseDTO.CreateUnOfficialGroupResponseDTO response = groupService.createUnOfficialGroup(requestDTO, currentMember());
+        GroupResponseDTO.CreateUnOfficialGroupResponseDTO response = groupService.createUnOfficialGroup(requestDTO, securityUtils.currentMember());
 
         return ResponseEntity.ok().body(ApiUtils.success(response));
     }
@@ -93,7 +94,7 @@ public class GroupRestController {
     @PostMapping("/{groupId}/entry")
     public ResponseEntity<?> groupEntry(@PathVariable("groupId") Long groupId, @RequestBody GroupRequestDTO.GroupEntryRequestDTO requestDTO) {
 
-        groupService.groupEntry(groupId, currentMember(), requestDTO);
+        groupService.groupEntry(groupId, securityUtils.currentMember(), requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -109,7 +110,7 @@ public class GroupRestController {
             throw new Exception400(result.getFieldError().getDefaultMessage());
         }
 
-        groupService.joinGroup(groupId, currentMember(), requestDTO);
+        groupService.joinGroup(groupId, securityUtils.currentMember(), requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -131,7 +132,7 @@ public class GroupRestController {
     @GetMapping("/invitation/{invitationLink}")
     public ResponseEntity<?> ValidateInvitation(@PathVariable String invitationLink) {
 
-        GroupResponseDTO.ValidateInvitationResponseDTO responseDTO = invitationService.validateInvitation(invitationLink, currentMember());
+        GroupResponseDTO.ValidateInvitationResponseDTO responseDTO = invitationService.validateInvitation(invitationLink, securityUtils.currentMember());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -141,7 +142,7 @@ public class GroupRestController {
      */
     @GetMapping("{groupId}/groupMembers")
     public ResponseEntity<?> getGroupMembers(@PathVariable("groupId") Long groupId) {
-        GroupResponseDTO.GetGroupMembersResponseDTO responseDTO = groupService.getGroupMembers(groupId, currentMember());
+        GroupResponseDTO.GetGroupMembersResponseDTO responseDTO = groupService.getGroupMembers(groupId, securityUtils.currentMember());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -155,7 +156,7 @@ public class GroupRestController {
     @GetMapping("/{groupId}/myInfo")
     public ResponseEntity<?> myGroupPage(@PathVariable("groupId") Long groupId) {
 
-        GroupResponseDTO.MyGroupInfoResponseDTO responseDTO = groupService.getMyGroupInfo(groupId, currentMember());
+        GroupResponseDTO.MyGroupInfoResponseDTO responseDTO = groupService.getMyGroupInfo(groupId, securityUtils.currentMember());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -171,7 +172,7 @@ public class GroupRestController {
             throw new Exception400(result.getFieldError().getDefaultMessage());
         }
 
-        groupService.updateMyGroupPage(groupId, currentMember(), requestDTO);
+        groupService.updateMyGroupPage(groupId, securityUtils.currentMember(), requestDTO);
         
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -185,7 +186,7 @@ public class GroupRestController {
                                                 @RequestParam(value = "size", defaultValue = "10") int size
     ) {
 
-        GroupResponseDTO.MyGroupHistoryResponseDTO responseDTO = groupService.getMyGroupHistory(groupId, currentMember(), page, size);
+        GroupResponseDTO.MyGroupHistoryResponseDTO responseDTO = groupService.getMyGroupHistory(groupId, securityUtils.currentMember(), page, size);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -196,7 +197,7 @@ public class GroupRestController {
     @DeleteMapping("/{groupId}")
     public ResponseEntity<?> leaveGroup(@PathVariable("groupId") Long groupId) {
 
-        groupService.leaveGroup(groupId, currentMember());
+        groupService.leaveGroup(groupId, securityUtils.currentMember());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

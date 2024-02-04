@@ -42,7 +42,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMember;
 
 @Slf4j
 @Service
@@ -103,10 +102,10 @@ public class MemberService {
         return tokenProvider.generateToken(authentication);
     }
 
-    public MemberResponse.myInfoResponseDTO getMyInfo() {
+    public MemberResponse.myInfoResponseDTO getMyInfo(Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (마이페이지 조회)");
             throw e;
@@ -119,10 +118,10 @@ public class MemberService {
         return new MemberResponse.myInfoResponseDTO(member.getName(), infoGroupDTOList);
     }
 
-    public void cancel() {
+    public void cancel(Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (회원 탈퇴)");
             throw e;
@@ -132,10 +131,10 @@ public class MemberService {
         memberRepository.deleteModify(deletedMember);
     }
 
-    public void changeNickName(MemberRequest.changeNickNameRequestDTO nickNameRequestDTO) {
+    public void changeNickName(MemberRequest.changeNickNameRequestDTO nickNameRequestDTO,Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (전체 닉네임 변경)");
             throw e;
@@ -143,10 +142,10 @@ public class MemberService {
         member.changeNickName(nickNameRequestDTO.getNewNickName());
     }
 
-    public void changePassword(MemberRequest.changePasswordRequestDTO changePasswordDTO) {
+    public void changePassword(MemberRequest.changePasswordRequestDTO changePasswordDTO,Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (비밀번호 변경)");
             throw e;
@@ -158,10 +157,10 @@ public class MemberService {
         member.changePassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
     }
 
-    public void sendEmail(String email) {
+    public void sendEmail(String email,Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (부산대 인증 메일 전송)");
             throw e;
@@ -178,10 +177,10 @@ public class MemberService {
         javaMailSender.send(simpleMailMessage);
     }
 
-    public void checkPNUEmail(MemberRequest.checkPNUEmailRequestDTO pnuEmailRequestDTO) {
+    public void checkPNUEmail(MemberRequest.checkPNUEmailRequestDTO pnuEmailRequestDTO,Long memberId) {
         Member member;
         try {
-            member = findMember();
+            member = findMember(memberId);
         } catch (Exception404 e) {
             log.error("Access Token에서 뽑아낸 회원이 존재하지 않는 회원입니다. (부산대 인증 메일 확인)");
             throw e;
@@ -230,8 +229,8 @@ public class MemberService {
 
     }
 
-    private Member findMember() {
-        Optional<Member> member = memberRepository.findById(currentMember());
+    private Member findMember(Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
         if(member.isEmpty()) {
             throw new Exception404("없는 회원입니다.");
         }

@@ -9,5 +9,5 @@ public interface PageInfoReadService {
     PageInfoResponse.getRecentPageDTO getRecentPage(Long memberId , Long groupId);
     PageInfoResponse.getPageFromIdDTO getPageFromTitle(Long memberId, Long groupId, String title);
     PageInfoResponse.getPageLinkDTO getPageLink(Long groupId, String title);
-    PageInfoResponse.mainPageDTO getMainPage();
+    PageInfoResponse.mainPageDTO getMainPage(Long memberId);
 }

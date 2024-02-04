@@ -11,6 +11,7 @@ import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.mock.FakeCommentRepository;
 import com.kakao.techcampus.wekiki.mock.FakeGroupMemberRepository;
+import com.kakao.techcampus.wekiki.mock.FakePageInfoRepository;
 import com.kakao.techcampus.wekiki.mock.FakePostRepository;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.domain.Post;
@@ -24,19 +25,21 @@ import static org.assertj.core.api.Assertions.*;
 
 public class CommentServiceTest {
 
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
     private final LocalDateTime testTime = LocalDateTime.now();
     private FakeCommentRepository fakeCommentRepository;
     private FakeGroupMemberRepository fakeGroupMemberRepository;
     private FakePostRepository fakePostRepository;
+    private FakePageInfoRepository fakePageInfoRepository;
 
     @BeforeEach
     void init(){
         fakeCommentRepository = new FakeCommentRepository();
         fakeGroupMemberRepository = new FakeGroupMemberRepository();
         fakePostRepository = new FakePostRepository();
+        fakePageInfoRepository = new FakePageInfoRepository();
 
-        this.commentService = CommentService.builder()
+        this.commentService = CommentServiceImpl.builder()
                 .commentRepository(fakeCommentRepository)
                 .postRepository(fakePostRepository)
                 .groupMemberRepository(fakeGroupMemberRepository)
@@ -120,7 +123,6 @@ public class CommentServiceTest {
         fakeGroupMemberRepository.save(groupMember3);
 
         PageInfo pageInfo = PageInfo.builder()
-                .id(1L)
                 .group(group)
                 .pageName("Test Page")
                 //.posts(postEntities.stream().map(PostEntity::toModel).toList())
@@ -131,11 +133,13 @@ public class CommentServiceTest {
                 .updated_at( testTime)
                 .build();
 
+        PageInfo savedPageInfo1 = fakePageInfoRepository.save(pageInfo);
+
         Post post = Post.builder()
                 //.parent(parent.toModel())
                 .orders(0)
                 .groupMember(savedGroupMember1)
-                .pageInfo(pageInfo)
+                .pageInfo(savedPageInfo1)
                 //.historys(historyEntities.stream().map(HistoryEntity::toModel).toList())
                 //.comments(commentEntities.stream().map(CommentEntity::toModel).toList())
                 .title("Test Post")

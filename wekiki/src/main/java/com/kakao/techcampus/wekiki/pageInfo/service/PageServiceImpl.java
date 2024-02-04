@@ -9,6 +9,10 @@ import com.kakao.techcampus.wekiki.group.service.port.GroupMemberRepository;
 import com.kakao.techcampus.wekiki.group.service.port.GroupRepository;
 import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoCreateService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoDeleteService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoReadService;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
@@ -32,13 +36,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMember;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
 @Builder
-public class PageService {
+public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteService, PageInfoReadService, PageInfoUpdateService {
 
     private final PageRepository pageRepository;
     private final PostRepository postRepository;
@@ -54,6 +57,7 @@ public class PageService {
     @Getter
     final String GROUP_PREFIX = "GROUP_";
 
+    @Override
     @Transactional
     public PageInfoResponse.getPageIndexDTO getPageIndex(Long groupId,Long memberId, Long pageId){
 
@@ -76,6 +80,7 @@ public class PageService {
 
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.deletePageDTO deletePage(Long memberId, Long groupId, Long pageId){
 
@@ -102,7 +107,7 @@ public class PageService {
         return response;
     }
 
-
+    @Override
     @Transactional
     public PageInfoResponse.getPageFromIdDTO getPageFromId(Long memberId,Long groupId, Long pageId){
 
@@ -125,6 +130,7 @@ public class PageService {
 
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.createPageDTO createPage(String title, Long groupId, Long memberId){
 
@@ -158,7 +164,7 @@ public class PageService {
         return new PageInfoResponse.createPageDTO(savedPageInfo);
     }
 
-
+    @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PageInfoResponse.likePageDTO likePage(Long pageId , Long groupId, Long memberId){
 
@@ -177,6 +183,7 @@ public class PageService {
 
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.hatePageDTO hatePage(Long pageId , Long groupId, Long memberId){
 
@@ -194,6 +201,7 @@ public class PageService {
         return response;
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.searchPageDTO searchPage(Long groupId, Long memberId, int pageNo, String keyword){
 
@@ -229,6 +237,7 @@ public class PageService {
         return new PageInfoResponse.searchPageDTO(res);
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.getRecentPageDTO getRecentPage(Long memberId , Long groupId){
 
@@ -247,6 +256,7 @@ public class PageService {
 
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.getPageFromIdDTO getPageFromTitle(Long memberId, Long groupId, String title){
 
@@ -269,6 +279,7 @@ public class PageService {
         return new PageInfoResponse.getPageFromIdDTO(page, temp);
     }
 
+    @Override
     @Transactional
     public PageInfoResponse.getPageLinkDTO getPageLink(Long groupId, String title){
 
@@ -284,9 +295,9 @@ public class PageService {
         }
     }
 
-
+    @Override
     @Transactional
-    public PageInfoResponse.mainPageDTO getMainPage() {
+    public PageInfoResponse.mainPageDTO getMainPage(Long memberId) {
         if(SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
             // 로그인 안한 사람
             log.info("로그인하지 않은 사람의 메인 페이지 조회");
@@ -297,7 +308,7 @@ public class PageService {
         else {
             //로그인을 한 사람
             log.info("로그인을 한 사람의 메인 페이지 조회");
-            Optional<Member> member = memberRepository.findById(currentMember());
+            Optional<Member> member = memberRepository.findById(memberId);
             if(member.isEmpty()) {
                 log.error("회원이 존재하지 않습니다.");
                 throw new Exception400("없는 회원입니다.");

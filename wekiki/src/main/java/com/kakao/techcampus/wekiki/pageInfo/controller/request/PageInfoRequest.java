@@ -2,13 +2,14 @@ package com.kakao.techcampus.wekiki.pageInfo.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 public class PageInfoRequest {
 
     @Getter
-    @Setter
+    @AllArgsConstructor
     public static class createPageDTO {
 
         @NotBlank(message = "페이지명을 입력해주세요.")

@@ -1,10 +1,12 @@
 package com.kakao.techcampus.wekiki.member.controller;
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
+import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
 import com.kakao.techcampus.wekiki.member.controller.request.MemberRequest;
 import com.kakao.techcampus.wekiki.member.controller.response.MemberResponse;
 import com.kakao.techcampus.wekiki.member.service.MemberService;
 import jakarta.validation.Valid;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Builder
 public class MemberController {
     private final MemberService memberService;
+    private final SecurityUtils securityUtils;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody MemberRequest.signUpRequestDTO signUpRequestDTO) {
@@ -35,13 +39,13 @@ public class MemberController {
 
     @GetMapping("/myinfo")
     public ResponseEntity<?> myPage() {
-        MemberResponse.myInfoResponseDTO response = memberService.getMyInfo();
+        MemberResponse.myInfoResponseDTO response = memberService.getMyInfo(securityUtils.currentMember());
         return ResponseEntity.ok(ApiUtils.success(response));
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> cancel() {
-        memberService.cancel();
+        memberService.cancel(securityUtils.currentMember());
         return ResponseEntity.ok(true);
     }
 
@@ -51,25 +55,25 @@ public class MemberController {
 
     @PatchMapping("/password/change")
     public ResponseEntity<?> changePassword(@RequestBody @Valid MemberRequest.changePasswordRequestDTO changePasswordRequestDTO) {
-        memberService.changePassword(changePasswordRequestDTO);
+        memberService.changePassword(changePasswordRequestDTO,securityUtils.currentMember());
         return ResponseEntity.ok(true);
     }
 
     @PatchMapping("/changename")
     public ResponseEntity<?> changeNickName(@RequestBody @Valid MemberRequest.changeNickNameRequestDTO nickNameRequestDTO) {
-        memberService.changeNickName(nickNameRequestDTO);
+        memberService.changeNickName(nickNameRequestDTO,securityUtils.currentMember());
         return ResponseEntity.ok(true);
     }
 
     @PostMapping("/pusanuniv")
     public ResponseEntity<?> sendMail(@RequestBody @Valid MemberRequest.PNUEmailRequestDTO PNUemailRequestDTO) {
-        memberService.sendEmail(PNUemailRequestDTO.getEmail());
+        memberService.sendEmail(PNUemailRequestDTO.getEmail(),securityUtils.currentMember());
         return ResponseEntity.ok(true);
     }
 
     @PostMapping("/pusanuniv/cert")
     public ResponseEntity<?> checkPNUEmail(@RequestBody MemberRequest.checkPNUEmailRequestDTO pnuEmailRequestDTO) {
-        memberService.checkPNUEmail(pnuEmailRequestDTO);
+        memberService.checkPNUEmail(pnuEmailRequestDTO,securityUtils.currentMember());
         return ResponseEntity.ok(true);
     }
 

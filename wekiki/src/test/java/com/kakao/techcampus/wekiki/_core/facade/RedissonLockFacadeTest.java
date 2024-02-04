@@ -1,20 +1,21 @@
 package com.kakao.techcampus.wekiki._core.facade;
 
 import com.kakao.techcampus.wekiki.page.service.PageConcurrencyService;
-import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
 @Component
-@RequiredArgsConstructor
 public class RedissonLockFacadeTest {
 
-    private final RedissonClient redissonClient;
+    @Autowired
+    private RedissonClient redissonClient;
 
-    private final PageConcurrencyService pageConcurrencyService;
+    @Autowired
+    private PageConcurrencyService pageConcurrencyService;
 
     public void likePageWithRedissonLock(Long pageId){
         RLock lock = redissonClient.getLock(pageId.toString());

@@ -10,7 +10,6 @@ import lombok.Setter;
 
 public class PostRequest {
     @Getter
-    @Setter
     @Builder
     public static class createPostDTO {
 
@@ -33,7 +32,7 @@ public class PostRequest {
     }
 
     @Getter
-    @Setter
+    @Builder
     public static class modifyPostDTO{
         @Positive(message = "유효하지 않은 postID입니다.")
         private Long postId;
@@ -47,7 +46,7 @@ public class PostRequest {
     }
 
     @Getter
-    @Setter
+    @Builder
     public static class createReportDTO{
         @Positive(message = "유효하지 않은 postID입니다.")
         private Long postId;

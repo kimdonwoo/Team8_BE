@@ -2,6 +2,10 @@ package com.kakao.techcampus.wekiki.comment.service;
 
 import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
 import com.kakao.techcampus.wekiki._core.error.exception.Exception404;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentCreateService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentDeleteService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentReadService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentUpdateService;
 import com.kakao.techcampus.wekiki.comment.controller.response.CommentResponse;
 import com.kakao.techcampus.wekiki.comment.domain.Comment;
 import com.kakao.techcampus.wekiki.comment.service.port.CommentRepository;
@@ -24,12 +28,13 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Builder
-public class CommentService {
+public class CommentServiceImpl implements CommentReadService, CommentUpdateService, CommentDeleteService, CommentCreateService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final GroupMemberRepository groupMemberRepository;
     final int COMMENT_COUNT = 10;
 
+    @Override
     @Transactional
     public CommentResponse.getCommentDTO getComment(Long memberId, Long groupId, Long postId, int pageNo){
 
@@ -51,6 +56,7 @@ public class CommentService {
         return new CommentResponse.getCommentDTO(post,commentDTOs);
     }
 
+    @Override
     @Transactional
     public CommentResponse.createCommentDTO createComment(Long memberId, Long groupId, Long postId, String content){
 
@@ -69,6 +75,7 @@ public class CommentService {
         return new CommentResponse.createCommentDTO(savedComment, activeGroupMember.getNickName());
     }
 
+    @Override
     @Transactional
     public CommentResponse.updateCommentDTO updateComment(Long memberId, Long groupId, Long commentId, String updateContent){
 
@@ -96,6 +103,7 @@ public class CommentService {
         return new CommentResponse.updateCommentDTO(updatedComment);
     }
 
+    @Override
     @Transactional
     public CommentResponse.deleteCommentDTO deleteComment(Long memberId, Long groupId, Long commentId){
 
@@ -118,7 +126,6 @@ public class CommentService {
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ commentId +" 댓글을 삭제합니다.");
         return response;
     }
-
 
 
     private GroupMember checkGroupMember(Long memberId, Long groupId){

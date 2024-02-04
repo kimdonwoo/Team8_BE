@@ -2,25 +2,35 @@ package com.kakao.techcampus.wekiki.comment.controller;
 
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
+import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentCreateService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentDeleteService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentReadService;
+import com.kakao.techcampus.wekiki.comment.controller.port.CommentUpdateService;
 import com.kakao.techcampus.wekiki.comment.controller.request.CommentRequest;
 import com.kakao.techcampus.wekiki.comment.controller.response.CommentResponse;
-import com.kakao.techcampus.wekiki.comment.service.CommentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kakao.techcampus.wekiki._core.utils.SecurityUtils.currentMember;
 
 @RestController
 @RequestMapping("/group/{groupid}")
 @RequiredArgsConstructor
 @Validated
+@Builder
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentReadService commentReadService;
+    private final CommentCreateService commentCreateService;
+    private final CommentUpdateService commentUpdateService;
+    private final CommentDeleteService commentDeleteService;
+    private final SecurityUtils securityUtils;
+
 
     // 댓글 조회하기
     @GetMapping("/post/{postid}/comment")
@@ -28,7 +38,7 @@ public class CommentController {
                                                                                         @Positive(message = "유효하지 않은 postID입니다.") @PathVariable Long postid,
                                                                                         @Positive(message = "유효하지 않은 pageID입니다.") @RequestParam(value = "page", defaultValue = "1") int page){
 
-        CommentResponse.getCommentDTO response = commentService.getComment(currentMember(), groupid, postid, page-1);
+        CommentResponse.getCommentDTO response = commentReadService.getComment(securityUtils.currentMember(), groupid, postid, page-1);
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -39,7 +49,7 @@ public class CommentController {
                                                                                               @Positive(message = "유효하지 않은 postID입니다.") @PathVariable Long postid,
                                                                                               @Valid @RequestBody CommentRequest.createComment request){
 
-        CommentResponse.createCommentDTO response = commentService.createComment(currentMember(), groupid, postid, request.getContent());
+        CommentResponse.createCommentDTO response = commentCreateService.createComment(securityUtils.currentMember(), groupid, postid, request.getContent());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -49,7 +59,7 @@ public class CommentController {
     public ResponseEntity<ApiUtils.ApiResult<CommentResponse.deleteCommentDTO>> deleteComment(@Positive(message = "유효하지 않은 groupID입니다.") Long groupid,
                                                                                               @Positive(message = "유효하지 않은 commentID입니다.") @PathVariable Long commentid){
 
-        CommentResponse.deleteCommentDTO response = commentService.deleteComment(currentMember(), groupid, commentid);
+        CommentResponse.deleteCommentDTO response = commentDeleteService.deleteComment(securityUtils.currentMember(), groupid, commentid);
 
         return ResponseEntity.ok(ApiUtils.success(response));
 
@@ -61,7 +71,7 @@ public class CommentController {
                                                                                               @Positive(message = "유효하지 않은 commentID입니다.") @PathVariable Long commentid,
                                                                                               @Valid @RequestBody CommentRequest.updateComment request){
 
-        CommentResponse.updateCommentDTO response = commentService.updateComment(currentMember(), groupid, commentid, request.getContent());
+        CommentResponse.updateCommentDTO response = commentUpdateService.updateComment(securityUtils.currentMember(), groupid, commentid, request.getContent());
 
         return ResponseEntity.ok(ApiUtils.success(response));
 

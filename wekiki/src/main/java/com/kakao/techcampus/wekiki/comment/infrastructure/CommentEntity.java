@@ -45,15 +45,54 @@ public class CommentEntity {
                 .build();
     }
 
-    public static CommentEntity fromModel(Comment comment){
+    public Comment toModelWithGroupMember(){
+        return Comment.builder()
+                .id(id)
+                .groupMember(groupMemberEntity.toPureModel())
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
+    public Comment toPureModel(){
+        return Comment.builder()
+                .id(id)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
+    public static CommentEntity fromPureModel(Comment comment){
         return CommentEntity.builder()
                 .id(comment.getId())
-                .groupMemberEntity(GroupMemberEntity.fromModel(comment.getGroupMember()))
-                .postEntity(PostEntity.fromModel(comment.getPost()))
                 .content(comment.getContent())
                 .created_at(comment.getCreated_at())
                 .build();
     }
+
+
+    public static CommentEntity createFromModel(Comment comment){
+        return CommentEntity.builder()
+                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(comment.getGroupMember()))
+                .postEntity(PostEntity.fromModelWithComments(comment.getPost()))
+                .content(comment.getContent())
+                .created_at(comment.getCreated_at())
+                .build();
+    }
+
+    public static CommentEntity updateFromModel(Comment comment){
+        return CommentEntity.builder()
+                .id(comment.getId())
+                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(comment.getGroupMember()))
+                .content(comment.getContent())
+                .created_at(comment.getCreated_at())
+                .build();
+    }
+
+    public void update(Comment comment){
+        this.content = comment.getContent();
+    }
+
 
     public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
         this.groupMemberEntity = groupMemberEntity;

@@ -24,7 +24,7 @@ public class PageRepositoryImpl implements PageRepository {
 
     @Override
     public PageInfo findByIdWithOptimisticLock(Long pageId) {
-        return pageJPARepository.findByIdWithOptimisticLock(pageId).toModel();
+        return pageJPARepository.findByIdWithOptimisticLock(pageId).toPureModel();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class PageRepositoryImpl implements PageRepository {
     @Override
     public List<PageInfo> findByGroupIdOrderByUpdatedAtDesc(Long groupId, Pageable pageable) {
         return pageJPARepository.findByGroupIdOrderByUpdatedAtDesc(groupId,pageable)
-                .stream().map(PageInfoEntity::toModel).toList();
+                .stream().map(PageInfoEntity::toPureModel).toList();
     }
 
     @Override
@@ -55,12 +55,12 @@ public class PageRepositoryImpl implements PageRepository {
 
     @Override
     public Optional<PageInfo> findByTitleWithPosts(Long groupId, String title) {
-        return pageJPARepository.findByTitleWithPosts(groupId,title).map(PageInfoEntity::toModel);
+        return pageJPARepository.findByTitleWithPosts(groupId,title).map(PageInfoEntity::toModelWithPost);
     }
 
     @Override
     public Optional<PageInfo> findByPageIdWithPosts(Long pageId) {
-        return pageJPARepository.findByPageIdWithPosts(pageId).map(PageInfoEntity::toModel);
+        return pageJPARepository.findByPageIdWithPosts(pageId).map(PageInfoEntity::toModelWithPost);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class PageRepositoryImpl implements PageRepository {
     @Override
     public Page<PageInfo> findPages(Long groupId, String keyword, Pageable pageable) {
         return pageJPARepository.findPages(groupId,keyword,pageable)
-                .map(PageInfoEntity::toModel);
+                .map(PageInfoEntity::toPureModel);
     }
 
     @Override
@@ -82,7 +82,14 @@ public class PageRepositoryImpl implements PageRepository {
 
     @Override
     public PageInfo save(PageInfo newPageInfo) {
-        return pageJPARepository.save(PageInfoEntity.fromModel(newPageInfo)).toModel();
+        return pageJPARepository.save(PageInfoEntity.fromModelWithGroup(newPageInfo)).toPureModel();
+    }
+
+    @Override
+    public PageInfo update(PageInfo updatedPageInfo){
+        PageInfoEntity pageInfo = pageJPARepository.findById(updatedPageInfo.getId()).get();
+        pageInfo.update(updatedPageInfo);
+        return pageInfo.toPureModel();
     }
 
     @Override
@@ -92,14 +99,12 @@ public class PageRepositoryImpl implements PageRepository {
 
     @Override
     public PageInfo saveAndFlush(PageInfo pageInfo) {
-        return pageJPARepository.saveAndFlush(PageInfoEntity.fromModelWithId(pageInfo)).toModel();
+        return pageJPARepository.saveAndFlush(PageInfoEntity.fromModelWithId(pageInfo)).toPureModel();
     }
 
     @Override
     public Optional<PageInfo> findById(Long pageId) {
-        //PageInfo pageInfo = pageJPARepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
-        Optional<PageInfo> temp = pageJPARepository.findById(pageId).map(PageInfoEntity::toModel);
-        return temp;
+        return pageJPARepository.findById(pageId).map(PageInfoEntity::toPureModel);
     }
 
     @Override

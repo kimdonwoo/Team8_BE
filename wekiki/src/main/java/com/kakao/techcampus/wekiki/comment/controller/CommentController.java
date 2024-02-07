@@ -56,7 +56,7 @@ public class CommentController {
 
     // 댓글 삭제하기
     @DeleteMapping("/comment/{commentid}")
-    public ResponseEntity<ApiUtils.ApiResult<CommentResponse.deleteCommentDTO>> deleteComment(@Positive(message = "유효하지 않은 groupID입니다.") Long groupid,
+    public ResponseEntity<ApiUtils.ApiResult<CommentResponse.deleteCommentDTO>> deleteComment(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                               @Positive(message = "유효하지 않은 commentID입니다.") @PathVariable Long commentid){
 
         CommentResponse.deleteCommentDTO response = commentDeleteService.deleteComment(securityUtils.currentMember(), groupid, commentid);

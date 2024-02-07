@@ -18,13 +18,13 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<Post> findPostsByPageIdAndOrderGreaterThan(Long pageId, int orders) {
-        return postJPARepository.findPostsByPageIdAndOrderGreaterThan(pageId,orders)
-                .stream().map(PostEntity::toModel).toList();
+        return postJPARepository.findPostsByPageIdAndOrderGreaterThan(pageId, orders)
+                .stream().map(PostEntity::toPureModel).toList();
     }
 
     @Override
     public Optional<Post> findPostWithPageFromPostId(Long postId) {
-        return postJPARepository.findPostWithPageFromPostId(postId).map(PostEntity::toModel);
+        return postJPARepository.findPostWithPageFromPostId(postId).map(PostEntity::toModelWihPageInfo);
     }
 
     @Override
@@ -39,20 +39,27 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public List<Post> findPostInPages(List<PageInfo> pages) {
-        return postJPARepository.findPostInPages(pages.stream().map(p->PageInfoEntity.fromModel(p)).toList())
-                .stream().map(PostEntity::toModel).toList();
+        return postJPARepository.findPostInPages(pages.stream().map(p->PageInfoEntity.fromPureModelWithId(p)).toList())
+                .stream().map(PostEntity::toModelWihPageInfo).toList();
     }
 
     @Override
     public Optional<Post> findById(Long postId) {
-        return postJPARepository.findById(postId).map(PostEntity::toModel);
+        return postJPARepository.findById(postId).map(PostEntity::toPureModel);
     }
 
     @Override
     public Post save(Post newPost) {
-        PostEntity postEntity = PostEntity.fromModel(newPost);
-        PageInfoEntity.fromModel(newPost.getPageInfo()).addPostEntity(postEntity);
-        return postJPARepository.save(PostEntity.fromModel(newPost)).toModel();
+        PostEntity postEntity = PostEntity.create(newPost);
+        postEntity.getPageInfoEntity().addPostEntity(postEntity);
+        return postJPARepository.save(postEntity).toPureModel();
+    }
+
+    @Override
+    public Post update(Post updatedPost){
+        PostEntity postEntity = postJPARepository.findById(updatedPost.getId()).get();
+        postEntity.update(updatedPost);
+        return postEntity.toPureModel();
     }
 
     @Override

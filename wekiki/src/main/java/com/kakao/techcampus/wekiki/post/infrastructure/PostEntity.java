@@ -34,10 +34,10 @@ public class PostEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private PageInfoEntity pageInfoEntity;
 
-    @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "postEntity",orphanRemoval = true)
     private List<HistoryEntity> historyEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "postEntity",orphanRemoval = true)
     private List<CommentEntity> commentEntities = new ArrayList<>();
 
     private String title;
@@ -58,12 +58,40 @@ public class PostEntity {
         this.content = content;
         this.created_at = created_at;
     }
-    /*
-        TODO : 이렇게 toModel을 하나만 가지고 Post로 바꿔버리면
-            post가 별로 필요없는 상황에서도 history 정보나 comment 정보 다 긁어올듯?
-            흠... toModel을 따로 사용하지 않고 HistoryRepositoryImpl에서 builder를 사용하는 것은 ?
 
-     */
+    public Post toPureModel(){
+        return Post.builder()
+                .id(id)
+                .orders(orders)
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
+    public Post toModelWithParent(){
+        return Post.builder()
+                .id(id)
+                .parent(this.parent == null ? null : this.parent.toPureModel())
+                .orders(orders)
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
+
+    public Post toModelWihPageInfo(){
+        return Post.builder()
+                .id(id)
+                .orders(orders)
+                .pageInfo(pageInfoEntity.toPureModel())
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
     public Post toModel(){
         return Post.builder()
                 .id(id)
@@ -79,16 +107,46 @@ public class PostEntity {
                 .build();
     }
 
-    public static PostEntity fromModel(Post post){
+    public static PostEntity create(Post post){
+        return PostEntity.builder()
+                .parent(post.getParent() == null ? null : PostEntity.fromPureModel(post.getParent()))
+                .orders(post.getOrders())
+                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(post.getGroupMember()))
+                .pageInfoEntity(PageInfoEntity.fromModelWithPosts(post.getPageInfo()))
+                .title(post.getTitle())
+                .content(post.getContent())
+                .created_at(post.getCreated_at())
+                .build();
+    }
+
+    public static PostEntity fromPureModel(Post post){
         return PostEntity.builder()
                 .id(post.getId())
-                .parent(PostEntity.fromModel(post.getParent()))
+                //.parent(post.getParent() == null ? null : PostEntity.fromPureModel(post.getParent()))
                 .orders(post.getOrders())
-                .groupMemberEntity(GroupMemberEntity.fromModel(post.getGroupMember()))
-                .pageInfoEntity(PageInfoEntity.fromModel(post.getPageInfo()))
-                .historyEntities(post.getHistorys().stream().map(HistoryEntity::fromModel).toList())
-                .commentEntities(post.getComments().stream().map(CommentEntity::fromModel).toList())
                 .title(post.getTitle())
+                .content(post.getContent())
+                .created_at(post.getCreated_at())
+                .build();
+    }
+
+    public static PostEntity fromModelWithComments(Post post){
+        return PostEntity.builder()
+                .id(post.getId())
+                .orders(post.getOrders())
+                .title(post.getTitle())
+                .commentEntities(new ArrayList<>())
+                .content(post.getContent())
+                .created_at(post.getCreated_at())
+                .build();
+    }
+
+    public static PostEntity fromModelWithHisotries(Post post){
+        return PostEntity.builder()
+                .id(post.getId())
+                .orders(post.getOrders())
+                .title(post.getTitle())
+                .historyEntities(new ArrayList<>())
                 .content(post.getContent())
                 .created_at(post.getCreated_at())
                 .build();
@@ -99,9 +157,15 @@ public class PostEntity {
         commentEntity.setPostEntity(this);
     }
 
+    public void update(Post updatedPost){
+        this.title = updatedPost.getTitle();
+        this.content = updatedPost.getContent();
+        this.orders = updatedPost.getOrders();
+
+    }
+
     public void addHistoryEntity(HistoryEntity historyEntity){
         this.historyEntities.add(historyEntity);
-        historyEntity.setPostEntity(this);
     }
 
 }

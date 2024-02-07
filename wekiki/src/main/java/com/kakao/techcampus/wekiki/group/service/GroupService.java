@@ -54,7 +54,7 @@ public class GroupService {
         비공식 그룹 생성
      */
     @Transactional
-    public GroupResponseDTO.CreateUnOfficialGroupResponseDTO createUnOfficialGroup(GroupRequestDTO.CreateUnOfficialGroupRequestDTO requestDTO, Long memberId) {
+    public void createUnOfficialGroup(GroupRequestDTO.CreateUnOfficialGroupRequestDTO requestDTO, Long memberId) {
         
         // Group 생성
         Group group = switch (requestDTO.groupType()) {
@@ -70,18 +70,23 @@ public class GroupService {
 
         // MemberId로부터 Member 찾기
         Member member = getMemberById(memberId);
+
+        // TODO : group 저장
+        Group savedGroup = groupRepository.save(group);
+
         // GroupMember 생성
-        GroupMember groupMember = buildGroupMember(member, group, requestDTO.groupNickName());
+        GroupMember groupMember = buildGroupMember(member, savedGroup, requestDTO.groupNickName());
         
         log.debug("GroupMember 생성 완료");
 
         //  저장
-        saveGroupMember(groupMember);
-        
+        //saveGroupMember(groupMember);
+        groupMemberRepository.save(groupMember);
+
         log.debug(" 저장 완료");
 
         // return
-        return new GroupResponseDTO.CreateUnOfficialGroupResponseDTO(group, invitationService.getGroupInvitationCode(group.getId()));
+        //return new GroupResponseDTO.CreateUnOfficialGroupResponseDTO(group, invitationService.getGroupInvitationCode(group.getId()));
     }
 
 
@@ -121,6 +126,7 @@ public class GroupService {
                 .group(group)
                 .nickName(groupNickName)
                 .created_at(LocalDateTime.now())
+                .activeStatus(true)
                 .build();
     }
 

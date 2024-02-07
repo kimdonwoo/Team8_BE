@@ -82,6 +82,26 @@ public class FakePageInfoRepository implements PageRepository {
     }
 
     @Override
+    public PageInfo update(PageInfo pageInfo) {
+        PageInfo beforePageInfo = data.stream().filter(item -> item.getId().equals(pageInfo.getId())).findAny().get();
+        PageInfo updatedPageInfo = PageInfo.builder()
+                .id(beforePageInfo.getId())
+                .group(beforePageInfo.getGroup())
+                .pageName(pageInfo.getPageName())
+                .posts(beforePageInfo.getPosts())
+                .goodCount(pageInfo.getGoodCount())
+                .badCount(pageInfo.getBadCount())
+                .viewCount(pageInfo.getViewCount())
+                .created_at(pageInfo.getCreated_at())
+                .updated_at(pageInfo.getUpdated_at())
+                .build();
+
+        data.removeIf(item -> Objects.equals(item.getId(), beforePageInfo.getId()));
+        data.add(updatedPageInfo);
+        return updatedPageInfo;
+    }
+
+    @Override
     public void deleteById(Long pageId) {
         data.removeIf(item -> Objects.equals(item.getId(), pageId));
     }

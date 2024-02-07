@@ -42,12 +42,7 @@ public class Post {
     public Post plusOrder(){
         return Post.builder()
                 .id(id)
-                .parent(parent)
                 .orders(orders+1)
-                .groupMember(groupMember)
-                .pageInfo(pageInfo)
-                .historys(historys)
-                .comments(comments)
                 .title(title)
                 .content(content)
                 .created_at(created_at)
@@ -72,12 +67,9 @@ public class Post {
     public Post modifyPost(GroupMember groupMember, String title, String content){
         return Post.builder()
                 .id(this.id)
-                .parent(this.parent)
                 .orders(this.orders)
                 .groupMember(groupMember)
                 .pageInfo(this.pageInfo)
-                .historys(this.historys)
-                .comments(this.comments)
                 .title(title)
                 .content(content)
                 .created_at(this.created_at)
@@ -89,10 +81,21 @@ public class Post {
                 .parent(parent)
                 .orders(request.getOrder())
                 .groupMember(activeGroupMember)
-                .pageInfo(pageInfo) // history랑 comment는 ?
+                .pageInfo(pageInfo)
                 .title(request.getTitle())
                 .content(request.getContent())
                 .created_at(LocalDateTime.now())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", orders=" + orders +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", created_at=" + created_at +
+                '}';
     }
 }

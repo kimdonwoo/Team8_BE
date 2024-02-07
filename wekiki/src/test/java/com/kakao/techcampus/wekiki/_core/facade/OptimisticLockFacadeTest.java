@@ -18,6 +18,9 @@ public class OptimisticLockFacadeTest {
 
                 break;
             } catch (Exception e) {
+                System.out.println(e.getStackTrace());
+                System.out.println(e.getMessage());
+                System.out.println("흠..");
                 Thread.sleep(500);
             }
         }

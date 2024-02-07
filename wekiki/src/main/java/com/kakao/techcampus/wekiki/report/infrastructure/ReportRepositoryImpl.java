@@ -22,6 +22,6 @@ public class ReportRepositoryImpl implements ReportRepository {
 
     @Override
     public Report save(Report report) {
-        return reportJPARepository.save(ReportEntity.fromModel(report)).toModel();
+        return reportJPARepository.save(ReportEntity.fromModel(report)).toPureModel();
     }
 }

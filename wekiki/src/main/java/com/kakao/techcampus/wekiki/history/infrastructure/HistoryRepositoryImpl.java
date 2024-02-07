@@ -25,18 +25,18 @@ public class HistoryRepositoryImpl implements HistoryRepository {
     @Override
     public void save(History newHistory) {
         HistoryEntity historyEntity = HistoryEntity.fromModel(newHistory);
-        PostEntity.fromModel(newHistory.getPost()).addHistoryEntity(historyEntity);
-        historyJPARepository.save(HistoryEntity.fromModel(newHistory));
+        historyEntity.getPostEntity().getHistoryEntities().add(historyEntity);
+        historyJPARepository.save(historyEntity);
     }
 
     @Override
     public Page<History> findHistoryWithMemberByPostId(Long postId, PageRequest pageRequest) {
-        return historyJPARepository.findHistoryWithMemberByPostId(postId,pageRequest).map(HistoryEntity::toModel);
+        return historyJPARepository.findHistoryWithMemberByPostId(postId,pageRequest).map(HistoryEntity::toModelWithGroupMember);
     }
 
     @Override
     public List<History> findHistoryByPostId(Long postId, PageRequest pageRequest) {
         return historyJPARepository.findHistoryByPostId(postId,pageRequest)
-                .stream().map(HistoryEntity::toModel).toList();
+                .stream().map(HistoryEntity::toModelWithPost).toList();
     }
 }

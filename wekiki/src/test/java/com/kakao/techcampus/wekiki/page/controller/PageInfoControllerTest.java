@@ -78,7 +78,9 @@ public class PageInfoControllerTest {
                 .build();
         testContainer.testPageInfoControllerSetting();
         Long groupId = 1L;
-        PageInfoRequest.createPageDTO request = new PageInfoRequest.createPageDTO("새로운 페이지!!");
+        PageInfoRequest.createPageDTO request = PageInfoRequest.createPageDTO.builder()
+                .pageName("새로운 페이지!!")
+                .build();
 
         // when
         ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.createPageDTO>> result = testContainer.pageInfoController.createPage(groupId, request);

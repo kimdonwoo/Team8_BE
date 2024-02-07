@@ -11,4 +11,5 @@ public interface CommentRepository {
     Comment save(Comment comment);
     void delete(Comment comment);
     Optional<Comment> findCommentWithGroupMember(Long commentId);
+    Comment update(Comment updatedComment);
 }

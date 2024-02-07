@@ -1,6 +1,7 @@
 package com.kakao.techcampus.wekiki.pageInfo.domain;
 
 import com.kakao.techcampus.wekiki.group.domain.Group;
+import com.kakao.techcampus.wekiki.group.domain.GroupMember;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,24 +34,22 @@ public class PageInfo {
         this.updated_at = updated_at;
     }
 
-//    public PageInfo createPage(){
-//        PageInfo.builder()
-//                .group(activeGroupMember.getGroup())
-//                .pageName(title)
-//                .goodCount(0)
-//                .badCount(0)
-//                .viewCount(0)
-//                .created_at(LocalDateTime.now())
-//                .updated_at(LocalDateTime.now())
-//                .build();
-//    }
+    public static PageInfo from(Group group,String title){
+        return PageInfo.builder()
+                .group(group)
+                .pageName(title)
+                .goodCount(0)
+                .badCount(0)
+                .viewCount(0)
+                .created_at(LocalDateTime.now())
+                .updated_at(LocalDateTime.now())
+                .build();
+    }
 
     public PageInfo plusGoodCount(){
         return PageInfo.builder()
                 .id(id)
-                .group(group)
                 .pageName(pageName)
-                .posts(posts)
                 .goodCount(goodCount+1)
                 .badCount(badCount)
                 .viewCount(viewCount)
@@ -62,9 +61,7 @@ public class PageInfo {
     public PageInfo plusBadCount(){
         return PageInfo.builder()
                 .id(id)
-                .group(group)
                 .pageName(pageName)
-                .posts(posts)
                 .goodCount(goodCount)
                 .badCount(badCount+1)
                 .viewCount(viewCount)
@@ -76,11 +73,9 @@ public class PageInfo {
     public PageInfo updatePage(){
         return PageInfo.builder()
                 .id(id)
-                .group(group)
                 .pageName(pageName)
-                .posts(posts)
                 .goodCount(goodCount)
-                .badCount(badCount+1)
+                .badCount(badCount)
                 .viewCount(viewCount)
                 .created_at(created_at)
                 .updated_at(LocalDateTime.now())

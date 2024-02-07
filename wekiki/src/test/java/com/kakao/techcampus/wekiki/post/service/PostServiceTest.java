@@ -10,6 +10,7 @@ import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.mock.*;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
+import com.kakao.techcampus.wekiki.post.controller.request.PostRequest.createPostDTO;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.junit.jupiter.api.BeforeEach;
@@ -230,7 +231,7 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
+        createPostDTO request = createPostDTO.builder()
                 .pageId(1L)
                 .parentPostId(0L)
                 .order(5)
@@ -254,7 +255,7 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 2L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
+        createPostDTO request = createPostDTO.builder()
                 .pageId(1L)
                 .parentPostId(0L)
                 .order(5)
@@ -274,7 +275,7 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 3L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
+        createPostDTO request = createPostDTO.builder()
                 .pageId(1L)
                 .parentPostId(0L)
                 .order(5)
@@ -294,7 +295,7 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
+        createPostDTO request = createPostDTO.builder()
                 .pageId(100L)
                 .parentPostId(0L)
                 .order(5)
@@ -314,7 +315,7 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
+        createPostDTO request = createPostDTO.builder()
                 .pageId(1L)
                 .parentPostId(100L)
                 .order(5)

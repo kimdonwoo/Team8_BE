@@ -25,4 +25,5 @@ public interface PageRepository {
     Optional<PageInfo> findById(Long pageId);
     void deleteAll();
     void deletePageInfos(List<PageInfo> pageInfos);
+    PageInfo update(PageInfo updatedPageInfo);
 }

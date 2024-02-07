@@ -28,7 +28,7 @@ public class MemberEntity {
     private String password;
     private LocalDateTime created_at;
 
-    @OneToMany(mappedBy = "memberEntity")
+    @OneToMany(mappedBy = "memberEntity",orphanRemoval = true)
     private List<GroupMemberEntity> groupMemberEntities = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
@@ -57,6 +57,17 @@ public class MemberEntity {
                 .build();
     }
 
+    public Member toPureModelWithId(){
+        return Member.builder()
+                .id(id)
+                .name(name)
+                .email(email)
+                .password(password)
+                .created_at(created_at)
+                .authority(authority)
+                .build();
+    }
+
     public static MemberEntity fromModel(Member member){
         return MemberEntity.builder()
                 .id(member.getId())
@@ -65,6 +76,28 @@ public class MemberEntity {
                 .password(member.getPassword())
                 .created_at(member.getCreated_at())
                 .groupMemberEntities(member.getGroupMembers().stream().map(GroupMemberEntity::fromModel).toList())
+                .authority(member.getAuthority())
+                .build();
+    }
+
+    public static MemberEntity fromPureModelWithId(Member member){
+        return MemberEntity.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .groupMemberEntities(new ArrayList<>())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .created_at(member.getCreated_at())
+                .authority(member.getAuthority())
+                .build();
+    }
+
+    public static MemberEntity create(Member member){
+        return MemberEntity.builder()
+                .name(member.getName())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .created_at(member.getCreated_at())
                 .authority(member.getAuthority())
                 .build();
     }

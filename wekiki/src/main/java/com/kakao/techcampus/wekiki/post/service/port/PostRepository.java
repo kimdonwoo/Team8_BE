@@ -17,4 +17,5 @@ public interface PostRepository {
     Optional<Post> findById(Long postId);
     Post save(Post newPost);
     void deleteById(Long postId);
+    Post update(Post updatedPost);
 }

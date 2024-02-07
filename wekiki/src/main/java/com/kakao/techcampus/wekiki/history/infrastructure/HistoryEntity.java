@@ -43,9 +43,18 @@ public class HistoryEntity {
 
     public static HistoryEntity fromModel(History history){
         return HistoryEntity.builder()
+                //.id(history.getId())
+                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(history.getGroupMember()))
+                .postEntity(PostEntity.fromModelWithHisotries(history.getPost()))
+                .title(history.getTitle())
+                .content(history.getContent())
+                .created_at(history.getCreated_at())
+                .build();
+    }
+
+    public static HistoryEntity fromPureModel(History history){
+        return HistoryEntity.builder()
                 .id(history.getId())
-                .groupMemberEntity(GroupMemberEntity.fromModel(history.getGroupMember()))
-                .postEntity(PostEntity.fromModel(history.getPost()))
                 .title(history.getTitle())
                 .content(history.getContent())
                 .created_at(history.getCreated_at())
@@ -63,9 +72,30 @@ public class HistoryEntity {
                 .build();
     }
 
+    public History toModelWithGroupMember() {
+        return History.builder()
+                .id(id)
+                .groupMember(groupMemberEntity.toPureModel())
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
+    public History toModelWithPost(){
+        return History.builder()
+                .id(id)
+                .post(postEntity.toPureModel())
+                .title(title)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
 
 
-    public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
+
+
+        public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
         this.groupMemberEntity = groupMemberEntity;
     }
 }

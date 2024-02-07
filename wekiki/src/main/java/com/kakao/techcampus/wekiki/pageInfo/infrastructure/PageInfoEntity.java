@@ -26,7 +26,7 @@ public class PageInfoEntity {
     private GroupEntity groupEntity;
     private String pageName;
 
-    @OneToMany(mappedBy = "pageInfoEntity", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "pageInfoEntity",orphanRemoval = true)
     private List<PostEntity> postEntities = new ArrayList<>();
     private int goodCount;
     private int badCount;
@@ -51,7 +51,6 @@ public class PageInfoEntity {
 
     public static PageInfoEntity fromModel(PageInfo pageInfo){
         return PageInfoEntity.builder()
-                //.id(pageInfo.getId())
                 .groupEntity(GroupEntity.fromModel(pageInfo.getGroup()))
                 .pageName(pageInfo.getPageName())
                 //.postEntities(pageInfo.getPosts().stream().map(p->PostEntity.fromModel(p)).toList())
@@ -63,10 +62,47 @@ public class PageInfoEntity {
                 .build();
     }
 
+    public static PageInfoEntity fromModelWithGroup(PageInfo pageInfo){
+        return PageInfoEntity.builder()
+                .groupEntity(GroupEntity.fromPureModelWithId(pageInfo.getGroup()))
+                .pageName(pageInfo.getPageName())
+                .goodCount(pageInfo.getGoodCount())
+                .badCount(pageInfo.getBadCount())
+                .viewCount(pageInfo.getViewCount())
+                .created_at(pageInfo.getCreated_at())
+                .updated_at(pageInfo.getUpdated_at())
+                .build();
+    }
+
+    public static PageInfoEntity fromPureModelWithId(PageInfo pageInfo){
+        return PageInfoEntity.builder()
+                .id(pageInfo.getId())
+                .pageName(pageInfo.getPageName())
+                .goodCount(pageInfo.getGoodCount())
+                .badCount(pageInfo.getBadCount())
+                .viewCount(pageInfo.getViewCount())
+                .created_at(pageInfo.getCreated_at())
+                .updated_at(pageInfo.getUpdated_at())
+                .build();
+    }
+
+    public static PageInfoEntity fromModelWithPosts(PageInfo pageInfo){
+        return PageInfoEntity.builder()
+                .id(pageInfo.getId())
+                .pageName(pageInfo.getPageName())
+                .goodCount(pageInfo.getGoodCount())
+                .postEntities(new ArrayList<>())
+                .badCount(pageInfo.getBadCount())
+                .viewCount(pageInfo.getViewCount())
+                .created_at(pageInfo.getCreated_at())
+                .updated_at(pageInfo.getUpdated_at())
+                .build();
+    }
+
     public static PageInfoEntity fromModelWithId(PageInfo pageInfo){
         return PageInfoEntity.builder()
                 .id(pageInfo.getId())
-                .groupEntity(GroupEntity.fromModel(pageInfo.getGroup()))
+                //.groupEntity(GroupEntity.fromModel(pageInfo.getGroup()))
                 .pageName(pageInfo.getPageName())
                 //.postEntities(pageInfo.getPosts().stream().map(p->PostEntity.fromModel(p)).toList())
                 .goodCount(pageInfo.getGoodCount())
@@ -89,6 +125,38 @@ public class PageInfoEntity {
                 .created_at(created_at)
                 .updated_at(updated_at)
                 .build();
+    }
+
+    public PageInfo toModelWithPost(){
+        return PageInfo.builder()
+                .id(id)
+                .pageName(pageName)
+                .posts(postEntities.stream().map(PostEntity::toModelWithParent).toList())
+                .goodCount(goodCount)
+                .badCount(badCount)
+                .viewCount(viewCount)
+                .created_at(created_at)
+                .updated_at(updated_at)
+                .build();
+    }
+
+    public PageInfo toPureModel(){
+        return PageInfo.builder()
+                .id(id)
+                .pageName(pageName)
+                .goodCount(goodCount)
+                .badCount(badCount)
+                .viewCount(viewCount)
+                .created_at(created_at)
+                .updated_at(updated_at)
+                .build();
+    }
+
+    public void update(PageInfo pageInfo){
+        this.goodCount = pageInfo.getGoodCount();
+        this.badCount = pageInfo.getBadCount();
+        this.viewCount = pageInfo.getViewCount();
+        this.updated_at = pageInfo.getUpdated_at();
     }
 
 

@@ -36,7 +36,7 @@ public interface PageJPARepository extends JpaRepository<PageInfoEntity, Long> {
     Page<PageInfoEntity> findPagesByTitleContainingKeyword(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p FROM PageInfoEntity p WHERE p.groupEntity.id = :groupId ORDER BY p.updated_at DESC")
-    List<PageInfoEntity> findByGroupIdOrderByUpdatedAtDesc(Long groupId, Pageable pageable);
+    List<PageInfoEntity> findByGroupIdOrderByUpdatedAtDesc(@Param("groupId") Long groupId, Pageable pageable);
 
     @Query("SELECT p FROM PageInfoEntity p where p.groupEntity.id = :groupId AND p.pageName=:title")
     Optional<PageInfoEntity> findByTitle(@Param("groupId") Long groupId, @Param("title") String title);

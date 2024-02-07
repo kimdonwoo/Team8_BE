@@ -48,6 +48,29 @@ public class FakePostRepository implements PostRepository {
             return post;
         }
     }
+
+    @Override
+    public Post update(Post post) {
+
+        Post beforePost = data.stream().filter(item -> item.getId().equals(post.getId())).findAny().get();
+        Post updatedPost = Post.builder()
+                .id(beforePost.getId())
+                .parent(beforePost.getParent())
+                .orders(post.getOrders())
+                .groupMember(beforePost.getGroupMember())
+                .pageInfo(beforePost.getPageInfo())
+                .historys(beforePost.getHistorys())
+                .comments(beforePost.getComments())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .created_at(post.getCreated_at())
+                .build();
+
+        data.removeIf(item -> Objects.equals(item.getId(), post.getId()));
+        data.add(updatedPost);
+        return updatedPost;
+    }
+
     @Override
     public List<Post> findPostsByPageIdAndOrderGreaterThan(Long pageId, int orders) {
         return data.stream().filter(item -> item.getPageInfo().getId().equals(pageId) && item.getOrders() >= orders)
@@ -92,4 +115,5 @@ public class FakePostRepository implements PostRepository {
     public void deleteById(Long postId) {
         data.removeIf(item -> Objects.equals(item.getId(), postId));
     }
+
 }

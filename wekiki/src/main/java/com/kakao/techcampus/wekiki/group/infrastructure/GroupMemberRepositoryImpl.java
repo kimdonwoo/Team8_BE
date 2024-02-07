@@ -37,10 +37,10 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
     @Override
     public GroupMember save(GroupMember groupMember) {
-        GroupMemberEntity groupMemberEntity = GroupMemberEntity.fromModel(groupMember);
+        GroupMemberEntity groupMemberEntity = GroupMemberEntity.create(groupMember);
         groupMemberEntity.getGroupEntity().addGroupMember(groupMemberEntity);
         groupMemberEntity.getMemberEntity().getGroupMemberEntities().add(groupMemberEntity);
 
-        return groupMemberJPARepository.save(groupMemberEntity).toModel();
+        return groupMemberJPARepository.save(groupMemberEntity).toPureModel();
     }
 }

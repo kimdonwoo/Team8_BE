@@ -19,24 +19,31 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public Page<Comment> findCommentsByPostIdWithGroupMembers(Long postId, PageRequest pageRequest) {
         return commentJPARepository.findCommentsByPostIdWithGroupMembers(postId,pageRequest)
-                .map(CommentEntity::toModel);
+                .map(CommentEntity::toModelWithGroupMember);
     }
 
     @Override
     public Comment save(Comment comment) {
-        CommentEntity commentEntity = CommentEntity.fromModel(comment);
-        PostEntity.fromModel(comment.getPost()).addCommentEntity(commentEntity);
-        return commentJPARepository.save(commentEntity).toModel();
+        CommentEntity newComment = CommentEntity.createFromModel(comment);
+        newComment.getPostEntity().addCommentEntity(newComment);
+        return commentJPARepository.save(newComment).toPureModel();
+    }
+
+    @Override
+    public Comment update(Comment updatedComment){
+        CommentEntity commentEntity = commentJPARepository.findById(updatedComment.getId()).get();
+        commentEntity.update(updatedComment);
+        return commentEntity.toPureModel();
     }
 
 
     @Override
     public void delete(Comment comment) {
-        commentJPARepository.delete(CommentEntity.fromModel(comment));
+        commentJPARepository.delete(CommentEntity.fromPureModel(comment));
     }
 
     @Override
     public Optional<Comment> findCommentWithGroupMember(Long commentId) {
-        return commentJPARepository.findCommentWithGroupMember(commentId).map(CommentEntity::toModel);
+        return commentJPARepository.findCommentWithGroupMember(commentId).map(CommentEntity::toModelWithGroupMember);
     }
 }

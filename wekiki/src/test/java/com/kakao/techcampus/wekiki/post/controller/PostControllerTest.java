@@ -32,13 +32,12 @@ public class PostControllerTest {
                 .build();
         testContainer.testPostControllerSetting();
         Long groupId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(1L)
-                .parentPostId(0L)
-                .order(2)
-                .title("새로운 Post의 title")
-                .content("새로운 Post의 content")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(2);
+        request.setTitle("새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
 
         // when
         ResponseEntity<ApiUtils.ApiResult<PostResponse.createPostDTO>> result = testContainer.postRestController.createPost(groupId, request);
@@ -58,11 +57,10 @@ public class PostControllerTest {
                 .build();
         testContainer.testPostControllerSetting();
         Long groupId = 1L;
-        PostRequest.modifyPostDTO request = PostRequest.modifyPostDTO.builder()
-                .postId(1L)
-                .title("수정된 Post의 title")
-                .content("수정된 Post의 content")
-                .build();
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(1L);
+        request.setTitle("수정된 Post의 title");
+        request.setContent("수정된 Post의 content");
 
         // when
         ResponseEntity<ApiUtils.ApiResult<PostResponse.modifyPostDTO>> result = testContainer.postRestController.modifyPost(groupId, request);
@@ -126,10 +124,9 @@ public class PostControllerTest {
                 .build();
         testContainer.testPostControllerSetting();
         Long groupId = 1L;
-        PostRequest.createReportDTO request = PostRequest.createReportDTO.builder()
-                .postId(1L)
-                .content("해당 post 신고합니다!")
-                .build();
+        PostRequest.createReportDTO request = new PostRequest.createReportDTO();
+        request.setPostId(1L);
+        request.setContent("해당 post 신고합니다!");
 
         // when
         ResponseEntity<ApiUtils.ApiResult<PostResponse.createReportDTO>> result = testContainer.postRestController.createReport(groupId, request);

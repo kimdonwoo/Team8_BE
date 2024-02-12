@@ -96,7 +96,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_조회가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageId로_pageInfo와_Post_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -118,7 +118,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_조회가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageId로_pageInfo와_Post_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -140,7 +140,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지_조회가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_pageId로_pageInfo와_Post_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 100L;
@@ -187,7 +187,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_생성이_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_생성요청시_404Exception을_응답한다() throws Exception {
         // given
         PageInfoRequest.createPageDTO request = new PageInfoRequest.createPageDTO();
         request.setPageName("새로운 페이지!!");
@@ -212,7 +212,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_생성이_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageInfo_생성요청시_404Exception을_응답한다() throws Exception {
         // given
         PageInfoRequest.createPageDTO request = new PageInfoRequest.createPageDTO();
         request.setPageName("새로운 페이지!!");
@@ -237,7 +237,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 이미_존재하는_이름의_페이지랑_동일한_페이지_생성이_불가능하다() throws Exception {
+    void 이미_존재하는_이름의_페이지랑_동일한_pageInfo_생성요청시_400Exception을_응답한다() throws Exception {
         // given
         PageInfoRequest.createPageDTO request = new PageInfoRequest.createPageDTO();
         request.setPageName("Test Page1");
@@ -284,7 +284,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_삭제가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_삭제요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 2L;
@@ -306,7 +306,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_삭제가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageInfo_삭제요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 2L;
@@ -328,7 +328,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지_삭제가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_pageInfo_삭제요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 100L;
@@ -350,7 +350,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void post가_존재하는_페이지는_삭제가_불가능하다() throws Exception {
+    void post가_존재하는_페이지에_대해서_pageInfo_삭제요청시_400Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -394,7 +394,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_좋아요가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_좋아요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -416,7 +416,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_좋아요가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageInfo_좋아요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -438,7 +438,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지_좋아요가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_pageInfo_좋아요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 100L;
@@ -482,7 +482,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_싫어요_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_싫어요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -504,7 +504,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_싫어요가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageInfo_싫어요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -526,7 +526,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지_싫어요가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_pageInfo_싫어요_요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 100L;
@@ -590,7 +590,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지인덱스_조회가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_페이지_목차_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -612,7 +612,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지인덱스_조회가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_페이지_목차_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 1L;
@@ -634,7 +634,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지인덱스_조회가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_페이지_목차_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 100L;
@@ -656,7 +656,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void Post가_없는_Page요청에_대해서는_빈_Post를_반환합니다() throws Exception {
+    void Post가_없는_페이지_목차_조회요청시_빈_Post를_반환합니다() throws Exception {
         // given
         Long groupId = 1L;
         Long pageId = 2L;
@@ -674,7 +674,7 @@ public class PageInfoIntegrationTest {
         //result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageId").value(1));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageName").value("Test Page2"));
 
-        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.postList").value(null));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.postList").isEmpty());
 
     }
 
@@ -741,7 +741,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_제목으로_페이지조회가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_제목으로_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         String title = "Test Page1";
@@ -764,7 +764,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_제목으로_페이지조회가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_pageInfo_제목으로_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         String title = "Test Page1";
@@ -787,7 +787,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_제목으로_페이지조회가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_pageInfo_제목으로_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         String title = "Test Page No Title";
@@ -810,7 +810,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void Post가_없는_페이지에_대해_제목으로_페이지조회는_빈_Post를_반환합니다() throws Exception {
+    void Post가_없는_페이지에_대해_pageInfo_제목으로_조회요청시_빈_Post를_반환합니다() throws Exception {
         // given
         Long groupId = 1L;
         String title = "Test Page2";
@@ -829,7 +829,7 @@ public class PageInfoIntegrationTest {
         //result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageId").value(1));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageName").value("Test Page2"));
 
-        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.postList").value(null));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.postList").isEmpty());
 
     }
 
@@ -870,7 +870,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_페이지_검색이_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_키워드로_pageInfo_검색요청시_404Exception을_응답한다() throws Exception {
         // given
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword","Test");
@@ -895,7 +895,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_페이지_검색이_불가능하다() throws Exception {
+    void 가입한적없는_회원이_키워드로_pageInfo_검색요청시_404Exception을_응답한다() throws Exception {
         // given
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword","Test");
@@ -920,7 +920,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void Post가_존재하지_않는_Page는_content에_빈문자열을_반환한다() throws Exception {
+    void Post가_존재하지_않는_Page에대해_키워드로_pageInfo_검색요청시_content에_빈문자열을_반환한다() throws Exception {
         // given
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword","Test");
@@ -951,7 +951,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 해당_keyword를_포함하는_페이지가_존재하지_않을_경우_빈페이지를_반환한다() throws Exception {
+    void 키워드로_pageInfo_검색요청시_해당_keyword를_포함하는_페이지가_존재하지_않을_경우_빈페이지를_반환한다() throws Exception {
         // given
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("keyword","BUSAN");
@@ -969,7 +969,7 @@ public class PageInfoIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
-        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pages").value(null));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pages").isEmpty());
 
     }
 
@@ -1006,7 +1006,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_최근변경페이지_조회가_불가능하다() throws Exception {
+    void 해당_그룹을_이미_탈퇴한_회원이_최근_바뀐_pageInfo_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
 
@@ -1027,7 +1027,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_최근변경페이지_조회가_불가능하다() throws Exception {
+    void 가입한적없는_회원이_최근_바뀐_pageInfo_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
 
@@ -1048,7 +1048,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void Page가_10개_이상있을때_10개의_최근변경페이지를_반환한다() throws Exception {
+    void Page가_10개_이상있을때_최근_바뀐_pageInfo_조회요청시_10개의_최근변경페이지만_반환한다() throws Exception {
         // given
         Long groupId = 1L;
         for(int i = 0 ; i < 20 ; i++){
@@ -1068,13 +1068,36 @@ public class PageInfoIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
-        //TODO: 여기
-//        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[0].pageId").value(1));
-//        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[0].pageName").value("Test Page1"));
-//        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[0].updated_at").value("2024-02-09T00:00:00"));
-//
-//        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("해당 그룹에 속한 회원이 아닙니다."));
-//        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(404));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[0].pageId").value(23));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[0].pageName").value("New Page for Link Test19"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[1].pageId").value(22));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[1].pageName").value("New Page for Link Test18"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[2].pageId").value(21));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[2].pageName").value("New Page for Link Test17"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[3].pageId").value(20));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[3].pageName").value("New Page for Link Test16"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[4].pageId").value(19));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[4].pageName").value("New Page for Link Test15"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[5].pageId").value(18));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[5].pageName").value("New Page for Link Test14"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[6].pageId").value(17));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[6].pageName").value("New Page for Link Test13"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[7].pageId").value(16));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[7].pageName").value("New Page for Link Test12"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[8].pageId").value(15));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[8].pageName").value("New Page for Link Test11"));
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[9].pageId").value(14));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.recentPage[9].pageName").value("New Page for Link Test10"));
 
     }
 
@@ -1105,7 +1128,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_페이지의_링크_조회가_불가능하다() throws Exception {
+    void 존재하지않는_페이지에_대해_페이지명으로_링크를위한_pageId_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 1L;
         String title = "No Page";
@@ -1128,7 +1151,7 @@ public class PageInfoIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_그룹에_대해_페이지의_링크_조회가_불가능하다() throws Exception {
+    void 존재하지않는_그룹에_대해_페이지명으로_링크를위한_pageId_조회요청시_404Exception을_응답한다() throws Exception {
         // given
         Long groupId = 100L;
         String title = "New Page for Link Test";

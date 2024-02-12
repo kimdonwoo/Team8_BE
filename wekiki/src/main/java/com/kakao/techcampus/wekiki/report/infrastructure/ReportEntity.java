@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,7 @@ public class ReportEntity {
     private GroupMemberEntity fromMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private HistoryEntity historyEntity;
     private String content;
 
@@ -48,11 +51,19 @@ public class ReportEntity {
                 .build();
     }
 
+    public Report toPureModel(){
+        return Report.builder()
+                .id(id)
+                .content(content)
+                .created_at(created_at)
+                .build();
+    }
+
     public static ReportEntity fromModel(Report report){
         return ReportEntity.builder()
-                .id(report.getId())
-                .groupMemberEntity(GroupMemberEntity.fromModel(report.getFromMember()))
-                .historyEntity(HistoryEntity.fromModel(report.getHistory()))
+                //.id(report.getId())
+                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(report.getFromMember()))
+                .historyEntity(HistoryEntity.fromPureModel(report.getHistory()))
                 .content(report.getContent())
                 .created_at(report.getCreated_at())
                 .build();

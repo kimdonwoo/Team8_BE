@@ -25,7 +25,7 @@ public class GroupEntity {
     private String groupName;
     private String groupProfileImage;
 
-    @OneToMany(mappedBy = "groupEntity", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "groupEntity", orphanRemoval = true)
     private List<GroupMemberEntity> groupMemberEntities = new ArrayList<>();
 
     private int memberCount;
@@ -42,12 +42,21 @@ public class GroupEntity {
     }
 
     public Group toModel(){
-        System.out.println("@@@@@@@");
         return Group.builder()
                 .id(this.id)
                 .groupName(this.groupName)
                 .groupProfileImage(this.groupProfileImage)
                 //.groupMembers(this.groupMemberEntities.stream().map(GroupMemberEntity::toModel).toList())
+                .memberCount(this.memberCount)
+                .created_at(this.created_at)
+                .build();
+    }
+
+    public Group toPureModelWithId(){
+        return Group.builder()
+                .id(this.id)
+                .groupName(this.groupName)
+                .groupProfileImage(this.groupProfileImage)
                 .memberCount(this.memberCount)
                 .created_at(this.created_at)
                 .build();
@@ -59,6 +68,26 @@ public class GroupEntity {
                 .groupName(group.getGroupName())
                 .groupProfileImage(group.getGroupProfileImage())
                 //.groupMemberEntities(group.getGroupMembers().stream().map(GroupMemberEntity::fromModel).toList())
+                .memberCount(group.getMemberCount())
+                .created_at(group.getCreated_at())
+                .build();
+    }
+
+    public static GroupEntity create(Group group){
+        return GroupEntity.builder()
+                .groupName(group.getGroupName())
+                .groupProfileImage(group.getGroupProfileImage())
+                .memberCount(group.getMemberCount())
+                .created_at(group.getCreated_at())
+                .build();
+    }
+
+    public static GroupEntity fromPureModelWithId(Group group){
+        return GroupEntity.builder()
+                .id(group.getId())
+                .groupName(group.getGroupName())
+                .groupProfileImage(group.getGroupProfileImage())
+                .groupMemberEntities(new ArrayList<>())
                 .memberCount(group.getMemberCount())
                 .created_at(group.getCreated_at())
                 .build();

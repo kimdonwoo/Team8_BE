@@ -28,11 +28,10 @@ public class Comment {
 
     public Comment updateContent(String newContent){
         return Comment.builder()
-                .id(id)
-                .groupMember(groupMember)
-                .post(post)
+                .id(this.id)
+                .groupMember(this.groupMember)
                 .content(newContent)
-                .created_at(created_at)
+                .created_at(this.created_at)
                 .build();
     }
 

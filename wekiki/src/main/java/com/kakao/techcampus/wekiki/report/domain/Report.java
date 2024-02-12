@@ -24,4 +24,13 @@ public class Report {
         this.content = content;
         this.created_at = created_at;
     }
+
+    public static Report from(GroupMember groupMember, History history,String content){
+        return Report.builder()
+                .fromMember(groupMember)
+                .history(history)
+                .content(content)
+                .created_at(LocalDateTime.now())
+                .build();
+    }
 }

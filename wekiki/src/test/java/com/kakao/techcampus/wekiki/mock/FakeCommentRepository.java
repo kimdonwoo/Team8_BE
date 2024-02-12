@@ -40,6 +40,21 @@ public class FakeCommentRepository implements CommentRepository {
     }
 
     @Override
+    public Comment update(Comment comment) {
+        Comment beforeComment = data.stream().filter(item -> item.getId().equals(comment.getId())).findAny().get();
+        Comment updatedComment = Comment.builder()
+                .id(beforeComment.getId())
+                .groupMember(beforeComment.getGroupMember())
+                .post(beforeComment.getPost())
+                .content(comment.getContent())
+                .created_at(comment.getCreated_at())
+                .build();
+        data.removeIf(item -> Objects.equals(item.getId(), beforeComment.getId()));
+        data.add(updatedComment);
+        return updatedComment;
+    }
+
+    @Override
     public void delete(Comment comment) {
         data.removeIf(item -> Objects.equals(item.getId(),comment.getId()));
     }
@@ -48,6 +63,7 @@ public class FakeCommentRepository implements CommentRepository {
     public Optional<Comment> findCommentWithGroupMember(Long commentId) {
         return data.stream().filter(item->item.getId().equals(commentId)).findAny();
     }
+
 
     @Override
     public Page<Comment> findCommentsByPostIdWithGroupMembers(Long postId, PageRequest pageRequest) {

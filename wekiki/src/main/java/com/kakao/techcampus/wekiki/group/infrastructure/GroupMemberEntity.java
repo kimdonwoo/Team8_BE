@@ -19,7 +19,7 @@ public class GroupMemberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private MemberEntity memberEntity;
     @ManyToOne(fetch = FetchType.LAZY)
     private GroupEntity groupEntity;
@@ -44,8 +44,18 @@ public class GroupMemberEntity {
     public GroupMember toModel(){
         return GroupMember.builder()
                 .id(this.id)
-                .member(memberEntity.toModel())
-                .group(groupEntity.toModel())
+                .member(memberEntity.toPureModelWithId())
+                .group(groupEntity.toPureModelWithId())
+                .nickName(this.nickName)
+                .memberLevel(this.memberLevel)
+                .created_at(this.created_at)
+                .activeStatus(this.activeStatus)
+                .build();
+    }
+
+    public GroupMember toPureModel(){
+        return GroupMember.builder()
+                .id(this.id)
                 .nickName(this.nickName)
                 .memberLevel(this.memberLevel)
                 .created_at(this.created_at)
@@ -58,6 +68,27 @@ public class GroupMemberEntity {
                 .id(groupMember.getId())
                 .memberEntity(MemberEntity.fromModel(groupMember.getMember()))
                 .groupEntity(GroupEntity.fromModel(groupMember.getGroup()))
+                .nickName(groupMember.getNickName())
+                .memberLevel(groupMember.getMemberLevel())
+                .created_at(groupMember.getCreated_at())
+                .activeStatus(groupMember.isActiveStatus())
+                .build();
+    }
+
+    public static GroupMemberEntity create(GroupMember groupMember){
+        return GroupMemberEntity.builder()
+                .memberEntity(MemberEntity.fromPureModelWithId(groupMember.getMember()))
+                .groupEntity(GroupEntity.fromPureModelWithId(groupMember.getGroup()))
+                .nickName(groupMember.getNickName())
+                .memberLevel(groupMember.getMemberLevel())
+                .created_at(groupMember.getCreated_at())
+                .activeStatus(groupMember.isActiveStatus())
+                .build();
+    }
+
+    public static GroupMemberEntity fromPureModelWithId(GroupMember groupMember){
+        return GroupMemberEntity.builder()
+                .id(groupMember.getId())
                 .nickName(groupMember.getNickName())
                 .memberLevel(groupMember.getMemberLevel())
                 .created_at(groupMember.getCreated_at())

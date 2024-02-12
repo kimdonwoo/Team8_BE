@@ -30,15 +30,16 @@ public class GroupRestController {
         - 그룹 생성 시 기본 페이지 생성은 어떻게 하는게 좋을까
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createUnOfficialGroup(@RequestBody @Valid GroupRequestDTO.CreateUnOfficialGroupRequestDTO requestDTO, BindingResult result) {
+    public void createUnOfficialGroup(@RequestBody @Valid GroupRequestDTO.CreateUnOfficialGroupRequestDTO requestDTO, BindingResult result) {
         // 유효성 검사
         if (result.hasErrors()) {
             throw new Exception400(result.getFieldError().getDefaultMessage());
         }
 
-        GroupResponseDTO.CreateUnOfficialGroupResponseDTO response = groupService.createUnOfficialGroup(requestDTO, securityUtils.currentMember());
+        groupService.createUnOfficialGroup(requestDTO, securityUtils.currentMember());
+        //GroupResponseDTO.CreateUnOfficialGroupResponseDTO response = groupService.createUnOfficialGroup(requestDTO, securityUtils.currentMember());
 
-        return ResponseEntity.ok().body(ApiUtils.success(response));
+        //return ResponseEntity.ok().body(ApiUtils.success(response));
     }
 
 

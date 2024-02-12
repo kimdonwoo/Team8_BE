@@ -4,19 +4,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@AllArgsConstructor
 public class PostRequest {
     @Getter
-    @Builder
+    @Setter
     public static class createPostDTO {
 
         @Positive(message = "유효하지 않은 pageID입니다.")
         private Long pageId;
 
-        @Positive(message = "유효하지 않은 parentPostID입니다.")
+        @PositiveOrZero(message = "유효하지 않은 parentPostID입니다.")
         private Long parentPostId;
 
         @PositiveOrZero(message = "유효하지 않은 order입니다.")
@@ -32,7 +31,7 @@ public class PostRequest {
     }
 
     @Getter
-    @Builder
+    @Setter
     public static class modifyPostDTO{
         @Positive(message = "유효하지 않은 postID입니다.")
         private Long postId;
@@ -46,7 +45,7 @@ public class PostRequest {
     }
 
     @Getter
-    @Builder
+    @Setter
     public static class createReportDTO{
         @Positive(message = "유효하지 않은 postID입니다.")
         private Long postId;

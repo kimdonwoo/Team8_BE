@@ -16,17 +16,17 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Optional<Member> findById(Long currentMember) {
-        return memberJPARepository.findById(currentMember).map(MemberEntity::toModel);
+        return memberJPARepository.findById(currentMember).map(MemberEntity::toPureModelWithId);
     }
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        return memberJPARepository.findByEmail(email).map(MemberEntity::toModel);
+        return memberJPARepository.findByEmail(email).map(MemberEntity::toPureModelWithId);
     }
 
     @Override
     public Member save(Member member) {
-        return memberJPARepository.save(MemberEntity.fromModel(member)).toModel();
+        return memberJPARepository.save(MemberEntity.create(member)).toPureModelWithId();
     }
 
     @Override

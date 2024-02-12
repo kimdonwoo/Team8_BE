@@ -26,6 +26,6 @@ public interface PostJPARepository extends JpaRepository<PostEntity, Long> {
     boolean existsByParentId(Long parentId);
 
 
-    @Query("SELECT po FROM PostEntity po WHERE po.pageInfoEntity IN (:pages) AND po.orders = 1")
+    @Query("SELECT po FROM PostEntity po JOIN FETCH po.pageInfoEntity WHERE po.pageInfoEntity IN (:pages) AND po.orders = 1")
     List<PostEntity> findPostInPages(@Param("pages") List<PageInfoEntity> pages);
 }

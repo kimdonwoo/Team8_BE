@@ -143,23 +143,15 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
         }
 
         // 3. Page 생성
-        PageInfo newPageInfo = PageInfo.builder()
-                .group(activeGroupMember.getGroup())
-                .pageName(title)
-                .goodCount(0)
-                .badCount(0)
-                .viewCount(0)
-                .created_at(LocalDateTime.now())
-                .updated_at(LocalDateTime.now())
-                .build();
+        PageInfo newPageInfo = PageInfo.from(activeGroupMember.getGroup(),title);
 
-        // 5. Page 저장
+        // 4. Page 저장
         PageInfo savedPageInfo = pageRepository.save(newPageInfo);
 
-        // 6. Redis에 Hash 자료구조로 pageID 저장
+        // 5. Redis에 Hash 자료구조로 pageID 저장
         redisUtils.saveKeyAndHashValue(GROUP_PREFIX+groupId,title, savedPageInfo.getId().toString());
 
-        // 7. return DTO
+        // 6. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + title + " 페이지를 생성하였습니다.");
         return new PageInfoResponse.createPageDTO(savedPageInfo);
     }
@@ -175,7 +167,7 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
         PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        PageInfoResponse.likePageDTO response = new PageInfoResponse.likePageDTO(pageRepository.save(PageInfo.plusGoodCount()));
+        PageInfoResponse.likePageDTO response = new PageInfoResponse.likePageDTO(pageRepository.update(PageInfo.plusGoodCount()));
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 좋아요를 눌렀습니다.");
@@ -184,7 +176,7 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PageInfoResponse.hatePageDTO hatePage(Long pageId , Long groupId, Long memberId){
 
         // 1. 존재하는 Member, Group, GroupMember 인지 fetch join으로 하나의 쿼리로 확인
@@ -194,7 +186,7 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
         PageInfo PageInfo = checkPageFromPageId(pageId);
 
         // 3. 페이지 goodCount 증가
-        PageInfoResponse.hatePageDTO response = new PageInfoResponse.hatePageDTO(PageInfo.plusBadCount());
+        PageInfoResponse.hatePageDTO response = new PageInfoResponse.hatePageDTO(pageRepository.update(PageInfo.plusBadCount()));
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에서 "  + pageId + " 페이지 싫어요를 눌렀습니다.");

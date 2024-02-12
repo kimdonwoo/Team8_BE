@@ -17,7 +17,7 @@ public class PageConcurrencyWithSync {
     public void likePageWithSynchronized(Long pageId){
         PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
         PageInfo newPage = page.plusGoodCount();
-        pageRepository.saveAndFlush(newPage);
+        pageRepository.update(newPage);
     }
 
 }

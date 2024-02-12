@@ -31,7 +31,8 @@ public class CommentControllerTest {
         testContainer.testCommentControllerSetting();
         Long groupId = 1L;
         Long postId = 1L;
-        CommentRequest.createComment request = new CommentRequest.createComment("create Comment Controller Test");
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("create Comment Controller Test");
 
         // when
         ResponseEntity<ApiUtils.ApiResult<CommentResponse.createCommentDTO>> result = testContainer.commentController.createComment(groupId, postId, request);
@@ -94,7 +95,8 @@ public class CommentControllerTest {
         testContainer.testCommentControllerSetting();
         Long groupId = 1L;
         Long commentId = 2L;
-        CommentRequest.updateComment request = new CommentRequest.updateComment("update Comment Controller Test");
+        CommentRequest.updateComment request = new CommentRequest.updateComment();
+        request.setContent("update Comment Controller Test");
 
         // when
         ResponseEntity<ApiUtils.ApiResult<CommentResponse.updateCommentDTO>> result = testContainer.commentController.updateComment(groupId, commentId, request);

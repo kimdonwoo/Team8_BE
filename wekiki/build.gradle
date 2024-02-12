@@ -51,8 +51,8 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java:8.0.31'
 
 	// (테스트용) H2 데이터베이스
-	//runtimeOnly 'com.h2database:h2'
-
+	runtimeOnly 'com.h2database:h2'
+	
 	// 테스트 기능 제공
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

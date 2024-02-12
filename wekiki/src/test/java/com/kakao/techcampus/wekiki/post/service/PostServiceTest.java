@@ -10,6 +10,7 @@ import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.mock.*;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
+import com.kakao.techcampus.wekiki.post.controller.request.PostRequest.createPostDTO;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import com.kakao.techcampus.wekiki.post.domain.Post;
 import org.junit.jupiter.api.BeforeEach;
@@ -230,13 +231,12 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(1L)
-                .parentPostId(0L)
-                .order(5)
-                .title("새로운 Post의 제목입니다.")
-                .content("새로운 Post의 내용입니다")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(5);
+        request.setTitle("새로운 Post의 제목입니다.");
+        request.setContent("새로운 Post의 내용입니다");
 
         // when
         PostResponse.createPostDTO result = postService.createPost(memberId, groupId, request);
@@ -254,13 +254,12 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 2L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(1L)
-                .parentPostId(0L)
-                .order(5)
-                .title("새로운 Post의 제목입니다.")
-                .content("새로운 Post의 내용입니다")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(5);
+        request.setTitle("새로운 Post의 제목입니다.");
+        request.setContent("새로운 Post의 내용입니다");
 
         // when
         // then
@@ -274,13 +273,12 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 3L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(1L)
-                .parentPostId(0L)
-                .order(5)
-                .title("새로운 Post의 제목입니다.")
-                .content("새로운 Post의 내용입니다")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(5);
+        request.setTitle("새로운 Post의 제목입니다.");
+        request.setContent("새로운 Post의 내용입니다");
 
         // when
         // then
@@ -294,13 +292,12 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(100L)
-                .parentPostId(0L)
-                .order(5)
-                .title("새로운 Post의 제목입니다.")
-                .content("새로운 Post의 내용입니다")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(100L);
+        request.setParentPostId(0L);
+        request.setOrder(5);
+        request.setTitle("새로운 Post의 제목입니다.");
+        request.setContent("새로운 Post의 내용입니다");
 
         // when
         // then
@@ -314,13 +311,12 @@ public class PostServiceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        PostRequest.createPostDTO request = PostRequest.createPostDTO.builder()
-                .pageId(1L)
-                .parentPostId(100L)
-                .order(5)
-                .title("새로운 Post의 제목입니다.")
-                .content("새로운 Post의 내용입니다")
-                .build();
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(100L);
+        request.setOrder(5);
+        request.setTitle("새로운 Post의 제목입니다.");
+        request.setContent("새로운 Post의 내용입니다");
 
         // when
         // then

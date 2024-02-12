@@ -28,7 +28,7 @@ public class PageConcurrencyService {
     public PageInfo likePageTest(Long pageId){
         PageInfo page = pageRepository.findById(pageId).orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
         PageInfo newPage = page.plusGoodCount();
-        PageInfo pageInfo = pageRepository.saveAndFlush(newPage);
+        PageInfo pageInfo = pageRepository.update(newPage);
         return pageInfo;
     }
 
@@ -42,14 +42,14 @@ public class PageConcurrencyService {
     public void likePageWithPessimisticLock(Long pageId){
         PageInfo page = pageRepository.findByIdWithPessimisticLock(pageId);
         PageInfo newPage = page.plusGoodCount();
-        pageRepository.saveAndFlush(newPage);
+        pageRepository.update(newPage);
     }
 
     @Transactional
     public void likePageWithOptimisticLock(Long pageId){
         PageInfo page = pageRepository.findByIdWithOptimisticLock(pageId);
         PageInfo newPage = page.plusGoodCount();
-        pageRepository.save(newPage);
+        pageRepository.update(newPage);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -57,7 +57,7 @@ public class PageConcurrencyService {
         PageInfo page = pageRepository.findById(pageId).orElseThrow(
                 () -> new Exception404("존재하지 않는 페이지 입니다."));
         PageInfo newPage = page.plusGoodCount();
-        pageRepository.saveAndFlush(newPage);
+        pageRepository.update(newPage);
     }
 
 }

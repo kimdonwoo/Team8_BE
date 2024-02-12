@@ -49,7 +49,8 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
 
         // 4. return DTO
         List<CommentResponse.getCommentDTO.commentDTO> commentDTOs = comments.getContent()
-                .stream().map(c -> new CommentResponse.getCommentDTO.commentDTO(c,c.getGroupMember(), c.getGroupMember().getId() == activeGroupMember.getId()))
+                .stream().map(c -> new CommentResponse.getCommentDTO.commentDTO(c,c.getGroupMember(),
+                        c.getGroupMember().getId() == activeGroupMember.getId()))
                 .collect(Collectors.toList());
 
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ postId +" 포스트의 댓글을 조회합니다.");
@@ -67,8 +68,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         Post post = checkPostFromPostId(postId);
 
         // 3. comment 불변 객체 생성 + 저장
-        Comment comment = Comment.from(activeGroupMember,post,content);
-        Comment savedComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(Comment.from(activeGroupMember,post,content));
 
         // 4. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ postId +" 포스트의 댓글을 생성합니다.");
@@ -96,7 +96,7 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
         }
 
         // 5. 수정
-        Comment updatedComment = commentRepository.save(comment.updateContent(updateContent));
+        Comment updatedComment = commentRepository.update(comment.updateContent(updateContent));
 
         // 6. return DTO
         log.info(memberId + " 님이 " + groupId + " 그룹에 "+ commentId +" 댓글을 수정합니다.");
@@ -107,8 +107,12 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
     @Transactional
     public CommentResponse.deleteCommentDTO deleteComment(Long memberId, Long groupId, Long commentId){
 
+        System.out.println("여긴가?? - 1");
+
         // 1. 존재하는 Member, Group, GroupMember 인지 fetch join으로 하나의 쿼리로 확인
         GroupMember activeGroupMember = checkGroupMember(memberId, groupId);
+
+        System.out.println("여긴가?? -1-");
 
         // 2. comment 존재하는지 예외처리
         Comment comment = checkCommentFromCommentId(commentId);
@@ -129,9 +133,10 @@ public class CommentServiceImpl implements CommentReadService, CommentUpdateServ
 
 
     private GroupMember checkGroupMember(Long memberId, Long groupId){
-
+        System.out.println("여긴가?? - 2");
         GroupMember activeGroupMember = groupMemberRepository.findGroupMemberByMemberIdAndGroupIdFetchJoin(memberId, groupId)
                 .orElseThrow(() -> new Exception404("해당 그룹에 속한 회원이 아닙니다."));
+        System.out.println("여긴가?? - 4");
         if(!activeGroupMember.isActiveStatus()) throw new Exception404("해당 그룹에 속한 회원이 아닙니다.");
         if(activeGroupMember.getMember() == null) throw new Exception404("존재하지 않는 회원입니다.");
         if(activeGroupMember.getGroup() == null) throw new Exception404("존재하지 않는 그룹입니다.");

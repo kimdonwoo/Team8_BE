@@ -219,7 +219,7 @@ public class CommentIntegrationTest {
         System.out.println("테스트 : "+responseBody);
 
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
-        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getComment.arg2: 유효하지 않은 page입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getComment.arg2: 유효하지 않은 pageID입니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
 
     }

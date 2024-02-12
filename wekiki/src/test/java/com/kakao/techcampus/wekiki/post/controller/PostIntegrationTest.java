@@ -175,6 +175,230 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_양수가아닌_groupId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(6);
+        request.setTitle("새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("createPost.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_양수가아닌_pageId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(0L);
+        request.setParentPostId(0L);
+        request.setOrder(6);
+        request.setTitle("새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 유효하지 않은 pageID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_음수인_parentPostId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(-1L);
+        request.setOrder(6);
+        request.setTitle("새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 유효하지 않은 parentPostID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_음수인_order값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(-1);
+        request.setTitle("새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 유효하지 않은 order입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_title이_비어있으면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(6);
+        request.setTitle("");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목을 입력해주세요."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_title이_200자가_넘으면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(6);
+        request.setTitle("새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title" +
+                "새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title" +
+                "새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title" +
+                "새로운 Post의 title 새로운 Post의 title 새로운 Post의 title 새로운 Post의 title");
+        request.setContent("새로운 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목은 최대 200자까지 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_생성요청시_content가_10000자가_넘으면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createPostDTO request = new PostRequest.createPostDTO();
+        request.setPageId(1L);
+        request.setParentPostId(0L);
+        request.setOrder(6);
+        request.setTitle("새로운 Post의 title");
+        String str = "새로운 Content";
+        for(int i = 0 ; i < 1000; i++){
+            str+="새로운 Content";
+        }
+        request.setContent(str);
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/create")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 내용은 최대 10000자 이내로 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
     void 사용자는_올바른_요청에_대해_post_수정이_가능하다() throws Exception {
         // given
         PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
@@ -310,7 +534,159 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 사용자는_올바른_요청에_대해_post_삭제가_가능하다() throws Exception {
+    public void post_수정요청시_양수가아닌_groupId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(1L);
+        request.setTitle("수정된 Post의 title");
+        request.setContent("수정된 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                put("/group/"+groupId+"/post/modify")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("modifyPost.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_수정요청시_양수가아닌_postId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(0L);
+        request.setTitle("수정된 Post의 title");
+        request.setContent("수정된 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                put("/group/"+groupId+"/post/modify")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_수정요청시_title값이_빈배열이면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(1L);
+        request.setTitle("");
+        request.setContent("수정된 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                put("/group/"+groupId+"/post/modify")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목을 입력해주세요."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_수정요청시_title이_200자가_넘으면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(1L);
+        request.setTitle("수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title" +
+                "수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title" +
+                "수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title" +
+                "수정된 Post의 title 수정된 Post의 title 수정된 Post의 title 수정된 Post의 title");
+        request.setContent("수정된 Post의 content");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                put("/group/"+groupId+"/post/modify")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목은 최대 200자까지 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void post_수정요청시_content가_10000자를_넘으면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
+        request.setPostId(1L);
+        request.setTitle("수정된 Post의 title");
+        String str = "수정된 Content";
+        for(int i = 0 ; i < 1000; i++){
+            str+="수정된 Content";
+        }
+        request.setContent(str);
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                put("/group/"+groupId+"/post/modify")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 내용은 최대 10000자 이내로 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    void 사용자는_올바른_요청에_대해_Post_삭제가_가능하다() throws Exception {
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -419,6 +795,54 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
+    public void Post_삭제요청시_양수가아닌_groupId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 0L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                delete("/group/"+groupId+"/post/"+postId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("deletePost.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void Post_삭제요청시_양수가아닌_postId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 1L;
+        Long postId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                delete("/group/"+groupId+"/post/"+postId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("deletePost.arg1: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
     void 사용자는_올바른_요청에_대해_post_히스토리_조회가_가능하다() throws Exception {
         // given
         Long groupId = 1L;
@@ -449,6 +873,7 @@ public class PostIntegrationTest {
     @Test
     @WithUserDetails(value = "test2@test.com")
     void 해당_그룹을_이미_탈퇴한_회원이_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
+
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -471,6 +896,7 @@ public class PostIntegrationTest {
     @Test
     @WithUserDetails(value = "test3@test.com")
     void 해당_회원이_가입한적없는_회원이_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
+
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -494,6 +920,7 @@ public class PostIntegrationTest {
     @Test
     @WithUserDetails(value = "test1@test.com")
     void 존재하지_않는_Post에_대해서_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
+
         // given
         Long groupId = 1L;
         Long postId = 100L;
@@ -516,7 +943,58 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 사용자는_올바른_요청에_대해_post_신고가_가능하다() throws Exception {
+    public void Post의_History조회요청시_양수가아닌_groupId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 0L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                get("/group/"+groupId+"/post/"+postId+"/history")
+                        .param("page","1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getPostHistory.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void Post의_History조회요청시_양수가아닌_postId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 1L;
+        Long postId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                get("/group/"+groupId+"/post/"+postId+"/history")
+                        .param("page","1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getPostHistory.arg1: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    void 사용자는_올바른_요청에_대해_Post_신고가_가능하다() throws Exception {
+
         // given
         PostRequest.createReportDTO request = new PostRequest.createReportDTO();
         request.setPostId(1L);
@@ -613,6 +1091,94 @@ public class PostIntegrationTest {
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("존재하지 않는 글 입니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(404));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void Post_신고요청시_양수가아닌_groupId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createReportDTO request = new PostRequest.createReportDTO();
+        request.setPostId(1L);
+        request.setContent("해당 post 신고합니다!");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/report")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("createReport.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void Post_신고요청시_양수가아닌_postId값로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createReportDTO request = new PostRequest.createReportDTO();
+        request.setPostId(0L);
+        request.setContent("해당 post 신고합니다!");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/report")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void Post_신고요청시_content가_500자를_초과하면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        PostRequest.createReportDTO request = new PostRequest.createReportDTO();
+        request.setPostId(1L);
+        String str = "해당 post 신고합니다!";
+        for(int i = 0 ; i < 50; i++){
+            str+="해당 post 신고합니다!";
+        }
+        request.setContent(str);
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/report")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 신고글 내용은 최대 500자 이내로 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
 
     }
 }

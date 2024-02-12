@@ -14,8 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
-
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @AutoConfigureMockMvc
@@ -447,6 +446,7 @@ public class CommentIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(request.getContent().length()).isGreaterThan(200);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 작성은 200자 이내로 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
@@ -723,6 +723,7 @@ public class CommentIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(request.getContent().length()).isGreaterThan(200);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 작성은 200자 이내로 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));

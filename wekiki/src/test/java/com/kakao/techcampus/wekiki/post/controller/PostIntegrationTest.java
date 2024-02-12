@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @AutoConfigureMockMvc
@@ -356,6 +357,7 @@ public class PostIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(request.getTitle().length()).isGreaterThan(200);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목은 최대 200자까지 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
@@ -391,6 +393,7 @@ public class PostIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(str.length()).isGreaterThan(10000);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 내용은 최대 10000자 이내로 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
@@ -645,6 +648,7 @@ public class PostIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(request.getTitle().length()).isGreaterThan(200);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 제목은 최대 200자까지 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
@@ -678,6 +682,7 @@ public class PostIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(str.length()).isGreaterThan(10000);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 게시글 내용은 최대 10000자 이내로 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
@@ -1176,6 +1181,7 @@ public class PostIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
 
+        assertThat(str.length()).isGreaterThan(500);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 신고글 내용은 최대 500자 이내로 가능합니다."));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));

@@ -24,8 +24,8 @@ INSERT INTO group_member_tb (`id`,`group_entity_id`,`member_entity_id`,`nick_nam
 INSERT INTO group_member_tb (`id`,`group_entity_id`,`member_entity_id`,`nick_name`,`active_status`,`member_level`,`created_at`) VALUES ('3','1','4','test Nickname3','1','0','2024-02-09 00:00:00.000000');
 
 INSERT INTO pageinfo_tb (`id`,`group_entity_id`,`page_name`,`bad_count`,`good_count`,`view_count`,`created_at`,`updated_at`) VALUES ('1','1','Test Page1','0','0','0','2024-02-09 00:00:00.000000','2024-02-09 00:00:00.000000');
-INSERT INTO pageinfo_tb (`id`,`group_entity_id`,`page_name`,`bad_count`,`good_count`,`view_count`,`created_at`,`updated_at`) VALUES ('2','1','Test Page2','0','0','0','2024-02-09 00:00:00.000000','2024-02-09 00:00:00.000000');
-INSERT INTO pageinfo_tb (`id`,`group_entity_id`,`page_name`,`bad_count`,`good_count`,`view_count`,`created_at`,`updated_at`) VALUES ('3','1','Test Page3','0','0','0','2024-02-09 00:00:00.000000','2024-02-09 00:00:00.000000');
+INSERT INTO pageinfo_tb (`id`,`group_entity_id`,`page_name`,`bad_count`,`good_count`,`view_count`,`created_at`,`updated_at`) VALUES ('2','1','Test Page2','0','0','0','2024-02-08 00:00:00.000000','2024-02-08 00:00:00.000000');
+INSERT INTO pageinfo_tb (`id`,`group_entity_id`,`page_name`,`bad_count`,`good_count`,`view_count`,`created_at`,`updated_at`) VALUES ('3','1','Test Page3','0','0','0','2024-02-07 00:00:00.000000','2024-02-07 00:00:00.000000');
 
 INSERT INTO post_tb (`id`,`parent_id`,`page_info_entity_id`,`group_member_entity_id`,`orders`,`title`,`content`,`created_at`) VALUES ('1',null,'1','1','1','Test Title 1','Test Content 1','2024-02-09 00:00:00.000000');
 INSERT INTO history_tb (`id`,`group_member_entity_id`,`post_id`, `title`,`content`,`created_at`) VALUES ('1','1','1','Test Title 1','Test Content 1','2024-02-09 00:00:00.000000');

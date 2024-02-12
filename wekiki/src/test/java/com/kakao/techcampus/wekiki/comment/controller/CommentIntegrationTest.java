@@ -149,6 +149,84 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글에_대해서_조회요청시_양수가아닌_groupId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 0L;
+        Long postId = 1L;
+        int page = 1;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                get("/group/"+groupId+"/post/"+postId+"/comment")
+                        .param("page",String.valueOf(page))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getComment.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글에_대해서_조회요청시_양수가아닌_postId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 1L;
+        Long postId = 0L;
+        int page = 1;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                get("/group/"+groupId+"/post/"+postId+"/comment")
+                        .param("page",String.valueOf(page))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getComment.arg1: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글에_대해서_조회요청시_양수가아닌_page값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 1L;
+        Long postId = 1L;
+        int page = 0;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                get("/group/"+groupId+"/post/"+postId+"/comment")
+                        .param("page",String.valueOf(page))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("getComment.arg2: 유효하지 않은 page입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
     public void 사용자는_올바른_요청에_대해_댓글생성이_가능하다() throws Exception {
 
         // given
@@ -261,6 +339,119 @@ public class CommentIntegrationTest {
 
     }
 
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글생성요청시_양수가아닌_groupId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("create Comment Integration Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 0L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("createComment.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글생성요청시_양수가아닌_postId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("create Comment Integration Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long postId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("createComment.arg1: 유효하지 않은 postID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글생성요청시_댓글_요청이_빈문자열이면_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 내용을 입력해주세요."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글생성요청시_댓글_글자수가_200자를_초과하면_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("create Comment Integration Test create Comment Integration Test " +
+                "create Comment Integration Test create Comment Integration Test create Comment Integration Test " +
+                "create Comment Integration Test create Comment Integration Test create Comment Integration Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 작성은 200자 이내로 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
 
     @Test
     @WithUserDetails(value = "test1@test.com")
@@ -424,6 +615,119 @@ public class CommentIntegrationTest {
 
     }
 
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글수정요청시_양수가아닌_groupId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.updateComment request = new CommentRequest.updateComment();
+        request.setContent("update Comment Controller Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 0L;
+        Long commentId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                patch("/group/"+groupId+"/comment/"+commentId)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("updateComment.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글수정요청시_양수가아닌_commentId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.updateComment request = new CommentRequest.updateComment();
+        request.setContent("update Comment Controller Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long commentId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                patch("/group/"+groupId+"/comment/"+commentId)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("updateComment.arg1: 유효하지 않은 commentID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글수정요청시_댓글_요청이_빈문자열이면_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 내용을 입력해주세요."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글수정요청시_댓글_글자수가_200자를_초과하면_요청을_보내면_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        CommentRequest.createComment request = new CommentRequest.createComment();
+        request.setContent("update Comment Controller Test update Comment Controller Test update Comment Controller Test" +
+                " update Comment Controller Test update Comment Controller Test update Comment Controller Test update Comment Controller Test" +
+                " update Comment Controller Test update Comment Controller Test update Comment Controller Test update Comment Controller Test");
+        String requestBody = om.writeValueAsString(request);
+        Long groupId = 1L;
+        Long postId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post("/group/"+groupId+"/post/"+postId+"/comment")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("Validation error: 댓글 작성은 200자 이내로 가능합니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
 
     @Test
     @WithUserDetails(value = "test1@test.com")
@@ -545,5 +849,52 @@ public class CommentIntegrationTest {
 
     }
 
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글삭제요청시_양수가아닌_groupId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 0L;
+        Long commentId = 1L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                delete("/group/"+groupId+"/comment/"+commentId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("deleteComment.arg0: 유효하지 않은 groupID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
+
+    @Test
+    @WithUserDetails(value = "test1@test.com")
+    public void 게시글의_댓글삭제요청시_양수가아닌_commentId값으로_요청을_보낼시_validation에_의해_400Exception을_응답한다() throws Exception {
+
+        // given
+        Long groupId = 1L;
+        Long commentId = 0L;
+
+        // when
+        ResultActions result = mockMvc.perform(
+                delete("/group/"+groupId+"/comment/"+commentId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // then
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : "+responseBody);
+
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("false"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.message").value("deleteComment.arg1: 유효하지 않은 commentID입니다."));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.error.status").value(400));
+
+    }
 
 }

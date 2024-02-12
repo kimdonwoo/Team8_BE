@@ -60,7 +60,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_Post_생성이_불가능하다() throws Exception{
+    void 해당_그룹을_이미_탈퇴한_회원이_Post_생성요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createPostDTO request = new PostRequest.createPostDTO();
         request.setPageId(1L);
@@ -88,7 +88,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_Post_생성이_불가능하다() throws Exception{
+    void 해당_회원이_가입한적없는_회원이_Post생성요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createPostDTO request = new PostRequest.createPostDTO();
         request.setPageId(1L);
@@ -117,7 +117,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_페이지에_대해_Post_생성이_불가능하다() throws Exception{
+    void 존재하지_않는_페이지에_대해서_Post생성요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createPostDTO request = new PostRequest.createPostDTO();
         request.setPageId(100L);
@@ -146,7 +146,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_상위_Post에_대한_새로운_하위_Post_생성이_불가능하다() throws Exception{
+    void 존재하지않는_상위_Post에_대한_새로운_하위_Post_생성요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createPostDTO request = new PostRequest.createPostDTO();
         request.setPageId(1L);
@@ -203,7 +203,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_Post_수정이_불가능하다() throws Exception{
+    void 해당_그룹을_이미_탈퇴한_회원이_Post수정요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
         request.setPostId(1L);
@@ -229,7 +229,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_Post_수정이_불가능하다() throws Exception{
+    void 해당_회원이_가입한적없는_회원이_Post수정요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
         request.setPostId(1L);
@@ -256,7 +256,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_Post에_대해_Post_수정이_불가능하다() throws Exception{
+    void 존재하지_않는_Post에_대해서_Post수정요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
         request.setPostId(100L);
@@ -283,7 +283,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 동일한_내용으로_수정이_불가능합니다() throws Exception{
+    void 동일한_내용으로_Post수정요청시_400Exception을_응답한다() throws Exception{
         // given
         PostRequest.modifyPostDTO request = new PostRequest.modifyPostDTO();
         request.setPostId(1L);
@@ -332,7 +332,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_Post_삭제가_불가능하다() throws Exception{
+    void 해당_그룹을_이미_탈퇴한_회원이_Post삭제요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -353,7 +353,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_Post_삭제가_불가능하다() throws Exception{
+    void 해당_회원이_가입한적없는_회원이_Post삭제요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -375,7 +375,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_Post에_대해_Post_삭제가_불가능하다() throws Exception{
+    void 존재하지_않는_Post에_대해서_Post삭제요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 100L;
@@ -397,7 +397,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 하위_글이_존재하는_Post는_삭제가_불가능하다() throws Exception{
+    void 하위_글이_존재하는_Post삭제요청시_400Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 2L;
@@ -448,7 +448,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_Post의_History_조회가_불가능하다() throws Exception{
+    void 해당_그룹을_이미_탈퇴한_회원이_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -470,7 +470,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_Post의_History_조회가_불가능하다() throws Exception{
+    void 해당_회원이_가입한적없는_회원이_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 1L;
@@ -493,7 +493,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_Post에_대해_History_조회가_불가능하다() throws Exception{
+    void 존재하지_않는_Post에_대해서_Post의_History조회요청시_404Exception을_응답한다() throws Exception{
         // given
         Long groupId = 1L;
         Long postId = 100L;
@@ -541,7 +541,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    void 해당_그룹을_이미_탈퇴한_회원은_Post에_대해_신고가_불가능하다() throws Exception{
+    void 해당_그룹을_이미_탈퇴한_회원이_Post의_신고요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createReportDTO request = new PostRequest.createReportDTO();
         request.setPostId(1L);
@@ -566,7 +566,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    void 해당_회원이_가입한적없는_회원이면_Post에_대해_신고가_불가능하다() throws Exception{
+    void 해당_회원이_가입한적없는_회원이_Post의_신고요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createReportDTO request = new PostRequest.createReportDTO();
         request.setPostId(1L);
@@ -592,7 +592,7 @@ public class PostIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    void 존재하지않는_Post에_대해_신고가_불가능하다() throws Exception{
+    void 존재하지_않는_Post에_대해서_Post의_신고요청시_404Exception을_응답한다() throws Exception{
         // given
         PostRequest.createReportDTO request = new PostRequest.createReportDTO();
         request.setPostId(100L);

@@ -73,7 +73,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    public void 해당_그룹을_이미_탈퇴한_회원은_댓글조회가_불가능하다() throws Exception {
+    public void 해당_그룹을_이미_탈퇴한_회원이_댓글조회요청시_404Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;
@@ -98,7 +98,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    public void 해당_회원이_가입한적없는_회원이면_댓글조회가_불가능하다() throws Exception {
+    public void 해당_회원이_가입한적없는_회원이_댓글조회요청시_404Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;
@@ -123,7 +123,8 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    public void 존재하지_않는_게시글의_댓글은_조회가_불가능하다() throws Exception {
+    public void 존재하지_않는_게시글의_댓글에_대해서_조회요청시_404Exception을_응답한다() throws Exception {
+
 
         // given
         Long groupId = 1L;
@@ -176,7 +177,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    public void 해당_그룹을_이미_탈퇴한_회원은_댓글생성이_불가능하다() throws Exception {
+    public void 해당_그룹을_이미_탈퇴한_회원이_댓글생성요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.createComment request = new CommentRequest.createComment();
@@ -205,7 +206,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    public void 해당_회원이_가입한적없는_회원이면_댓글생성이_불가능하다() throws Exception {
+    public void 해당_회원이_가입한적없는_회원이_댓글생성요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.createComment request = new CommentRequest.createComment();
@@ -234,7 +235,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    public void 존재하지_않는_게시글에는_댓글생성이_불가능하다() throws Exception {
+    public void 존재하지_않는_게시글에_대해서_댓글생성요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.createComment request = new CommentRequest.createComment();
@@ -290,7 +291,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    public void 해당_그룹을_이미_탈퇴한_회원은_댓글수정이_불가능하다() throws Exception {
+    public void 해당_그룹을_이미_탈퇴한_회원이_댓글수정요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.updateComment request = new CommentRequest.updateComment();
@@ -317,7 +318,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    public void 해당_회원이_가입한적없는_회원이면_댓글수정이_불가능하다() throws Exception {
+    public void 해당_회원이_가입한적없는_회원이_댓글수정요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.updateComment request = new CommentRequest.updateComment();
@@ -344,7 +345,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    public void 존재하지_않는_댓글에_수정이_불가능하다() throws Exception {
+    public void 존재하지_않는_댓글에_대해서_수정요청시_404Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.updateComment request = new CommentRequest.updateComment();
@@ -371,7 +372,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test4@test.com")
-    public void 댓글작성자가_아니면_수정이_불가능하다() throws Exception {
+    public void 댓글작성자가_아닌_사용자가_수정요청시_400Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.updateComment request = new CommentRequest.updateComment();
@@ -398,7 +399,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    public void 기존_댓글과_내용이_동일하도록_수정이_불가능하다() throws Exception {
+    public void 기존_댓글_내용과_동일하게_수정요청시_400Exception을_응답한다() throws Exception {
 
         // given
         CommentRequest.updateComment request = new CommentRequest.updateComment();
@@ -450,7 +451,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test2@test.com")
-    public void 해당_그룹을_이미_탈퇴한_회원은_댓글삭제가_불가능하다() throws Exception {
+    public void 해당_그룹을_이미_탈퇴한_회원이_댓글삭제요청시_404Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;
@@ -474,7 +475,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test3@test.com")
-    public void 해당_회원이_가입한적없는_회원이면_댓글삭제가_불가능하다() throws Exception {
+    public void 해당_회원이_가입한적없는_회원이_댓글삭제요청시_404Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;
@@ -498,7 +499,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test1@test.com")
-    public void 존재하지_않는_댓글삭제가_불가능하다() throws Exception {
+    public void 존재하지_않는_댓글에_대해서_삭제요청시_404Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;
@@ -522,7 +523,7 @@ public class CommentIntegrationTest {
 
     @Test
     @WithUserDetails(value = "test4@test.com")
-    public void 댓글작성자가_아니면_삭제가_불가능하다() throws Exception {
+    public void 댓글작성자가_아닌_사용자가_삭제요청시_400Exception을_응답한다() throws Exception {
 
         // given
         Long groupId = 1L;

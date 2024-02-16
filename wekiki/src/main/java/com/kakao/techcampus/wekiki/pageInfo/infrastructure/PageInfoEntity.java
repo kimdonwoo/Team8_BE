@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "pageinfo_tb")
+@Table(name = "pageinfo_tb", indexes = @Index(name ="idx_group_updated",columnList = "group_entity_id,updated_at"))
 public class PageInfoEntity {
 
     @Id

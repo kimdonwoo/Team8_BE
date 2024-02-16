@@ -27,7 +27,7 @@ public class JWTTokenProvider {
     //jwt 토큰 암호화를 위한 키
     private final Key secretKey;
     //Access token의 시간을 15분으로 설정
-    private static final long ACCESS_TOKEN_LIFETIME = 15 * 60 * 1000;
+    private static final long ACCESS_TOKEN_LIFETIME = 24 * 60 * 60 * 1000;
 
     public JWTTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

@@ -210,28 +210,28 @@ public class PageConcurrencyServiceTest {
         assertEquals(100 ,pageInfo.getGoodCount());
     }
 
-//    @Test
-//    public void 동시에_페이지_좋아요_100개_요청_WithPessimisticLock() throws InterruptedException {
-//
-//        int threadCount = 100;
-//        ExecutorService executorService = Executors.newFixedThreadPool(32);
-//        CountDownLatch latch = new CountDownLatch(threadCount);
-//
-//        for(int i = 0 ; i < threadCount ; i++){
-//            executorService.submit(()->{
-//                try{
-//                    pageConcurrencyService.likePageWithPessimisticLock(testPageId);
-//                }finally {
-//                    latch.countDown();
-//                }
-//            });
-//        }
-//
-//        latch.await();
-//
-//        PageInfoEntity pageInfo = pageJPARepository.findById(testPageId).get();
-//        assertEquals(100 ,pageInfo.getGoodCount());
-//    }
+    @Test
+    public void 동시에_페이지_좋아요_100개_요청_WithPessimisticLock() throws InterruptedException {
+
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for(int i = 0 ; i < threadCount ; i++){
+            executorService.submit(()->{
+                try{
+                    pageConcurrencyService.likePageWithPessimisticLock(testPageId);
+                }finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        PageInfoEntity pageInfo = pageJPARepository.findById(testPageId).get();
+        assertEquals(100 ,pageInfo.getGoodCount());
+    }
 
 //    @Test
 //    public void 동시에_페이지_좋아요_100개_요청_WithOptimisticLock() throws InterruptedException {

@@ -128,6 +128,7 @@ public class PageInfoServiceTest {
                 .build();
 
         PageInfo savedPageInfo1 = fakePageInfoRepository.save(pageInfo1);
+        fakeRedisUtils.saveKeyAndHashValue(pageService.getGROUP_PREFIX()+group.getId(),"Test Page",savedPageInfo1.getId().toString());
 
         PageInfo pageInfo2 = PageInfo.builder()
                 .group(group)
@@ -141,6 +142,8 @@ public class PageInfoServiceTest {
                 .build();
 
         PageInfo savedPageInfo2 = fakePageInfoRepository.save(pageInfo2);
+        fakeRedisUtils.saveKeyAndHashValue(pageService.getGROUP_PREFIX()+group.getId(),"Test Page2",savedPageInfo2.getId().toString());
+
 
         Post post1 = Post.builder()
                 //.parent(parent.toModel())

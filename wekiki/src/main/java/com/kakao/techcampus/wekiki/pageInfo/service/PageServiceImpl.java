@@ -256,13 +256,19 @@ public class PageServiceImpl implements PageInfoCreateService, PageInfoDeleteSer
         checkGroupMember(memberId, groupId);
 
         // 2. groupId랑 title로 Page있는지 확인 (fetch join으로 post들 가져오기)
-        PageInfo page = pageRepository.findByTitleWithPosts(groupId,title).
-                orElseThrow(() -> new Exception404("존재하지 않는 페이지 입니다."));
+        String value = redisUtils.getHashValue(GROUP_PREFIX + groupId, title);
 
-        // 2. 목차 생성하기
+        if(value == null){
+            throw new Exception404("존재하지 않는 페이지 입니다.");
+        }
+
+        // 2. pageId로 PageInfo + Post 객체 fetch join으로 한번에 들고오기
+        PageInfo page = getPageAndPostFromPageId(Long.parseLong(value));
+
+        // 3. 목차 생성하기
         HashMap<Long, String> indexs = pageIndexGenerator.createIndex(page.getPosts());
 
-        // 3. DTO로 return
+        // 4. DTO로 return
         List<PageInfoResponse.getPageFromIdDTO.postDTO> temp = page.getPosts().stream()
                 .map(p -> new PageInfoResponse.getPageFromIdDTO.postDTO(p, indexs.get(p.getId())))
                 .collect(Collectors.toList());

@@ -19,7 +19,7 @@ public class PageRepositoryImpl implements PageRepository {
 
     @Override
     public PageInfo findByIdWithPessimisticLock(Long pageId) {
-        return pageJPARepository.findByIdWithPessimisticLock(pageId).toModel();
+        return pageJPARepository.findByIdWithPessimisticLock(pageId).toPureModel();
     }
 
     @Override

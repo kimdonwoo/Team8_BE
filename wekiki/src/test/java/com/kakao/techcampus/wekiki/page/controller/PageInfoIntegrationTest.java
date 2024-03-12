@@ -1,13 +1,18 @@
 package com.kakao.techcampus.wekiki.page.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki.pageInfo.controller.PageInfoController;
 import com.kakao.techcampus.wekiki.pageInfo.controller.request.PageInfoRequest;
+import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageInfoEntity;
+import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageJPARepository;
+import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
@@ -17,7 +22,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @AutoConfigureMockMvc
@@ -34,6 +44,12 @@ public class PageInfoIntegrationTest {
 
     @Autowired
     private PageInfoController pageInfoController;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Autowired
+    private PageServiceImpl pageService;
 
     @Test
     @WithUserDetails(value = "test1@test.com")
@@ -589,6 +605,7 @@ public class PageInfoIntegrationTest {
 
     }
 
+
     @Test
     @WithUserDetails(value = "test2@test.com")
     void 해당_그룹을_이미_탈퇴한_회원이_pageInfo_좋아요_요청시_404Exception을_응답한다() throws Exception {
@@ -1038,6 +1055,8 @@ public class PageInfoIntegrationTest {
         // given
         Long groupId = 1L;
         String title = "Test Page1";
+        redisUtils.saveKeyAndHashValue(pageService.getGROUP_PREFIX()+groupId,"Test Page1","1");
+
 
         // when
         ResultActions result = mockMvc.perform(
@@ -1171,7 +1190,10 @@ public class PageInfoIntegrationTest {
 
         // given
         Long groupId = 1L;
-        String title = "Test Page2";
+        String title = "Test Page4";
+        PageInfoRequest.createPageDTO request = new PageInfoRequest.createPageDTO();
+        request.setPageName(title);
+        pageInfoController.createPage(groupId,request);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -1184,8 +1206,8 @@ public class PageInfoIntegrationTest {
         String responseBody = result.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : "+responseBody);
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
-        //result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageId").value(1));
-        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageName").value("Test Page2"));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageId").value(4));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.response.pageName").value("Test Page4"));
 
         result.andExpect(MockMvcResultMatchers.jsonPath("$.response.postList").isEmpty());
 

@@ -11,12 +11,9 @@ public interface PageRepository {
     PageInfo findByIdWithOptimisticLock(Long pageId);
     void getLock(String key);
     void releaseLock(String key);
-    Page<PageInfo> findPagesByTitleContainingKeyword(Long groupId, String keyword, Pageable pageable);
     List<PageInfo> findByGroupIdOrderByUpdatedAtDesc(Long groupId, Pageable pageable);
     Optional<PageInfo> findByTitle(Long groupId, String title);
-    Optional<PageInfo> findByTitleWithPosts(Long groupId, String title);
     Optional<PageInfo> findByPageIdWithPosts(Long pageId);
-    Page<PageInfo> findPagesWithPosts(Long groupId, String keyword, Pageable pageable);
     Page<PageInfo> findPages(Long groupId, String keyword, Pageable pageable);
     List<PageInfo> findAllByGroupId(Long groupId);
     PageInfo save(PageInfo newPageInfo);

@@ -37,10 +37,6 @@ public class PageRepositoryImpl implements PageRepository {
         pageJPARepository.releaseLock(key);
     }
 
-    @Override
-    public Page<PageInfo> findPagesByTitleContainingKeyword(Long groupId, String keyword, Pageable pageable) {
-        return pageJPARepository.findPagesByTitleContainingKeyword(groupId,keyword,pageable).map(PageInfoEntity::toModel);
-    }
 
     @Override
     public List<PageInfo> findByGroupIdOrderByUpdatedAtDesc(Long groupId, Pageable pageable) {
@@ -54,18 +50,8 @@ public class PageRepositoryImpl implements PageRepository {
     }
 
     @Override
-    public Optional<PageInfo> findByTitleWithPosts(Long groupId, String title) {
-        return pageJPARepository.findByTitleWithPosts(groupId,title).map(PageInfoEntity::toModelWithPost);
-    }
-
-    @Override
     public Optional<PageInfo> findByPageIdWithPosts(Long pageId) {
         return pageJPARepository.findByPageIdWithPosts(pageId).map(PageInfoEntity::toModelWithPost);
-    }
-
-    @Override
-    public Page<PageInfo> findPagesWithPosts(Long groupId, String keyword, Pageable pageable) {
-        return pageJPARepository.findPagesWithPosts(groupId,keyword,pageable).map(PageInfoEntity::toModel);
     }
 
     @Override

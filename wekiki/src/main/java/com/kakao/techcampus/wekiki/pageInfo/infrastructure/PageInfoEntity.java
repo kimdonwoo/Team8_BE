@@ -53,7 +53,6 @@ public class PageInfoEntity {
         return PageInfoEntity.builder()
                 .groupEntity(GroupEntity.fromModel(pageInfo.getGroup()))
                 .pageName(pageInfo.getPageName())
-                //.postEntities(pageInfo.getPosts().stream().map(p->PostEntity.fromModel(p)).toList())
                 .goodCount(pageInfo.getGoodCount())
                 .badCount(pageInfo.getBadCount())
                 .viewCount(pageInfo.getViewCount())
@@ -102,9 +101,7 @@ public class PageInfoEntity {
     public static PageInfoEntity fromModelWithId(PageInfo pageInfo){
         return PageInfoEntity.builder()
                 .id(pageInfo.getId())
-                //.groupEntity(GroupEntity.fromModel(pageInfo.getGroup()))
                 .pageName(pageInfo.getPageName())
-                //.postEntities(pageInfo.getPosts().stream().map(p->PostEntity.fromModel(p)).toList())
                 .goodCount(pageInfo.getGoodCount())
                 .badCount(pageInfo.getBadCount())
                 .viewCount(pageInfo.getViewCount())
@@ -118,7 +115,6 @@ public class PageInfoEntity {
                 .id(id)
                 .group(groupEntity.toModel())
                 .pageName(pageName)
-                //.posts(postEntities.stream().map(PostEntity::toModel).toList())
                 .goodCount(goodCount)
                 .badCount(badCount)
                 .viewCount(viewCount)
@@ -165,16 +161,5 @@ public class PageInfoEntity {
         postEntity.setPageInfoEntity(this);
     }
 
-    @Override
-    public String toString() {
-        return "PageInfoEntity{" +
-                "id=" + id +
-                ", pageName='" + pageName + '\'' +
-                ", goodCount=" + goodCount +
-                ", badCount=" + badCount +
-                ", viewCount=" + viewCount +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                '}';
-    }
+
 }

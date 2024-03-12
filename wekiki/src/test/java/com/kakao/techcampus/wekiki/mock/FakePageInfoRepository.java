@@ -31,12 +31,6 @@ public class FakePageInfoRepository implements PageRepository {
     }
 
     @Override
-    public Optional<PageInfo> findByTitleWithPosts(Long groupId, String title) {
-        return data.stream().filter(item -> item.getGroup().getId().equals(groupId))
-                .filter(item -> item.getPageName().equals(title)).findAny();
-    }
-
-    @Override
     public Optional<PageInfo> findByPageIdWithPosts(Long pageId) {
         return data.stream().filter(item -> item.getId().equals(pageId)).findAny();
     }
@@ -120,15 +114,8 @@ public class FakePageInfoRepository implements PageRepository {
     // ----- 사용안하는 메소드 삭제 예정
 
 
-    @Override
-    public Page<PageInfo> findPagesByTitleContainingKeyword(Long groupId, String keyword, Pageable pageable) {
-        return null;
-    }
 
-    @Override
-    public Page<PageInfo> findPagesWithPosts(Long groupId, String keyword, Pageable pageable) {
-        return null;
-    }
+
 
     // ----- 동시성 테스트 용
 

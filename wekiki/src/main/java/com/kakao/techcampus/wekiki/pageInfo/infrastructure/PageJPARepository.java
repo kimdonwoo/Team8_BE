@@ -32,26 +32,15 @@ public interface PageJPARepository extends JpaRepository<PageInfoEntity, Long> {
 
 
     // ----------------------
-    @Query("SELECT p FROM PageInfoEntity p WHERE p.groupEntity.id = :groupId AND p.pageName LIKE :keyword%")
-    Page<PageInfoEntity> findPagesByTitleContainingKeyword(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);
-
     @Query("SELECT p FROM PageInfoEntity p WHERE p.groupEntity.id = :groupId ORDER BY p.updated_at DESC")
     List<PageInfoEntity> findByGroupIdOrderByUpdatedAtDesc(@Param("groupId") Long groupId, Pageable pageable);
 
     @Query("SELECT p FROM PageInfoEntity p where p.groupEntity.id = :groupId AND p.pageName=:title")
     Optional<PageInfoEntity> findByTitle(@Param("groupId") Long groupId, @Param("title") String title);
 
-    @Query("SELECT p FROM PageInfoEntity p LEFT JOIN FETCH p.postEntities ps WHERE p.groupEntity.id = :groupId AND p.pageName = :title ORDER BY ps.orders ASC")
-    Optional<PageInfoEntity> findByTitleWithPosts(@Param("groupId") Long groupId, @Param("title") String title);
-
     @Query("SELECT p FROM PageInfoEntity p LEFT JOIN FETCH p.postEntities ps WHERE p.id = :pageId ORDER BY ps.orders ASC")
     Optional<PageInfoEntity> findByPageIdWithPosts(@Param("pageId") Long pageId);
 
-//    @Query("SELECT p FROM PageInfo p LEFT JOIN FETCH p.posts ps WHERE p.group.id = :groupId AND p.pageName LIKE %:keyword%")
-//    Page<PageInfo> findPagesWithPosts(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);
-
-    @Query("SELECT distinct p FROM PageInfoEntity p LEFT JOIN FETCH p.postEntities ps WHERE p.groupEntity.id = :groupId AND p.pageName LIKE %:keyword% AND (ps.orders = 1 or ps.orders is null)")
-    Page<PageInfoEntity> findPagesWithPosts(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p FROM PageInfoEntity p WHERE p.groupEntity.id = :groupId AND p.pageName LIKE %:keyword% ")
     Page<PageInfoEntity> findPages(@Param("groupId") Long groupId, @Param("keyword") String keyword, Pageable pageable);

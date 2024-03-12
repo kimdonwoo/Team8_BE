@@ -80,21 +80,9 @@ public class CommentEntity {
                 .build();
     }
 
-    public static CommentEntity updateFromModel(Comment comment){
-        return CommentEntity.builder()
-                .id(comment.getId())
-                .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(comment.getGroupMember()))
-                .content(comment.getContent())
-                .created_at(comment.getCreated_at())
-                .build();
-    }
 
     public void update(Comment comment){
         this.content = comment.getContent();
     }
 
-
-    public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
-        this.groupMemberEntity = groupMemberEntity;
-    }
 }

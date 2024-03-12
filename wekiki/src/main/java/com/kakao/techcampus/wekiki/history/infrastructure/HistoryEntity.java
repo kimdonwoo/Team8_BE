@@ -43,7 +43,6 @@ public class HistoryEntity {
 
     public static HistoryEntity fromModel(History history){
         return HistoryEntity.builder()
-                //.id(history.getId())
                 .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(history.getGroupMember()))
                 .postEntity(PostEntity.fromModelWithHisotries(history.getPost()))
                 .title(history.getTitle())
@@ -92,10 +91,4 @@ public class HistoryEntity {
                 .build();
     }
 
-
-
-
-        public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
-        this.groupMemberEntity = groupMemberEntity;
-    }
 }

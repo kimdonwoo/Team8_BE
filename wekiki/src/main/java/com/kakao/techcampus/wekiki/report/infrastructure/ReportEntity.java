@@ -61,7 +61,6 @@ public class ReportEntity {
 
     public static ReportEntity fromModel(Report report){
         return ReportEntity.builder()
-                //.id(report.getId())
                 .groupMemberEntity(GroupMemberEntity.fromPureModelWithId(report.getFromMember()))
                 .historyEntity(HistoryEntity.fromPureModel(report.getHistory()))
                 .content(report.getContent())
@@ -69,8 +68,4 @@ public class ReportEntity {
                 .build();
     }
 
-
-    public void updateGroupMember(GroupMemberEntity groupMemberEntity) {
-        this.fromMember = groupMemberEntity;
-    }
 }

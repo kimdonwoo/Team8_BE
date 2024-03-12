@@ -122,7 +122,6 @@ public class PostEntity {
     public static PostEntity fromPureModel(Post post){
         return PostEntity.builder()
                 .id(post.getId())
-                //.parent(post.getParent() == null ? null : PostEntity.fromPureModel(post.getParent()))
                 .orders(post.getOrders())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -162,10 +161,6 @@ public class PostEntity {
         this.content = updatedPost.getContent();
         this.orders = updatedPost.getOrders();
 
-    }
-
-    public void addHistoryEntity(HistoryEntity historyEntity){
-        this.historyEntities.add(historyEntity);
     }
 
 }

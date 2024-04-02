@@ -1,5 +1,7 @@
 package com.kakao.techcampus.wekiki.pageInfo.facade;
 
+import com.kakao.techcampus.wekiki._core.error.exception.Exception400;
+import com.kakao.techcampus.wekiki._core.error.exception.Exception500;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateRedissonLockFacade;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
@@ -24,11 +26,11 @@ public class PageInfoUpdateRedissonLockFacadeImpl implements PageInfoUpdateRedis
         RLock lock = redissonClient.getLock(pageId.toString()+"like");
 
         try {
+            // 10초동안 1초마다 락 획득 시도중
             boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
 
             if (!available) {
-                System.out.println("lock 획득 실패");
-                return null;
+                throw new Exception500("현재 페이지 좋아요가 불가능합니다.");
             }
 
             return pageInfoUpdateService.likePage(pageId,groupId,memberId);
@@ -46,8 +48,7 @@ public class PageInfoUpdateRedissonLockFacadeImpl implements PageInfoUpdateRedis
             boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
 
             if (!available) {
-                System.out.println("lock 획득 실패");
-                return null;
+                throw new Exception500("현재 페이지 싫어요가 불가능합니다.");
             }
 
             return pageInfoUpdateService.hatePage(pageId,groupId,memberId);

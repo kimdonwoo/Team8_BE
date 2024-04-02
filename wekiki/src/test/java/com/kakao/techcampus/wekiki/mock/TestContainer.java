@@ -28,11 +28,9 @@ import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageIndexGenerator;
 import com.kakao.techcampus.wekiki.pageInfo.service.port.PageRepository;
 import com.kakao.techcampus.wekiki.post.controller.PostController;
-import com.kakao.techcampus.wekiki.post.controller.port.PostCreateService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostDeleteService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostReadService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostUpdateService;
+import com.kakao.techcampus.wekiki.post.controller.port.*;
 import com.kakao.techcampus.wekiki.post.domain.Post;
+import com.kakao.techcampus.wekiki.post.facade.PostUpdateRedissonLockFacadeImpl;
 import com.kakao.techcampus.wekiki.post.service.PostServiceImpl;
 import com.kakao.techcampus.wekiki.post.service.port.PostRepository;
 import com.kakao.techcampus.wekiki.report.service.port.ReportRepository;
@@ -67,6 +65,8 @@ public class TestContainer {
     public final PostCreateService postCreateService;
     public final PostUpdateService postUpdateService;
     public final PostDeleteService postDeleteService;
+
+    public final PostUpdateRedissonLockFacade postUpdateRedissonLockFacade;
     public final HistoryRepository historyRepository;
     public final ReportRepository reportRepository;
 
@@ -139,6 +139,12 @@ public class TestContainer {
 
         this.pageInfoUpdateRedissonLockFacade = pageInfoUpdateRedissonLockFacade;
 
+        PostUpdateRedissonLockFacadeImpl postUpdateRedissonLockFacade = PostUpdateRedissonLockFacadeImpl.builder()
+                .redissonClient(this.redissonClient)
+                .postUpdateService(this.postUpdateService)
+                .build();
+        this.postUpdateRedissonLockFacade = postUpdateRedissonLockFacade;
+
         this.pageInfoController = PageInfoController.builder()
                 .pageInfoCreateService(this.pageInfoCreateService)
                 .pageInfoDeleteService(this.pageInfoDeleteService)
@@ -151,7 +157,7 @@ public class TestContainer {
                 .postReadService(this.postReadService)
                 .postCreateService(this.postCreateService)
                 .postDeleteService(this.postDeleteService)
-                .postUpdateService(this.postUpdateService)
+                .postUpdateRedissonLockFacade(this.postUpdateRedissonLockFacade)
                 .securityUtils(this.securityUtils)
                 .build();
         this.commentController = CommentController.builder()

@@ -3,10 +3,7 @@ package com.kakao.techcampus.wekiki.post.controller;
 
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
 import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
-import com.kakao.techcampus.wekiki.post.controller.port.PostCreateService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostDeleteService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostReadService;
-import com.kakao.techcampus.wekiki.post.controller.port.PostUpdateService;
+import com.kakao.techcampus.wekiki.post.controller.port.*;
 import com.kakao.techcampus.wekiki.post.controller.request.PostRequest;
 import com.kakao.techcampus.wekiki.post.controller.response.PostResponse;
 import jakarta.validation.Valid;
@@ -27,7 +24,7 @@ public class PostController {
 
     private final PostReadService postReadService;
     private final PostCreateService postCreateService;
-    private final PostUpdateService postUpdateService;
+    private final PostUpdateRedissonLockFacade postUpdateRedissonLockFacade;
     private final PostDeleteService postDeleteService;
     private final SecurityUtils securityUtils;
 
@@ -46,7 +43,7 @@ public class PostController {
     public ResponseEntity<ApiUtils.ApiResult<PostResponse.modifyPostDTO>> modifyPost(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Valid @RequestBody PostRequest.modifyPostDTO request){
 
-        PostResponse.modifyPostDTO response = postUpdateService.modifyPost(securityUtils.currentMember(),groupid, request.getPostId(), request.getTitle(), request.getContent());
+        PostResponse.modifyPostDTO response = postUpdateRedissonLockFacade.modifyPostWithRedissonLock(securityUtils.currentMember(),groupid, request.getPostId(), request.getTitle(), request.getContent());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }

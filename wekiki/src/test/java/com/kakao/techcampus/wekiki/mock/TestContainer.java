@@ -1,6 +1,7 @@
 package com.kakao.techcampus.wekiki.mock;
 
-import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.*;
+import com.kakao.techcampus.wekiki.pageInfo.facade.PageInfoUpdateRedissonLockFacadeImpl;
 import com.kakao.techcampus.wekiki._core.utils.port.RedisUtils;
 import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
 import com.kakao.techcampus.wekiki.comment.controller.CommentController;
@@ -21,10 +22,6 @@ import com.kakao.techcampus.wekiki.member.domain.Member;
 import com.kakao.techcampus.wekiki.member.infrastructure.Authority;
 import com.kakao.techcampus.wekiki.member.service.port.MemberRepository;
 import com.kakao.techcampus.wekiki.pageInfo.controller.PageInfoController;
-import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoCreateService;
-import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoDeleteService;
-import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoReadService;
-import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
 import com.kakao.techcampus.wekiki.pageInfo.domain.PageInfo;
 import com.kakao.techcampus.wekiki.pageInfo.infrastructure.PageIndexGeneratorImpl;
 import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
@@ -62,7 +59,7 @@ public class TestContainer {
     public final GroupMemberRepository groupMemberRepository;
     public final GroupRepository groupRepository;
 
-    public final RedissonLockFacade redissonLockFacade;
+    public final PageInfoUpdateRedissonLockFacade pageInfoUpdateRedissonLockFacade;
     public final RedissonClient redissonClient;
 
     public final PostController postRestController;
@@ -135,16 +132,18 @@ public class TestContainer {
         this.commentUpdateService = commentService;
         this.commentDeleteService = commentService;
 
-        this.redissonLockFacade = RedissonLockFacade.builder()
+        PageInfoUpdateRedissonLockFacadeImpl pageInfoUpdateRedissonLockFacade = PageInfoUpdateRedissonLockFacadeImpl.builder()
                 .redissonClient(this.redissonClient)
                 .pageInfoUpdateService(this.pageInfoUpdateService)
                 .build();
+
+        this.pageInfoUpdateRedissonLockFacade = pageInfoUpdateRedissonLockFacade;
 
         this.pageInfoController = PageInfoController.builder()
                 .pageInfoCreateService(this.pageInfoCreateService)
                 .pageInfoDeleteService(this.pageInfoDeleteService)
                 .pageInfoReadService(this.pageInfoReadService)
-                .redissonLockFacade(this.redissonLockFacade)
+                .pageInfoUpdateRedissonLockFacade(this.pageInfoUpdateRedissonLockFacade)
                 //.pageInfoUpdateService(this.pageInfoUpdateService)
                 .securityUtils(this.securityUtils)
                 .build();

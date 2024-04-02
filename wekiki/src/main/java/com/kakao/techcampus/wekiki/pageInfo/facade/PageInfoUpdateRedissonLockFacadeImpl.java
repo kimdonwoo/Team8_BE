@@ -1,8 +1,8 @@
-package com.kakao.techcampus.wekiki._core.facade;
+package com.kakao.techcampus.wekiki.pageInfo.facade;
 
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateRedissonLockFacade;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
-import com.kakao.techcampus.wekiki.pageInfo.service.PageServiceImpl;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @Builder
-public class RedissonLockFacade {
+public class PageInfoUpdateRedissonLockFacadeImpl implements PageInfoUpdateRedissonLockFacade {
 
     private final RedissonClient redissonClient;
 

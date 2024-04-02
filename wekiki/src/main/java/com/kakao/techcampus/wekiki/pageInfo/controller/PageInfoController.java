@@ -1,13 +1,13 @@
 package com.kakao.techcampus.wekiki.pageInfo.controller;
 
 
-import com.kakao.techcampus.wekiki._core.facade.RedissonLockFacade;
+import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateRedissonLockFacade;
+import com.kakao.techcampus.wekiki.pageInfo.facade.PageInfoUpdateRedissonLockFacadeImpl;
 import com.kakao.techcampus.wekiki._core.utils.ApiUtils;
 import com.kakao.techcampus.wekiki._core.utils.port.SecurityUtils;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoCreateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoDeleteService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoReadService;
-import com.kakao.techcampus.wekiki.pageInfo.controller.port.PageInfoUpdateService;
 import com.kakao.techcampus.wekiki.pageInfo.controller.request.PageInfoRequest;
 import com.kakao.techcampus.wekiki.pageInfo.controller.response.PageInfoResponse;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class PageInfoController {
     private final PageInfoCreateService pageInfoCreateService;
     private final PageInfoDeleteService pageInfoDeleteService;
     private final PageInfoReadService pageInfoReadService;
-    private final RedissonLockFacade redissonLockFacade;
+    private final PageInfoUpdateRedissonLockFacade pageInfoUpdateRedissonLockFacade;
     private final SecurityUtils securityUtils;
 
     // 페이지 ID로 페이지 + 글 조회
@@ -70,7 +70,7 @@ public class PageInfoController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.likePageDTO>> likePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.likePageDTO response = redissonLockFacade.likePageWithRedissonLock(pageid, groupid, securityUtils.currentMember());
+        PageInfoResponse.likePageDTO response = pageInfoUpdateRedissonLockFacade.likePageWithRedissonLock(pageid, groupid, securityUtils.currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
@@ -80,7 +80,7 @@ public class PageInfoController {
     public ResponseEntity<ApiUtils.ApiResult<PageInfoResponse.hatePageDTO>> hatePage(@Positive(message = "유효하지 않은 groupID입니다.") @PathVariable Long groupid,
                                                                                      @Positive(message = "유효하지 않은 pageID입니다.") @PathVariable Long pageid) {
 
-        PageInfoResponse.hatePageDTO response = redissonLockFacade.hatePageWithRedissonLock(pageid, groupid, securityUtils.currentMember());
+        PageInfoResponse.hatePageDTO response = pageInfoUpdateRedissonLockFacade.hatePageWithRedissonLock(pageid, groupid, securityUtils.currentMember());
 
         return ResponseEntity.ok(ApiUtils.success(response));
     }
